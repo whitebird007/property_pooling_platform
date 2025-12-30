@@ -1,13 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { trpc } from "@/lib/trpc";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -15,104 +12,175 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Building2,
-  MapPin,
-  TrendingUp,
+import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { 
+  Building2, 
+  MapPin, 
+  TrendingUp, 
+  Users, 
   Search,
-  Grid3X3,
-  List,
   ArrowRight,
-  Percent,
-  Users,
-  SlidersHorizontal,
   Sparkles,
-  X
+  Target,
+  Clock,
+  CheckCircle2,
+  Percent,
+  Home,
+  Building,
+  Store as StoreIcon,
+  Landmark,
+  X,
+  SlidersHorizontal,
+  Grid3X3,
+  List
 } from "lucide-react";
 
 export default function Properties() {
-  const { language, t } = useLanguage();
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const { language } = useLanguage();
+  const [searchTerm, setSearchTerm] = useState("");
   const [propertyType, setPropertyType] = useState<string>("all");
   const [city, setCity] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("newest");
+  const [showFilters, setShowFilters] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { data: properties, isLoading } = trpc.properties.list.useQuery({ status: "active" });
 
-  const cities = Array.from(new Set(properties?.map(p => p.city) || []));
+  const filteredProperties = useMemo(() => {
+    if (!properties) return [];
+    
+    let filtered = [...properties];
+    
+    if (searchTerm) {
+      filtered = filtered.filter(p => 
+        p.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (p.area?.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+    
+    if (propertyType !== "all") {
+      filtered = filtered.filter(p => p.propertyType === propertyType);
+    }
+    
+    if (city !== "all") {
+      filtered = filtered.filter(p => p.city.toLowerCase() === city.toLowerCase());
+    }
+    
+    switch (sortBy) {
+      case "price-low":
+        filtered.sort((a, b) => Number(a.sharePrice) - Number(b.sharePrice));
+        break;
+      case "price-high":
+        filtered.sort((a, b) => Number(b.sharePrice) - Number(a.sharePrice));
+        break;
+      case "yield-high":
+        filtered.sort((a, b) => Number(b.expectedRentalYield || 0) - Number(a.expectedRentalYield || 0));
+        break;
+      default:
+        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+    
+    return filtered;
+  }, [properties, searchTerm, propertyType, city, sortBy]);
 
-  const filteredProperties = properties?.filter((property) => {
-    const matchesSearch = property.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         property.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         (property.area?.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesType = propertyType === "all" || property.propertyType === propertyType;
-    const matchesCity = city === "all" || property.city.toLowerCase() === city.toLowerCase();
-    return matchesSearch && matchesType && matchesCity;
-  });
+  const cities = useMemo(() => {
+    if (!properties) return [];
+    return Array.from(new Set(properties.map(p => p.city)));
+  }, [properties]);
 
   const clearFilters = () => {
-    setSearchQuery("");
+    setSearchTerm("");
     setPropertyType("all");
     setCity("all");
   };
 
-  const hasActiveFilters = searchQuery || propertyType !== "all" || city !== "all";
+  const hasActiveFilters = searchTerm || propertyType !== "all" || city !== "all";
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
-
+      
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-900"></div>
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-emerald-500 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-10 left-10 w-72 h-72 bg-cyan-500 rounded-full filter blur-3xl"></div>
-        </div>
+      <section className="relative pt-32 pb-16 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{ backgroundImage: "url('/properties-bg.png')" }}
+        />
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(251, 191, 36, 0.15) 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }} />
         
+        {/* Floating Elements */}
+        <div className="absolute top-40 left-20 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
+
         <div className="container relative z-10">
           <div className="max-w-3xl">
-            <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-sm">
-              <Sparkles className="w-4 h-4 mr-2" />
-              {language === "ur" ? "تصدیق شدہ پراپرٹیز" : "Verified Properties"}
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-              {language === "ur" ? (
-                <>
-                  <span className="gradient-text">سرمایہ کاری</span> کے مواقع
-                </>
-              ) : (
-                <>
-                  Investment <span className="gradient-text">Opportunities</span>
-                </>
-              )}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
+              <Building2 className="w-4 h-4 text-amber-400" />
+              <span className="text-amber-400 text-sm font-medium">
+                {language === "ur" ? "تصدیق شدہ پراپرٹیز" : "Verified Properties"}
+              </span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
+              {language === "ur" ? "سرمایہ کاری کے" : "Investment"}
+              <span className="block bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">
+                {language === "ur" ? "مواقع" : "Opportunities"}
+              </span>
             </h1>
-            <p className="text-xl text-white/70 mb-8">
+            
+            <p className="text-xl text-slate-400 mb-8">
               {language === "ur"
-                ? "پاکستان کی بہترین پراپرٹیز میں سے اپنی پسند کی منتخب کریں۔ ہر پراپرٹی قانونی طور پر تصدیق شدہ ہے۔"
-                : "Choose from Pakistan's finest properties. Each property is legally verified with complete documentation."}
+                ? "پاکستان کی بہترین پراپرٹیز میں سے اپنی پسند کی منتخب کریں۔"
+                : "Browse verified properties across Pakistan. Start investing with as little as PKR 50,000."}
             </p>
 
             {/* Search Bar */}
             <div className="flex gap-3">
               <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <Input
                   placeholder={language === "ur" ? "پراپرٹی تلاش کریں..." : "Search properties..."}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 h-14 bg-white/10 border-white/20 text-white placeholder:text-white/50 backdrop-blur-sm rounded-xl focus:bg-white/20"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-12 h-14 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 rounded-xl focus:border-amber-500"
                 />
               </div>
               <Button
                 variant="outline"
                 onClick={() => setShowFilters(!showFilters)}
-                className="h-14 px-6 bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm rounded-xl"
+                className="h-14 px-6 bg-slate-800/50 border-slate-700 text-white hover:bg-slate-800 rounded-xl"
               >
                 <SlidersHorizontal className="w-5 h-5 mr-2" />
                 {language === "ur" ? "فلٹرز" : "Filters"}
               </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="flex flex-wrap gap-6 mt-8">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold">{properties?.length || 0}+ Properties</p>
+                  <p className="text-slate-400 text-sm">Verified & Listed</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                  <Percent className="w-5 h-5 text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold">8-15% Returns</p>
+                  <p className="text-slate-400 text-sm">Expected Annually</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -120,75 +188,88 @@ export default function Properties() {
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="bg-white border-b shadow-sm animate-fade-in">
-          <div className="container py-6">
+        <section className="py-6 bg-slate-900/80 border-y border-slate-800">
+          <div className="container">
             <div className="flex flex-wrap gap-4 items-end">
               <div className="flex-1 min-w-[200px]">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-slate-400 mb-2 block">
                   {language === "ur" ? "شہر" : "City"}
                 </label>
                 <Select value={city} onValueChange={setCity}>
-                  <SelectTrigger className="h-12">
+                  <SelectTrigger className="h-12 bg-slate-800 border-slate-700 text-white rounded-xl">
                     <SelectValue placeholder={language === "ur" ? "شہر منتخب کریں" : "Select city"} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{language === "ur" ? "تمام شہر" : "All Cities"}</SelectItem>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectItem value="all" className="text-white">{language === "ur" ? "تمام شہر" : "All Cities"}</SelectItem>
                     {cities.map((c) => (
-                      <SelectItem key={c} value={c.toLowerCase()}>{c}</SelectItem>
+                      <SelectItem key={c} value={c.toLowerCase()} className="text-white">{c}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="flex-1 min-w-[200px]">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-slate-400 mb-2 block">
                   {language === "ur" ? "قسم" : "Property Type"}
                 </label>
                 <Select value={propertyType} onValueChange={setPropertyType}>
-                  <SelectTrigger className="h-12">
+                  <SelectTrigger className="h-12 bg-slate-800 border-slate-700 text-white rounded-xl">
                     <SelectValue placeholder={language === "ur" ? "قسم منتخب کریں" : "Select type"} />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">{language === "ur" ? "تمام اقسام" : "All Types"}</SelectItem>
-                    <SelectItem value="residential">{language === "ur" ? "رہائشی" : "Residential"}</SelectItem>
-                    <SelectItem value="commercial">{language === "ur" ? "تجارتی" : "Commercial"}</SelectItem>
-                    <SelectItem value="mixed_use">{language === "ur" ? "مخلوط" : "Mixed Use"}</SelectItem>
-                    <SelectItem value="vacation_rental">{language === "ur" ? "ایئر بی این بی" : "Vacation Rental"}</SelectItem>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectItem value="all" className="text-white">{language === "ur" ? "تمام اقسام" : "All Types"}</SelectItem>
+                    <SelectItem value="residential" className="text-white">{language === "ur" ? "رہائشی" : "Residential"}</SelectItem>
+                    <SelectItem value="commercial" className="text-white">{language === "ur" ? "تجارتی" : "Commercial"}</SelectItem>
+                    <SelectItem value="mixed_use" className="text-white">{language === "ur" ? "مخلوط" : "Mixed Use"}</SelectItem>
+                    <SelectItem value="vacation_rental" className="text-white">{language === "ur" ? "ایئر بی این بی" : "Vacation Rental"}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex-1 min-w-[200px]">
+                <label className="text-sm font-medium text-slate-400 mb-2 block">Sort By</label>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="h-12 bg-slate-800 border-slate-700 text-white rounded-xl">
+                    <SelectValue placeholder="Sort By" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-slate-800 border-slate-700">
+                    <SelectItem value="newest" className="text-white">Newest First</SelectItem>
+                    <SelectItem value="price-low" className="text-white">Price: Low to High</SelectItem>
+                    <SelectItem value="price-high" className="text-white">Price: High to Low</SelectItem>
+                    <SelectItem value="yield-high" className="text-white">Highest Yield</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {hasActiveFilters && (
-                <Button variant="ghost" onClick={clearFilters} className="h-12 text-red-600 hover:text-red-700 hover:bg-red-50">
+                <Button 
+                  variant="ghost" 
+                  onClick={clearFilters} 
+                  className="h-12 text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                >
                   <X className="w-4 h-4 mr-2" />
                   {language === "ur" ? "صاف کریں" : "Clear All"}
                 </Button>
               )}
             </div>
           </div>
-        </div>
+        </section>
       )}
 
       {/* Properties Grid */}
-      <section className="py-12 flex-1">
+      <section className="py-16">
         <div className="container">
           {/* Results Header */}
           <div className="flex items-center justify-between mb-8">
-            <div>
-              <p className="text-gray-600">
-                {language === "ur" ? (
-                  <><span className="font-semibold text-gray-900">{filteredProperties?.length || 0}</span> پراپرٹیز ملیں</>
-                ) : (
-                  <><span className="font-semibold text-gray-900">{filteredProperties?.length || 0}</span> properties found</>
-                )}
-              </p>
-            </div>
+            <p className="text-slate-400">
+              Showing <span className="text-white font-semibold">{filteredProperties?.length || 0}</span> properties
+            </p>
             <div className="flex items-center gap-2">
               <Button
                 variant={viewMode === "grid" ? "default" : "ghost"}
                 size="icon"
                 onClick={() => setViewMode("grid")}
-                className="h-10 w-10"
+                className={`h-10 w-10 ${viewMode === "grid" ? "bg-amber-500 text-slate-900" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
               >
                 <Grid3X3 className="w-5 h-5" />
               </Button>
@@ -196,7 +277,7 @@ export default function Properties() {
                 variant={viewMode === "list" ? "default" : "ghost"}
                 size="icon"
                 onClick={() => setViewMode("list")}
-                className="h-10 w-10"
+                className={`h-10 w-10 ${viewMode === "list" ? "bg-amber-500 text-slate-900" : "text-slate-400 hover:text-white hover:bg-slate-800"}`}
               >
                 <List className="w-5 h-5" />
               </Button>
@@ -204,113 +285,107 @@ export default function Properties() {
           </div>
 
           {isLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm">
-                  <div className="h-56 skeleton"></div>
+                <div key={i} className="rounded-2xl bg-slate-800/50 border border-slate-700/50 overflow-hidden animate-pulse">
+                  <div className="h-48 bg-slate-700" />
                   <div className="p-6 space-y-4">
-                    <div className="h-4 skeleton rounded w-1/3"></div>
-                    <div className="h-6 skeleton rounded w-2/3"></div>
-                    <div className="h-4 skeleton rounded w-full"></div>
+                    <div className="h-6 bg-slate-700 rounded w-3/4" />
+                    <div className="h-4 bg-slate-700 rounded w-1/2" />
+                    <div className="h-4 bg-slate-700 rounded w-full" />
                   </div>
                 </div>
               ))}
             </div>
           ) : filteredProperties && filteredProperties.length > 0 ? (
-            <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}>
-              {filteredProperties.map((property) => (
-                viewMode === "grid" ? (
+            <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-6"}>
+              {filteredProperties.map((property) => {
+                const fundingProgress = ((property.totalShares - property.availableShares) / property.totalShares) * 100;
+                
+                return viewMode === "grid" ? (
                   <Link key={property.id} href={`/properties/${property.id}`}>
-                    <div className="property-card cursor-pointer group">
-                      <div className="image-wrapper">
+                    <div className="group rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 overflow-hidden hover:border-amber-500/30 transition-all duration-300 cursor-pointer">
+                      {/* Image */}
+                      <div className="relative h-48 bg-gradient-to-br from-slate-700 to-slate-800 overflow-hidden">
                         {property.images && property.images[0] ? (
-                          <img
-                            src={property.images[0]}
+                          <img 
+                            src={property.images[0]} 
                             alt={property.title}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                            <Building2 className="w-16 h-16 text-gray-400" />
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Building2 className="w-16 h-16 text-slate-600" />
                           </div>
                         )}
-                        <div className="badge">
-                          {property.propertyType === "residential"
-                            ? (language === "ur" ? "رہائشی" : "Residential")
-                            : property.propertyType === "commercial"
-                            ? (language === "ur" ? "تجارتی" : "Commercial")
-                            : property.propertyType === "vacation_rental"
-                            ? (language === "ur" ? "ایئر بی این بی" : "Airbnb")
-                            : (language === "ur" ? "مخلوط" : "Mixed")}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+                        
+                        {/* Badges */}
+                        <div className="absolute top-4 left-4 flex gap-2">
+                          <Badge className="bg-amber-500/90 text-slate-900 font-semibold capitalize">
+                            {property.propertyType.replace("_", " ")}
+                          </Badge>
+                          {property.rentalType === "short_term" && (
+                            <Badge className="bg-emerald-500/90 text-white">
+                              Airbnb Ready
+                            </Badge>
+                          )}
                         </div>
-                        {property.rentalType === "short_term" && (
-                          <div className="absolute top-4 right-4 z-10 px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-bold">
-                            Airbnb Ready
+                        
+                        {/* Yield Badge */}
+                        <div className="absolute top-4 right-4">
+                          <div className="px-3 py-1 rounded-full bg-emerald-500/90 text-white text-sm font-semibold flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3" />
+                            {property.expectedRentalYield}% Yield
                           </div>
-                        )}
+                        </div>
                       </div>
+                      
+                      {/* Content */}
                       <div className="p-6">
-                        <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
+                        <div className="flex items-center gap-2 text-slate-400 mb-2">
                           <MapPin className="w-4 h-4" />
-                          {property.city}, {property.area}
+                          <span className="text-sm">{property.city}, {property.area}</span>
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-primary transition-colors">
+                        
+                        <h3 className="text-xl font-bold text-white mb-4 group-hover:text-amber-400 transition-colors line-clamp-1">
                           {property.title}
                         </h3>
-
+                        
+                        {/* Stats */}
                         <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div className="bg-gray-50 rounded-xl p-3">
-                            <p className="text-xs text-gray-500 mb-1">
-                              {language === "ur" ? "فی حصہ قیمت" : "Share Price"}
-                            </p>
-                            <p className="font-bold text-primary">
-                              PKR {Number(property.sharePrice).toLocaleString()}
-                            </p>
+                          <div className="p-3 rounded-xl bg-slate-800/50">
+                            <p className="text-slate-400 text-xs mb-1">Share Price</p>
+                            <p className="text-white font-bold">PKR {Number(property.sharePrice).toLocaleString()}</p>
                           </div>
-                          <div className="bg-gray-50 rounded-xl p-3">
-                            <p className="text-xs text-gray-500 mb-1">
-                              {language === "ur" ? "متوقع منافع" : "Expected Yield"}
-                            </p>
-                            <p className="font-bold text-emerald-600 flex items-center gap-1">
-                              <TrendingUp className="w-4 h-4" />
-                              {property.expectedRentalYield}% p.a.
-                            </p>
+                          <div className="p-3 rounded-xl bg-slate-800/50">
+                            <p className="text-slate-400 text-xs mb-1">Total Value</p>
+                            <p className="text-white font-bold">PKR {(Number(property.totalValue) / 1000000).toFixed(1)}M</p>
                           </div>
                         </div>
-
-                        <div className="space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">{language === "ur" ? "فنڈنگ پیشرفت" : "Funding Progress"}</span>
-                            <span className="font-medium">
-                              {Math.round(((property.totalShares - property.availableShares) / property.totalShares) * 100)}%
-                            </span>
+                        
+                        {/* Funding Progress */}
+                        <div className="mb-4">
+                          <div className="flex items-center justify-between text-sm mb-2">
+                            <span className="text-slate-400">Funding Progress</span>
+                            <span className="text-white font-semibold">{fundingProgress.toFixed(0)}%</span>
                           </div>
-                          <div className="investment-progress">
-                            <div
-                              className="bar"
-                              style={{
-                                width: `${((property.totalShares - property.availableShares) / property.totalShares) * 100}%`,
-                              }}
+                          <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full transition-all duration-500"
+                              style={{ width: `${Math.min(fundingProgress, 100)}%` }}
                             />
                           </div>
-                          <div className="flex justify-between text-xs text-gray-500">
-                            <span className="flex items-center gap-1">
-                              <Users className="w-3.5 h-3.5" />
-                              {property.totalShares - property.availableShares} {language === "ur" ? "حصص فروخت" : "shares sold"}
-                            </span>
-                            <span>{property.availableShares} {language === "ur" ? "باقی" : "remaining"}</span>
-                          </div>
                         </div>
-
-                        <div className="mt-4 pt-4 border-t flex items-center justify-between">
-                          <div className="text-sm text-gray-500">
-                            <span className="font-semibold text-gray-900">
-                              PKR {Number(property.totalValue).toLocaleString()}
-                            </span>
-                            <span className="ml-1">{language === "ur" ? "کل قیمت" : "total value"}</span>
+                        
+                        {/* Footer */}
+                        <div className="flex items-center justify-between pt-4 border-t border-slate-700/50">
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <Users className="w-4 h-4" />
+                            <span className="text-sm">{property.totalShares - property.availableShares} investors</span>
                           </div>
-                          <span className="text-primary font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-                            {language === "ur" ? "تفصیلات" : "View Details"}
+                          <span className="text-amber-400 font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
+                            View Details
                             <ArrowRight className="w-4 h-4" />
                           </span>
                         </div>
@@ -318,91 +393,117 @@ export default function Properties() {
                     </div>
                   </Link>
                 ) : (
-                  <Card key={property.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                    <div className="flex flex-col md:flex-row">
-                      <div className="relative w-full md:w-80 h-56 md:h-auto bg-muted shrink-0">
+                  <Link key={property.id} href={`/properties/${property.id}`}>
+                    <div className="group flex flex-col md:flex-row rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 overflow-hidden hover:border-amber-500/30 transition-all duration-300 cursor-pointer">
+                      {/* Image */}
+                      <div className="relative w-full md:w-80 h-56 md:h-auto bg-gradient-to-br from-slate-700 to-slate-800 flex-shrink-0 overflow-hidden">
                         {property.images && property.images[0] ? (
                           <img 
                             src={property.images[0]} 
                             alt={property.title}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-200 to-gray-300">
-                            <Building2 className="w-12 h-12 text-gray-400" />
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Building2 className="w-16 h-16 text-slate-600" />
                           </div>
                         )}
-                        <Badge className="absolute top-3 left-3 bg-primary">
+                        <Badge className="absolute top-4 left-4 bg-amber-500/90 text-slate-900 font-semibold capitalize">
                           {property.propertyType.replace("_", " ")}
                         </Badge>
                       </div>
-                      <div className="flex-1 p-6 flex flex-col">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-                            <MapPin className="w-4 h-4" />
-                            {property.city}, {property.area}
-                          </div>
-                          <h3 className="font-bold text-xl mb-2">{property.title}</h3>
-                          <p className="text-gray-600 line-clamp-2 mb-4">
-                            {property.description || "Premium investment opportunity with verified title and professional management."}
-                          </p>
+                      
+                      {/* Content */}
+                      <div className="flex-1 p-6">
+                        <div className="flex items-center gap-2 text-slate-400 mb-2">
+                          <MapPin className="w-4 h-4" />
+                          <span className="text-sm">{property.city}, {property.area}</span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-6 pt-4 border-t">
-                          <div className="flex items-center gap-2">
-                            <Percent className="w-5 h-5 text-primary" />
-                            <div>
-                              <p className="text-xs text-gray-500">Yield</p>
-                              <p className="font-semibold">{property.expectedRentalYield}%</p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <TrendingUp className="w-5 h-5 text-emerald-600" />
-                            <div>
-                              <p className="text-xs text-gray-500">Growth</p>
-                              <p className="font-semibold">{property.expectedAppreciation}%</p>
-                            </div>
+                        
+                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-400 transition-colors">
+                          {property.title}
+                        </h3>
+                        
+                        <p className="text-slate-400 text-sm mb-4 line-clamp-2">
+                          {property.description}
+                        </p>
+                        
+                        <div className="flex flex-wrap gap-4 mb-4">
+                          <div>
+                            <p className="text-slate-400 text-xs">Share Price</p>
+                            <p className="text-white font-bold">PKR {Number(property.sharePrice).toLocaleString()}</p>
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500">Min. Investment</p>
-                            <p className="font-semibold">PKR {Number(property.minInvestment).toLocaleString()}</p>
+                            <p className="text-slate-400 text-xs">Expected Yield</p>
+                            <p className="text-emerald-400 font-bold flex items-center gap-1">
+                              <TrendingUp className="w-4 h-4" />
+                              {property.expectedRentalYield}% p.a.
+                            </p>
                           </div>
-                          <Button className="ml-auto btn-premium" asChild>
-                            <Link href={`/properties/${property.id}`}>
-                              View Details
-                              <ArrowRight className="w-4 h-4 ml-2" />
-                            </Link>
+                          <div>
+                            <p className="text-slate-400 text-xs">Total Value</p>
+                            <p className="text-white font-bold">PKR {(Number(property.totalValue) / 1000000).toFixed(1)}M</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-slate-400">
+                            <Users className="w-4 h-4" />
+                            <span className="text-sm">{property.totalShares - property.availableShares} investors</span>
+                          </div>
+                          <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold rounded-xl">
+                            View Details
+                            <ArrowRight className="ml-2 w-4 h-4" />
                           </Button>
                         </div>
                       </div>
                     </div>
-                  </Card>
-                )
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-20">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
-                <Building2 className="w-12 h-12 text-gray-400" />
+              <div className="w-20 h-20 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto mb-6">
+                <Search className="w-10 h-10 text-slate-500" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                {language === "ur" ? "کوئی پراپرٹی نہیں ملی" : "No Properties Found"}
-              </h3>
-              <p className="text-gray-600 mb-6">
-                {hasActiveFilters
-                  ? (language === "ur"
-                    ? "آپ کے فلٹرز سے ملتی جلتی کوئی پراپرٹی نہیں ملی۔ فلٹرز تبدیل کر کے دوبارہ کوشش کریں۔"
-                    : "No properties match your current filters. Try adjusting your search criteria.")
-                  : (language === "ur"
-                    ? "ہم فی الحال پریمیم پراپرٹیز تلاش کر رہے ہیں۔ جلد واپس آئیں!"
-                    : "We're currently sourcing premium properties. Check back soon!")}
+              <h3 className="text-2xl font-bold text-white mb-2">No Properties Found</h3>
+              <p className="text-slate-400 mb-6">
+                Try adjusting your filters or search term
               </p>
-              {hasActiveFilters && (
-                <Button onClick={clearFilters} variant="outline">
-                  {language === "ur" ? "فلٹرز صاف کریں" : "Clear Filters"}
-                </Button>
-              )}
+              <Button 
+                onClick={clearFilters}
+                variant="outline"
+                className="border-slate-600 text-white hover:bg-slate-800"
+              >
+                Clear Filters
+              </Button>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gradient-to-br from-amber-500/10 via-slate-900 to-emerald-500/10">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
+              <Target className="w-4 h-4 text-amber-400" />
+              <span className="text-amber-400 text-sm font-medium">Can't Find What You're Looking For?</span>
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Get Notified About New Properties
+            </h2>
+            <p className="text-slate-400 mb-8">
+              Sign up to receive alerts when new investment opportunities matching your criteria become available.
+            </p>
+            <Link href="/signup">
+              <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
+                <Sparkles className="mr-2 w-5 h-5" />
+                Create Free Account
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 

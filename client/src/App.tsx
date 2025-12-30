@@ -12,6 +12,8 @@ import Properties from "./pages/Properties";
 import PropertyDetail from "./pages/PropertyDetail";
 import Education from "./pages/Education";
 import About from "./pages/About";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
 
 // Investor Pages
 import Dashboard from "./pages/Dashboard";
@@ -37,6 +39,8 @@ function Router() {
       <Route path="/properties/:id" component={PropertyDetail} />
       <Route path="/education" component={Education} />
       <Route path="/about" component={About} />
+      <Route path="/signup" component={SignUp} />
+      <Route path="/login" component={Login} />
       
       {/* Investor Routes */}
       <Route path="/dashboard" component={Dashboard} />
@@ -62,7 +66,7 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
+      <ThemeProvider defaultTheme="dark">
         <LanguageProvider>
           <TooltipProvider>
             <Toaster />

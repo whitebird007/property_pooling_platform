@@ -2,12 +2,8 @@ import { Link, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { getLoginUrl } from "@/const";
 import { useLanguage } from "@/contexts/LanguageContext";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
 import { 
   Building2, 
@@ -16,18 +12,33 @@ import {
   PieChart,
   ArrowUpRight,
   ArrowDownRight,
-  Clock,
-  CheckCircle,
-  AlertCircle,
   ChevronRight,
   Banknote,
-  Vote
+  Vote,
+  LayoutDashboard,
+  Briefcase,
+  Store,
+  FileCheck,
+  Settings,
+  LogOut,
+  Bell,
+  User,
+  AlertCircle,
+  CheckCircle2,
+  Clock,
+  Shield,
+  Menu,
+  X,
+  Home,
+  Sparkles
 } from "lucide-react";
+import { useState } from "react";
 
 export default function Dashboard() {
-  const { user, isAuthenticated, loading } = useAuth();
-  const { t } = useLanguage();
+  const { user, isAuthenticated, loading, logout } = useAuth();
+  const { t, language } = useLanguage();
   const [, setLocation] = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data: investments } = trpc.investments.myInvestments.useQuery(undefined, {
     enabled: isAuthenticated,
@@ -47,10 +58,12 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Building2 className="w-8 h-8 text-slate-900" />
+          </div>
+          <p className="text-slate-400">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -66,125 +79,231 @@ export default function Dashboard() {
 
   const recentTransactions = transactions?.slice(0, 5) || [];
 
+  const sidebarLinks = [
+    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, active: true },
+    { href: "/portfolio", label: "Portfolio", icon: Briefcase },
+    { href: "/marketplace", label: "Marketplace", icon: Store },
+    { href: "/wallet", label: "Wallet", icon: Wallet },
+    { href: "/kyc", label: "KYC Verification", icon: FileCheck },
+  ];
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <main className="flex-1 py-8">
-        <div className="container">
-          {/* Welcome Header */}
-          <div className="mb-8">
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              Welcome back, {user?.name || "Investor"}!
-            </h1>
-            <p className="text-muted-foreground">
-              Here's an overview of your investment portfolio
-            </p>
+    <div className="min-h-screen bg-slate-950 flex">
+      {/* Sidebar */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 border-r border-slate-800 transform transition-transform duration-300 lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex flex-col h-full">
+          {/* Logo */}
+          <div className="p-6 border-b border-slate-800">
+            <Link href="/">
+              <div className="flex items-center gap-3 cursor-pointer group">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/25">
+                  <Building2 className="w-6 h-6 text-slate-900" />
+                </div>
+                <span className="text-xl font-bold text-white">PropertyPool</span>
+              </div>
+            </Link>
           </div>
 
+          {/* Navigation */}
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            {sidebarLinks.map((link) => (
+              <Link key={link.href} href={link.href}>
+                <div className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                  link.active 
+                    ? "bg-amber-500/10 text-amber-400 border border-amber-500/30" 
+                    : "text-slate-400 hover:text-white hover:bg-slate-800"
+                }`}>
+                  <link.icon className="w-5 h-5" />
+                  <span className="font-medium">{link.label}</span>
+                </div>
+              </Link>
+            ))}
+
+            {user?.role === "admin" && (
+              <>
+                <div className="pt-4 pb-2">
+                  <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Admin</p>
+                </div>
+                <Link href="/admin">
+                  <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-amber-400 hover:bg-amber-500/10 transition-all duration-200">
+                    <Shield className="w-5 h-5" />
+                    <span className="font-medium">Admin Panel</span>
+                  </div>
+                </Link>
+              </>
+            )}
+          </nav>
+
+          {/* User Section */}
+          <div className="p-4 border-t border-slate-800">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/50">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
+                <User className="w-5 h-5 text-slate-900" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-medium truncate">{user?.name || "User"}</p>
+                <p className="text-slate-400 text-sm truncate">{user?.email}</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => logout()}
+              className="flex items-center gap-3 px-4 py-3 mt-2 w-full rounded-xl text-red-400 hover:bg-red-500/10 transition-all duration-200"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile Overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Main Content */}
+      <main className="flex-1 lg:ml-72">
+        {/* Top Bar */}
+        <header className="sticky top-0 z-30 bg-slate-900/80 backdrop-blur-lg border-b border-slate-800">
+          <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setSidebarOpen(true)}
+                className="lg:hidden p-2 rounded-lg hover:bg-slate-800 text-slate-400"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <div>
+                <h1 className="text-xl font-bold text-white">Dashboard</h1>
+                <p className="text-slate-400 text-sm">Welcome back, {user?.name || "Investor"}!</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Link href="/">
+                <Button variant="ghost" className="text-slate-400 hover:text-white hover:bg-slate-800">
+                  <Home className="w-5 h-5 mr-2" />
+                  Home
+                </Button>
+              </Link>
+              <button className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 relative">
+                <Bell className="w-5 h-5" />
+                <span className="absolute top-1 right-1 w-2 h-2 bg-amber-500 rounded-full" />
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <div className="p-6">
           {/* KYC Alert */}
           {kycData?.profile?.kycStatus !== "verified" && (
-            <Card className="mb-6 border-amber-200 bg-amber-50">
-              <CardContent className="flex items-center justify-between py-4">
+            <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-amber-500/10 to-amber-600/10 border border-amber-500/30">
+              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <AlertCircle className="w-5 h-5 text-amber-600" />
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-amber-400" />
+                  </div>
                   <div>
-                    <p className="font-medium text-amber-800">Complete Your KYC</p>
-                    <p className="text-sm text-amber-600">
+                    <p className="font-semibold text-white">Complete Your KYC</p>
+                    <p className="text-sm text-slate-400">
                       Verify your identity to start investing in properties
                     </p>
                   </div>
                 </div>
-                <Button asChild>
-                  <Link href="/kyc">Complete KYC</Link>
-                </Button>
-              </CardContent>
-            </Card>
+                <Link href="/kyc">
+                  <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                    Complete KYC
+                  </Button>
+                </Link>
+              </div>
+            </div>
           )}
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">{t("dashboard.totalInvested")}</span>
-                  <Banknote className="w-4 h-4 text-muted-foreground" />
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-slate-400">Total Invested</span>
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                  <Banknote className="w-5 h-5 text-emerald-400" />
                 </div>
-                <p className="text-2xl font-bold">PKR {totalInvested.toLocaleString()}</p>
-              </CardContent>
-            </Card>
+              </div>
+              <p className="text-2xl font-bold text-white">PKR {totalInvested.toLocaleString()}</p>
+            </div>
             
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">{t("dashboard.currentValue")}</span>
-                  <PieChart className="w-4 h-4 text-muted-foreground" />
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-slate-400">Current Value</span>
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                  <PieChart className="w-5 h-5 text-blue-400" />
                 </div>
-                <p className="text-2xl font-bold">PKR {currentValue.toLocaleString()}</p>
-              </CardContent>
-            </Card>
+              </div>
+              <p className="text-2xl font-bold text-white">PKR {currentValue.toLocaleString()}</p>
+            </div>
             
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">{t("dashboard.totalReturns")}</span>
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-slate-400">Total Returns</span>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${totalReturns >= 0 ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
                   {totalReturns >= 0 ? (
-                    <ArrowUpRight className="w-4 h-4 text-green-500" />
+                    <ArrowUpRight className="w-5 h-5 text-green-400" />
                   ) : (
-                    <ArrowDownRight className="w-4 h-4 text-red-500" />
+                    <ArrowDownRight className="w-5 h-5 text-red-400" />
                   )}
                 </div>
-                <p className={`text-2xl font-bold ${totalReturns >= 0 ? "text-green-600" : "text-red-600"}`}>
-                  {totalReturns >= 0 ? "+" : ""}PKR {totalReturns.toLocaleString()}
-                </p>
-                <p className={`text-sm ${totalReturns >= 0 ? "text-green-600" : "text-red-600"}`}>
-                  {returnPercentage >= 0 ? "+" : ""}{returnPercentage.toFixed(2)}%
-                </p>
-              </CardContent>
-            </Card>
+              </div>
+              <p className={`text-2xl font-bold ${totalReturns >= 0 ? "text-green-400" : "text-red-400"}`}>
+                {totalReturns >= 0 ? "+" : ""}PKR {totalReturns.toLocaleString()}
+              </p>
+              <p className={`text-sm ${totalReturns >= 0 ? "text-green-400" : "text-red-400"}`}>
+                {returnPercentage >= 0 ? "+" : ""}{returnPercentage.toFixed(2)}%
+              </p>
+            </div>
             
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-muted-foreground">{t("dashboard.properties")}</span>
-                  <Building2 className="w-4 h-4 text-muted-foreground" />
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm text-slate-400">Properties</span>
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                  <Building2 className="w-5 h-5 text-amber-400" />
                 </div>
-                <p className="text-2xl font-bold">{propertiesOwned}</p>
-              </CardContent>
-            </Card>
+              </div>
+              <p className="text-2xl font-bold text-white">{propertiesOwned}</p>
+            </div>
           </div>
 
           {/* Main Content Grid */}
           <div className="grid lg:grid-cols-3 gap-6">
             {/* Portfolio */}
             <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>My Properties</CardTitle>
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href="/portfolio">
+              <div className="rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 overflow-hidden">
+                <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
+                  <h2 className="text-lg font-bold text-white">My Properties</h2>
+                  <Link href="/portfolio">
+                    <Button variant="ghost" className="text-amber-400 hover:text-amber-300 hover:bg-amber-500/10">
                       View All
                       <ChevronRight className="w-4 h-4 ml-1" />
-                    </Link>
-                  </Button>
-                </CardHeader>
-                <CardContent>
+                    </Button>
+                  </Link>
+                </div>
+                <div className="p-6">
                   {investments && investments.length > 0 ? (
                     <div className="space-y-4">
                       {investments.slice(0, 3).map((investment) => (
-                        <div key={investment.id} className="flex items-center gap-4 p-4 border rounded-lg">
-                          <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <Building2 className="w-8 h-8 text-muted-foreground" />
+                        <div key={investment.id} className="flex items-center gap-4 p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
+                          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center border border-amber-500/30">
+                            <Building2 className="w-8 h-8 text-amber-400" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold truncate">Property #{investment.propertyId}</h4>
-                            <p className="text-sm text-muted-foreground">
+                            <h4 className="font-semibold text-white truncate">Property #{investment.propertyId}</h4>
+                            <p className="text-sm text-slate-400">
                               {investment.sharesOwned} shares owned
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold">PKR {Number(investment.currentValue).toLocaleString()}</p>
-                            <Badge variant={investment.status === "active" ? "default" : "secondary"}>
+                            <p className="font-semibold text-white">PKR {Number(investment.currentValue).toLocaleString()}</p>
+                            <Badge className={`${investment.status === "active" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" : "bg-slate-700 text-slate-300"}`}>
                               {investment.status}
                             </Badge>
                           </div>
@@ -192,51 +311,56 @@ export default function Dashboard() {
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                      <h3 className="font-semibold mb-2">No Investments Yet</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 rounded-2xl bg-slate-800 flex items-center justify-center mx-auto mb-4">
+                        <Building2 className="w-8 h-8 text-slate-500" />
+                      </div>
+                      <h3 className="font-semibold text-white mb-2">No Investments Yet</h3>
+                      <p className="text-sm text-slate-400 mb-6">
                         Start building your property portfolio today
                       </p>
-                      <Button asChild>
-                        <Link href="/properties">Browse Properties</Link>
-                      </Button>
+                      <Link href="/properties">
+                        <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                          <Sparkles className="mr-2 w-4 h-4" />
+                          Browse Properties
+                        </Button>
+                      </Link>
                     </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
               {/* Recent Transactions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Transactions</CardTitle>
-                </CardHeader>
-                <CardContent>
+              <div className="rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 overflow-hidden">
+                <div className="p-6 border-b border-slate-700/50">
+                  <h2 className="text-lg font-bold text-white">Recent Transactions</h2>
+                </div>
+                <div className="p-6">
                   {recentTransactions.length > 0 ? (
                     <div className="space-y-3">
                       {recentTransactions.map((tx) => (
-                        <div key={tx.id} className="flex items-center justify-between py-2 border-b last:border-0">
+                        <div key={tx.id} className="flex items-center justify-between py-3 border-b border-slate-700/50 last:border-0">
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                               tx.transactionType === "deposit" || tx.transactionType === "dividend"
-                                ? "bg-green-100 text-green-600"
+                                ? "bg-green-500/20"
                                 : tx.transactionType === "withdrawal"
-                                ? "bg-red-100 text-red-600"
-                                : "bg-blue-100 text-blue-600"
+                                ? "bg-red-500/20"
+                                : "bg-blue-500/20"
                             }`}>
                               {tx.transactionType === "deposit" || tx.transactionType === "dividend" ? (
-                                <ArrowDownRight className="w-4 h-4" />
+                                <ArrowDownRight className={`w-5 h-5 ${tx.transactionType === "deposit" || tx.transactionType === "dividend" ? "text-green-400" : ""}`} />
                               ) : tx.transactionType === "withdrawal" ? (
-                                <ArrowUpRight className="w-4 h-4" />
+                                <ArrowUpRight className="w-5 h-5 text-red-400" />
                               ) : (
-                                <Building2 className="w-4 h-4" />
+                                <Building2 className="w-5 h-5 text-blue-400" />
                               )}
                             </div>
                             <div>
-                              <p className="font-medium capitalize">
+                              <p className="font-medium text-white capitalize">
                                 {tx.transactionType.replace("_", " ")}
                               </p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-xs text-slate-400">
                                 {new Date(tx.createdAt).toLocaleDateString()}
                               </p>
                             </div>
@@ -244,112 +368,117 @@ export default function Dashboard() {
                           <div className="text-right">
                             <p className={`font-semibold ${
                               tx.transactionType === "deposit" || tx.transactionType === "dividend"
-                                ? "text-green-600"
+                                ? "text-green-400"
                                 : tx.transactionType === "withdrawal"
-                                ? "text-red-600"
-                                : ""
+                                ? "text-red-400"
+                                : "text-white"
                             }`}>
                               {tx.transactionType === "deposit" || tx.transactionType === "dividend" ? "+" : "-"}
                               PKR {Number(tx.amount).toLocaleString()}
                             </p>
-                            <Badge variant={tx.status === "completed" ? "default" : "secondary"} className="text-xs">
-                              {tx.status}
-                            </Badge>
                           </div>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-center text-muted-foreground py-4">
-                      No transactions yet
-                    </p>
+                    <div className="text-center py-8">
+                      <Clock className="w-12 h-12 mx-auto text-slate-500 mb-4" />
+                      <p className="text-slate-400">No transactions yet</p>
+                    </div>
                   )}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {/* Wallet */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Wallet className="w-5 h-5" />
-                    Wallet Balance
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold mb-4">PKR {walletBalance.toLocaleString()}</p>
-                  <div className="flex gap-2">
-                    <Button className="flex-1" asChild>
-                      <Link href="/wallet">Deposit</Link>
+              {/* Wallet Card */}
+              <div className="rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 border border-amber-500/30 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-amber-400 font-medium">Wallet Balance</span>
+                  <Wallet className="w-5 h-5 text-amber-400" />
+                </div>
+                <p className="text-3xl font-bold text-white mb-4">PKR {walletBalance.toLocaleString()}</p>
+                <div className="flex gap-2">
+                  <Link href="/wallet" className="flex-1">
+                    <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                      Add Funds
                     </Button>
-                    <Button variant="outline" className="flex-1" asChild>
-                      <Link href="/wallet">Withdraw</Link>
+                  </Link>
+                  <Link href="/wallet" className="flex-1">
+                    <Button variant="outline" className="w-full border-amber-500/50 text-amber-400 hover:bg-amber-500/10">
+                      Withdraw
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  </Link>
+                </div>
+              </div>
 
               {/* Quick Actions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button variant="outline" className="w-full justify-start" asChild>
-                    <Link href="/properties">
-                      <Building2 className="w-4 h-4 mr-2" />
-                      Browse Properties
-                    </Link>
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" asChild>
-                    <Link href="/marketplace">
-                      <TrendingUp className="w-4 h-4 mr-2" />
-                      Secondary Market
-                    </Link>
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start" asChild>
-                    <Link href="/portfolio">
-                      <Vote className="w-4 h-4 mr-2" />
-                      Vote on Decisions
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
+              <div className="rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 p-6">
+                <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
+                <div className="space-y-3">
+                  <Link href="/properties">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-colors cursor-pointer">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                        <Building2 className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-white">Browse Properties</p>
+                        <p className="text-xs text-slate-400">Find your next investment</p>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link href="/marketplace">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-colors cursor-pointer">
+                      <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                        <Store className="w-5 h-5 text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-white">Marketplace</p>
+                        <p className="text-xs text-slate-400">Trade property shares</p>
+                      </div>
+                    </div>
+                  </Link>
+                  <Link href="/education">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-800/50 hover:bg-slate-800 transition-colors cursor-pointer">
+                      <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-amber-400" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-white">Learn</p>
+                        <p className="text-xs text-slate-400">Investment guides</p>
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              </div>
 
               {/* KYC Status */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Account Status</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
+              <div className="rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 p-6">
+                <h3 className="text-lg font-bold text-white mb-4">Account Status</h3>
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">KYC Verification</span>
-                    <Badge variant={kycData?.profile?.kycStatus === "verified" ? "default" : "secondary"}>
+                    <span className="text-slate-400">KYC Status</span>
+                    <Badge className={`${
+                      kycData?.profile?.kycStatus === "verified" 
+                        ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" 
+                        : kycData?.profile?.kycStatus === "pending"
+                        ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
+                        : "bg-slate-700 text-slate-300"
+                    }`}>
                       {kycData?.profile?.kycStatus || "Not Started"}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm">Risk Profile</span>
-                    <Badge variant="outline">
-                      {kycData?.profile?.riskProfile || "Not Set"}
-                    </Badge>
+                    <span className="text-slate-400">Account Type</span>
+                    <span className="text-white font-medium capitalize">{user?.role || "Investor"}</span>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Member Since</span>
-                    <span className="text-sm text-muted-foreground">
-                      {kycData?.profile?.createdAt ? new Date(kycData.profile.createdAt).toLocaleDateString() : "N/A"}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }

@@ -6,13 +6,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { 
@@ -22,7 +20,17 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Search,
-  Plus,
+  Filter,
+  Clock,
+  CheckCircle2,
+  ArrowRight,
+  Wallet,
+  BarChart3,
+  Activity,
+  RefreshCw,
+  Info,
+  ChevronDown,
+  Sparkles,
   X
 } from "lucide-react";
 
@@ -33,12 +41,10 @@ export default function Marketplace() {
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
   const [orderShares, setOrderShares] = useState(1);
   const [orderPrice, setOrderPrice] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: properties } = trpc.properties.list.useQuery({ status: "active" });
   const { data: myOrders, refetch: refetchOrders } = trpc.market.myOrders.useQuery(undefined, {
-    enabled: isAuthenticated,
-  });
-  const { data: investments } = trpc.investments.myInvestments.useQuery(undefined, {
     enabled: isAuthenticated,
   });
 
@@ -62,21 +68,35 @@ export default function Marketplace() {
     },
   });
 
-  if (!loading && !isAuthenticated) {
-    window.location.href = getLoginUrl();
-    return null;
-  }
+  // Market stats
+  const marketStats = [
+    { label: "24h Volume", value: "PKR 12.5M", change: "+15.2%", positive: true, icon: BarChart3 },
+    { label: "Active Listings", value: "156", change: "+8", positive: true, icon: Activity },
+    { label: "Avg. Price/Share", value: "PKR 5,420", change: "-2.1%", positive: false, icon: TrendingDown },
+    { label: "Total Trades Today", value: "89", change: "+23", positive: true, icon: RefreshCw },
+  ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
-        </div>
-      </div>
-    );
-  }
+  // Sample marketplace data
+  const buyOrders = [
+    { id: 1, property: "DHA Phase 6 Apartment", shares: 50, pricePerShare: 5200, total: 260000, seller: "Ahmed K.", time: "2 min ago" },
+    { id: 2, property: "Bahria Town Villa", shares: 100, pricePerShare: 4800, total: 480000, seller: "Sara M.", time: "5 min ago" },
+    { id: 3, property: "Commercial Plaza Gulberg", shares: 25, pricePerShare: 8500, total: 212500, seller: "Hassan R.", time: "12 min ago" },
+    { id: 4, property: "DHA Phase 5 Plot", shares: 75, pricePerShare: 6200, total: 465000, seller: "Fatima A.", time: "18 min ago" },
+    { id: 5, property: "Bahria Orchard Apartment", shares: 30, pricePerShare: 3900, total: 117000, seller: "Ali Z.", time: "25 min ago" },
+  ];
+
+  const sellOrders = [
+    { id: 1, property: "DHA Phase 6 Apartment", shares: 40, pricePerShare: 5400, total: 216000, buyer: "Usman T.", time: "1 min ago" },
+    { id: 2, property: "Commercial Plaza Gulberg", shares: 60, pricePerShare: 8800, total: 528000, buyer: "Zara K.", time: "8 min ago" },
+    { id: 3, property: "Bahria Town Villa", shares: 80, pricePerShare: 5000, total: 400000, buyer: "Imran S.", time: "15 min ago" },
+  ];
+
+  const recentTrades = [
+    { id: 1, property: "DHA Phase 6 Apartment", shares: 25, price: 5300, type: "buy", time: "Just now", status: "completed" },
+    { id: 2, property: "Bahria Town Villa", shares: 50, price: 4900, type: "sell", time: "3 min ago", status: "completed" },
+    { id: 3, property: "Commercial Plaza", shares: 15, price: 8600, type: "buy", time: "10 min ago", status: "completed" },
+    { id: 4, property: "DHA Phase 5 Plot", shares: 30, price: 6100, type: "sell", time: "22 min ago", status: "pending" },
+  ];
 
   const handlePlaceOrder = () => {
     if (!selectedProperty || selectedProperty === "all") {
@@ -96,312 +116,404 @@ export default function Marketplace() {
     });
   };
 
-  // Mock order book data for display
-  const mockBuyOrders = [
-    { price: 52000, shares: 10, total: 520000 },
-    { price: 51500, shares: 25, total: 1287500 },
-    { price: 51000, shares: 15, total: 765000 },
-    { price: 50500, shares: 30, total: 1515000 },
-    { price: 50000, shares: 50, total: 2500000 },
-  ];
+  // Not authenticated view
+  if (!loading && !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950">
+        <Navbar />
+        <div className="container py-24">
+          <div className="max-w-2xl mx-auto text-center space-y-8">
+            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center mx-auto border border-amber-500/30">
+              <Building2 className="w-10 h-10 text-amber-400" />
+            </div>
+            <h1 className="text-4xl font-bold text-white">Secondary Marketplace</h1>
+            <p className="text-slate-400 text-lg">
+              Trade your property shares with other verified investors. Buy low, sell high, and maintain liquidity in your portfolio.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link href="/login">
+                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl">
+                  Sign In to Trade
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 px-8 py-6 text-lg rounded-xl">
+                  Create Account
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
-  const mockSellOrders = [
-    { price: 53000, shares: 8, total: 424000 },
-    { price: 53500, shares: 12, total: 642000 },
-    { price: 54000, shares: 20, total: 1080000 },
-    { price: 54500, shares: 18, total: 981000 },
-    { price: 55000, shares: 35, total: 1925000 },
-  ];
-
-  const mockRecentTrades = [
-    { price: 52500, shares: 5, time: "2 min ago", type: "buy" },
-    { price: 52400, shares: 3, time: "5 min ago", type: "sell" },
-    { price: 52600, shares: 10, time: "12 min ago", type: "buy" },
-    { price: 52300, shares: 7, time: "18 min ago", type: "sell" },
-    { price: 52500, shares: 15, time: "25 min ago", type: "buy" },
-  ];
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="animate-spin w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
       
-      <main className="flex-1 py-8">
-        <div className="container">
-          {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      {/* Hero Section */}
+      <section className="relative py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-950" />
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(251, 191, 36, 0.15) 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }} />
+        
+        <div className="container relative z-10">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold mb-2">{t("nav.marketplace")}</h1>
-              <p className="text-muted-foreground">
-                Buy and sell property shares on the secondary market
-              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-4">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span className="text-amber-400 text-sm font-medium">Secondary Market</span>
+              </div>
+              <h1 className="text-4xl font-bold text-white mb-2">
+                Trade Property <span className="bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">Shares</span>
+              </h1>
+              <p className="text-slate-400">Buy and sell fractional property shares with other verified investors</p>
             </div>
-            <div className="flex gap-2 mt-4 md:mt-0">
-              <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                <SelectTrigger className="w-[200px]">
-                  <SelectValue placeholder="Select Property" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Properties</SelectItem>
-                  {properties?.map((property) => (
-                    <SelectItem key={property.id} value={String(property.id)}>
-                      {property.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex gap-3">
+              <Link href="/wallet">
+                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 rounded-xl">
+                  <Wallet className="mr-2 w-4 h-4" />
+                  Wallet Balance: PKR 250,000
+                </Button>
+              </Link>
             </div>
           </div>
 
           {/* Market Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-sm text-muted-foreground mb-1">Last Price</p>
-                <p className="text-2xl font-bold">PKR 52,500</p>
-                <p className="text-sm text-green-600 flex items-center gap-1">
-                  <ArrowUpRight className="w-3 h-3" />
-                  +2.5%
-                </p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-sm text-muted-foreground mb-1">24h Volume</p>
-                <p className="text-2xl font-bold">PKR 15.2M</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-sm text-muted-foreground mb-1">Bid</p>
-                <p className="text-2xl font-bold text-green-600">PKR 52,000</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="pt-6">
-                <p className="text-sm text-muted-foreground mb-1">Ask</p>
-                <p className="text-2xl font-bold text-red-600">PKR 53,000</p>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            {marketStats.map((stat, index) => (
+              <div key={index} className="p-5 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 backdrop-blur-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-slate-700/50 flex items-center justify-center">
+                    <stat.icon className="w-5 h-5 text-slate-400" />
+                  </div>
+                  <span className={`text-sm font-medium ${stat.positive ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {stat.change}
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-white">{stat.value}</p>
+                <p className="text-slate-500 text-sm">{stat.label}</p>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
 
-          {/* Main Content */}
-          <div className="grid lg:grid-cols-3 gap-6">
-            {/* Order Book */}
+      {/* Main Trading Section */}
+      <section className="py-10 bg-slate-900/50">
+        <div className="container">
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Order Book - Left Side */}
             <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Order Book</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {/* Buy Orders */}
-                    <div>
-                      <h4 className="font-semibold text-green-600 mb-3">Buy Orders</h4>
-                      <div className="space-y-1">
-                        <div className="grid grid-cols-3 text-xs text-muted-foreground pb-2 border-b">
-                          <span>Price</span>
-                          <span className="text-center">Shares</span>
-                          <span className="text-right">Total</span>
-                        </div>
-                        {mockBuyOrders.map((order, index) => (
-                          <div key={index} className="grid grid-cols-3 text-sm py-1 relative">
-                            <div 
-                              className="absolute inset-0 bg-green-500/10 rounded"
-                              style={{ width: `${(order.shares / 50) * 100}%` }}
-                            />
-                            <span className="relative text-green-600 font-medium">
-                              {order.price.toLocaleString()}
-                            </span>
-                            <span className="relative text-center">{order.shares}</span>
-                            <span className="relative text-right text-muted-foreground">
-                              {(order.total / 1000000).toFixed(2)}M
-                            </span>
-                          </div>
-                        ))}
-                      </div>
+              {/* Search and Filter */}
+              <div className="flex gap-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                  <Input
+                    placeholder="Search properties..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 py-6 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 rounded-xl"
+                  />
+                </div>
+                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 px-6 rounded-xl">
+                  <Filter className="mr-2 w-4 h-4" />
+                  Filter
+                </Button>
+              </div>
+
+              {/* Buy/Sell Tabs */}
+              <Tabs defaultValue="buy" className="w-full">
+                <TabsList className="w-full bg-slate-800/50 p-1.5 rounded-xl h-auto">
+                  <TabsTrigger 
+                    value="buy" 
+                    className="flex-1 py-3 rounded-lg data-[state=active]:bg-emerald-500 data-[state=active]:text-white text-slate-400"
+                  >
+                    <ArrowDownRight className="mr-2 w-4 h-4" />
+                    Buy Orders ({buyOrders.length})
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="sell" 
+                    className="flex-1 py-3 rounded-lg data-[state=active]:bg-red-500 data-[state=active]:text-white text-slate-400"
+                  >
+                    <ArrowUpRight className="mr-2 w-4 h-4" />
+                    Sell Orders ({sellOrders.length})
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="buy" className="mt-6">
+                  <div className="rounded-2xl bg-slate-800/30 border border-slate-700/50 overflow-hidden">
+                    {/* Table Header */}
+                    <div className="grid grid-cols-6 gap-4 p-4 bg-slate-800/50 text-slate-400 text-sm font-medium">
+                      <div className="col-span-2">Property</div>
+                      <div className="text-right">Shares</div>
+                      <div className="text-right">Price/Share</div>
+                      <div className="text-right">Total</div>
+                      <div className="text-right">Action</div>
                     </div>
                     
-                    {/* Sell Orders */}
-                    <div>
-                      <h4 className="font-semibold text-red-600 mb-3">Sell Orders</h4>
-                      <div className="space-y-1">
-                        <div className="grid grid-cols-3 text-xs text-muted-foreground pb-2 border-b">
-                          <span>Price</span>
-                          <span className="text-center">Shares</span>
-                          <span className="text-right">Total</span>
-                        </div>
-                        {mockSellOrders.map((order, index) => (
-                          <div key={index} className="grid grid-cols-3 text-sm py-1 relative">
-                            <div 
-                              className="absolute inset-0 bg-red-500/10 rounded right-0"
-                              style={{ width: `${(order.shares / 35) * 100}%`, marginLeft: "auto" }}
-                            />
-                            <span className="relative text-red-600 font-medium">
-                              {order.price.toLocaleString()}
-                            </span>
-                            <span className="relative text-center">{order.shares}</span>
-                            <span className="relative text-right text-muted-foreground">
-                              {(order.total / 1000000).toFixed(2)}M
-                            </span>
+                    {/* Table Body */}
+                    <div className="divide-y divide-slate-700/50">
+                      {buyOrders.map((order) => (
+                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-slate-800/30 transition-colors">
+                          <div className="col-span-2">
+                            <p className="text-white font-medium">{order.property}</p>
+                            <p className="text-slate-500 text-sm">by {order.seller} • {order.time}</p>
                           </div>
-                        ))}
-                      </div>
+                          <div className="text-right text-white font-medium">{order.shares}</div>
+                          <div className="text-right text-emerald-400 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
+                          <div className="text-right text-white font-bold">PKR {order.total.toLocaleString()}</div>
+                          <div className="text-right">
+                            <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg">
+                              Buy
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+                </TabsContent>
 
-              {/* Recent Trades */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Trades</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-4 text-xs text-muted-foreground pb-2 border-b">
-                      <span>Price</span>
-                      <span className="text-center">Shares</span>
-                      <span className="text-center">Type</span>
-                      <span className="text-right">Time</span>
+                <TabsContent value="sell" className="mt-6">
+                  <div className="rounded-2xl bg-slate-800/30 border border-slate-700/50 overflow-hidden">
+                    {/* Table Header */}
+                    <div className="grid grid-cols-6 gap-4 p-4 bg-slate-800/50 text-slate-400 text-sm font-medium">
+                      <div className="col-span-2">Property</div>
+                      <div className="text-right">Shares</div>
+                      <div className="text-right">Price/Share</div>
+                      <div className="text-right">Total</div>
+                      <div className="text-right">Action</div>
                     </div>
-                    {mockRecentTrades.map((trade, index) => (
-                      <div key={index} className="grid grid-cols-4 text-sm py-2 border-b last:border-0">
-                        <span className={trade.type === "buy" ? "text-green-600" : "text-red-600"}>
-                          PKR {trade.price.toLocaleString()}
-                        </span>
-                        <span className="text-center">{trade.shares}</span>
-                        <span className="text-center">
-                          <Badge variant={trade.type === "buy" ? "default" : "secondary"} className="text-xs">
-                            {trade.type}
+                    
+                    {/* Table Body */}
+                    <div className="divide-y divide-slate-700/50">
+                      {sellOrders.map((order) => (
+                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-slate-800/30 transition-colors">
+                          <div className="col-span-2">
+                            <p className="text-white font-medium">{order.property}</p>
+                            <p className="text-slate-500 text-sm">wanted by {order.buyer} • {order.time}</p>
+                          </div>
+                          <div className="text-right text-white font-medium">{order.shares}</div>
+                          <div className="text-right text-red-400 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
+                          <div className="text-right text-white font-bold">PKR {order.total.toLocaleString()}</div>
+                          <div className="text-right">
+                            <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                              Sell
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              {/* My Open Orders */}
+              {myOrders && myOrders.filter(o => o.status === "open").length > 0 && (
+                <div className="rounded-2xl bg-slate-800/30 border border-slate-700/50 p-6">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-amber-400" />
+                    My Open Orders
+                  </h3>
+                  <div className="space-y-3">
+                    {myOrders.filter(o => o.status === "open").map((order) => (
+                      <div key={order.id} className="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                        <div className="flex items-center gap-4">
+                          <Badge className={order.orderType === "buy" ? "bg-emerald-500" : "bg-red-500"}>
+                            {order.orderType}
                           </Badge>
-                        </span>
-                        <span className="text-right text-muted-foreground">{trade.time}</span>
+                          <div>
+                            <p className="text-white font-medium">{order.shares} shares</p>
+                            <p className="text-slate-400 text-sm">@ PKR {Number(order.pricePerShare).toLocaleString()}</p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => cancelOrderMutation.mutate({ orderId: order.id })}
+                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              )}
             </div>
 
-            {/* Place Order & My Orders */}
+            {/* Right Sidebar - Create Order & Recent Trades */}
             <div className="space-y-6">
-              {/* Place Order */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Place Order</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+              {/* Create Order Card */}
+              <div className="rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 p-6">
+                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-amber-400" />
+                  Create Order
+                </h3>
+
+                <div className="space-y-5">
+                  {/* Buy/Sell Toggle */}
                   <div className="grid grid-cols-2 gap-2">
                     <Button 
                       variant={orderType === "buy" ? "default" : "outline"}
                       onClick={() => setOrderType("buy")}
-                      className={orderType === "buy" ? "bg-green-600 hover:bg-green-700" : ""}
+                      className={`rounded-lg ${orderType === "buy" ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "border-slate-700 text-slate-400 hover:bg-slate-800"}`}
                     >
                       Buy
                     </Button>
                     <Button 
                       variant={orderType === "sell" ? "default" : "outline"}
                       onClick={() => setOrderType("sell")}
-                      className={orderType === "sell" ? "bg-red-600 hover:bg-red-700" : ""}
+                      className={`rounded-lg ${orderType === "sell" ? "bg-red-500 hover:bg-red-600 text-white" : "border-slate-700 text-slate-400 hover:bg-slate-800"}`}
                     >
                       Sell
                     </Button>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Property</Label>
+
+                  {/* Property Select */}
+                  <div>
+                    <Label className="text-slate-400 text-sm mb-2 block">Select Property</Label>
                     <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Property" />
+                      <SelectTrigger className="w-full bg-slate-700/50 border-slate-600 text-white rounded-lg">
+                        <SelectValue placeholder="Choose property" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-800 border-slate-700">
                         {properties?.map((property) => (
-                          <SelectItem key={property.id} value={String(property.id)}>
+                          <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-slate-700">
                             {property.title}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Price per Share (PKR)</Label>
-                    <Input
-                      type="number"
-                      value={orderPrice}
-                      onChange={(e) => setOrderPrice(e.target.value)}
-                      placeholder="Enter price"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Number of Shares</Label>
-                    <Input
-                      type="number"
+
+                  {/* Shares Input */}
+                  <div>
+                    <Label className="text-slate-400 text-sm mb-2 block">Number of Shares</Label>
+                    <Input 
+                      type="number" 
                       value={orderShares}
                       onChange={(e) => setOrderShares(Number(e.target.value))}
                       min={1}
+                      placeholder="0" 
+                      className="bg-slate-700/50 border-slate-600 text-white rounded-lg" 
                     />
                   </div>
-                  
-                  <div className="pt-2 border-t">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">Total</span>
-                      <span className="font-semibold">
-                        PKR {(Number(orderPrice || 0) * orderShares).toLocaleString()}
-                      </span>
+
+                  {/* Price Input */}
+                  <div>
+                    <Label className="text-slate-400 text-sm mb-2 block">Price per Share (PKR)</Label>
+                    <Input 
+                      type="number" 
+                      value={orderPrice}
+                      onChange={(e) => setOrderPrice(e.target.value)}
+                      placeholder="0" 
+                      className="bg-slate-700/50 border-slate-600 text-white rounded-lg" 
+                    />
+                  </div>
+
+                  {/* Summary */}
+                  <div className="p-4 rounded-xl bg-slate-700/30 space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400">Total Amount</span>
+                      <span className="text-white font-medium">PKR {(Number(orderPrice || 0) * orderShares).toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-400">Platform Fee (0.5%)</span>
+                      <span className="text-white font-medium">PKR {((Number(orderPrice || 0) * orderShares) * 0.005).toLocaleString()}</span>
                     </div>
                   </div>
-                  
+
+                  {/* Submit Button */}
                   <Button 
-                    className={`w-full ${orderType === "buy" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}`}
                     onClick={handlePlaceOrder}
                     disabled={placeOrderMutation.isPending}
+                    className={`w-full py-6 rounded-xl font-semibold ${
+                      orderType === "buy" 
+                        ? "bg-emerald-500 hover:bg-emerald-600 text-white" 
+                        : "bg-red-500 hover:bg-red-600 text-white"
+                    }`}
                   >
-                    {placeOrderMutation.isPending ? "Placing..." : `Place ${orderType} Order`}
+                    {placeOrderMutation.isPending ? "Placing..." : `Place ${orderType === "buy" ? "Buy" : "Sell"} Order`}
                   </Button>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
 
-              {/* My Orders */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>My Open Orders</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {myOrders && myOrders.length > 0 ? (
-                    <div className="space-y-3">
-                      {myOrders.filter(o => o.status === "open").map((order) => (
-                        <div key={order.id} className="flex items-center justify-between p-3 border rounded-lg">
-                          <div>
-                            <Badge variant={order.orderType === "buy" ? "default" : "secondary"}>
-                              {order.orderType}
-                            </Badge>
-                            <p className="text-sm mt-1">
-                              {order.shares} shares @ PKR {Number(order.pricePerShare).toLocaleString()}
-                            </p>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => cancelOrderMutation.mutate({ orderId: order.id })}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
+              {/* Recent Trades */}
+              <div className="rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 p-6">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-amber-400" />
+                  Recent Trades
+                </h3>
+
+                <div className="space-y-3">
+                  {recentTrades.map((trade) => (
+                    <div key={trade.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-700/30">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                          trade.type === 'buy' ? 'bg-emerald-500/20' : 'bg-red-500/20'
+                        }`}>
+                          {trade.type === 'buy' ? (
+                            <ArrowDownRight className="w-4 h-4 text-emerald-400" />
+                          ) : (
+                            <ArrowUpRight className="w-4 h-4 text-red-400" />
+                          )}
                         </div>
-                      ))}
+                        <div>
+                          <p className="text-white text-sm font-medium">{trade.property}</p>
+                          <p className="text-slate-500 text-xs">{trade.shares} shares • {trade.time}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`text-sm font-medium ${trade.type === 'buy' ? 'text-emerald-400' : 'text-red-400'}`}>
+                          PKR {trade.price.toLocaleString()}
+                        </p>
+                        {trade.status === 'completed' ? (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-400 ml-auto" />
+                        ) : (
+                          <Clock className="w-4 h-4 text-amber-400 ml-auto" />
+                        )}
+                      </div>
                     </div>
-                  ) : (
-                    <p className="text-center text-muted-foreground py-4">
-                      No open orders
+                  ))}
+                </div>
+
+                <Button variant="ghost" className="w-full mt-4 text-amber-400 hover:text-amber-300 hover:bg-slate-700/50 rounded-lg">
+                  View All Trades
+                  <ArrowRight className="ml-2 w-4 h-4" />
+                </Button>
+              </div>
+
+              {/* Info Card */}
+              <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-5">
+                <div className="flex gap-3">
+                  <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-amber-400 font-medium mb-1">Trading Hours</p>
+                    <p className="text-slate-400 text-sm">
+                      The marketplace is open 24/7. Orders are processed instantly when matched.
                     </p>
-                  )}
-                </CardContent>
-              </Card>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </main>
+      </section>
 
       <Footer />
     </div>

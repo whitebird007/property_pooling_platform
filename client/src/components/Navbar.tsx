@@ -26,7 +26,8 @@ import {
   Store,
   Info,
   Shield,
-  BookOpen
+  BookOpen,
+  Sparkles
 } from "lucide-react";
 
 export default function Navbar() {
@@ -43,8 +44,6 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const isHeroPage = location === "/" || location === "/about";
   
   const navLinks = [
     { href: "/properties", label: language === "ur" ? "پراپرٹیز" : "Properties", icon: Building2 },
@@ -54,22 +53,20 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`nav-premium ${isScrolled ? "scrolled" : ""}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      isScrolled 
+        ? "bg-slate-900/95 backdrop-blur-lg shadow-lg shadow-black/20 border-b border-slate-800" 
+        : "bg-slate-900/80 backdrop-blur-sm"
+    }`}>
       <div className="container">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-3 cursor-pointer group">
-              <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                isScrolled || !isHeroPage 
-                  ? "bg-gradient-to-br from-amber-500 to-yellow-600" 
-                  : "bg-gradient-to-br from-amber-500/20 to-yellow-600/20 backdrop-blur-sm border border-amber-500/30"
-              } group-hover:scale-105`}>
-                <Building2 className="w-6 h-6 text-white" />
+              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center transition-all duration-300 group-hover:scale-105 shadow-lg shadow-amber-500/25">
+                <Building2 className="w-6 h-6 text-slate-900" />
               </div>
-              <span className={`text-xl font-bold transition-colors duration-300 ${
-                isScrolled || !isHeroPage ? "text-slate-900" : "text-white"
-              }`}>
+              <span className="text-xl font-bold text-white">
                 PropertyPool
               </span>
             </div>
@@ -79,13 +76,10 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
-                <span className={`nav-link flex items-center gap-2 ${
-                  isScrolled || !isHeroPage 
-                    ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100" 
-                    : "text-white/80 hover:text-white hover:bg-white/10"
-                } ${location === link.href 
-                    ? (isScrolled || !isHeroPage ? "text-slate-900 bg-slate-100" : "text-white bg-white/10") 
-                    : ""
+                <span className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  location === link.href 
+                    ? "text-amber-400 bg-amber-500/10" 
+                    : "text-slate-300 hover:text-white hover:bg-slate-800"
                 }`}>
                   <link.icon className="w-4 h-4" />
                   {link.label}
@@ -99,11 +93,7 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === "en" ? "ur" : "en")}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 ${
-                isScrolled || !isHeroPage 
-                  ? "hover:bg-slate-100 text-slate-600" 
-                  : "hover:bg-white/10 text-white/80"
-              }`}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 hover:bg-slate-800 text-slate-300 hover:text-white"
             >
               <Globe className="w-4 h-4" />
               <span className="text-sm font-medium">{language === "en" ? "اردو" : "English"}</span>
@@ -112,48 +102,44 @@ export default function Navbar() {
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300 ${
-                    isScrolled || !isHeroPage 
-                      ? "bg-slate-100 hover:bg-slate-200 text-slate-800" 
-                      : "bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm border border-white/20"
-                  }`}>
+                  <button className="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
-                      <User className="w-4 h-4 text-white" />
+                      <User className="w-4 h-4 text-slate-900" />
                     </div>
                     <span className="font-medium">{user?.name || "User"}</span>
-                    <ChevronDown className="w-4 h-4" />
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2">
+                <DropdownMenuContent align="end" className="w-56 p-2 bg-slate-800 border-slate-700">
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 cursor-pointer">
+                    <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
                       <LayoutDashboard className="w-4 h-4" />
                       {language === "ur" ? "ڈیش بورڈ" : "Dashboard"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/portfolio" className="flex items-center gap-3 px-3 py-2 cursor-pointer">
+                    <Link href="/portfolio" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
                       <Building2 className="w-4 h-4" />
                       {language === "ur" ? "پورٹ فولیو" : "Portfolio"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/wallet" className="flex items-center gap-3 px-3 py-2 cursor-pointer">
+                    <Link href="/wallet" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
                       <Wallet className="w-4 h-4" />
                       {language === "ur" ? "والیٹ" : "Wallet"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/kyc" className="flex items-center gap-3 px-3 py-2 cursor-pointer">
+                    <Link href="/kyc" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
                       <FileCheck className="w-4 h-4" />
                       {language === "ur" ? "KYC تصدیق" : "KYC Verification"}
                     </Link>
                   </DropdownMenuItem>
                   {user?.role === "admin" && (
                     <>
-                      <DropdownMenuSeparator />
+                      <DropdownMenuSeparator className="bg-slate-700" />
                       <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-amber-600">
+                        <Link href="/admin" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-amber-400 hover:text-amber-300 hover:bg-slate-700 rounded-lg">
                           <Shield className="w-4 h-4" />
                           {language === "ur" ? "ایڈمن پینل" : "Admin Panel"}
                         </Link>
@@ -162,19 +148,19 @@ export default function Navbar() {
                   )}
                   {user?.role === "sales" && (
                     <>
-                      <DropdownMenuSeparator />
+                      <DropdownMenuSeparator className="bg-slate-700" />
                       <DropdownMenuItem asChild>
-                        <Link href="/admin/sales-training" className="flex items-center gap-3 px-3 py-2 cursor-pointer">
+                        <Link href="/admin/sales-training" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
                           <BookOpen className="w-4 h-4" />
                           Sales Training
                         </Link>
                       </DropdownMenuItem>
                     </>
                   )}
-                  <DropdownMenuSeparator />
+                  <DropdownMenuSeparator className="bg-slate-700" />
                   <DropdownMenuItem 
                     onClick={() => logout()}
-                    className="flex items-center gap-3 px-3 py-2 cursor-pointer text-red-600"
+                    className="flex items-center gap-3 px-3 py-2 cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg"
                   >
                     <LogOut className="w-4 h-4" />
                     {language === "ur" ? "لاگ آؤٹ" : "Logout"}
@@ -182,20 +168,26 @@ export default function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <a href={getLoginUrl()}>
-                <button className="btn-premium px-6 py-2.5 text-sm">
-                  {language === "ur" ? "لاگ ان / سائن اپ" : "Login / Sign Up"}
-                </button>
-              </a>
+              <div className="flex items-center gap-3">
+                <Link href="/login">
+                  <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-800">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-6 rounded-xl shadow-lg shadow-amber-500/25">
+                    <Sparkles className="mr-2 w-4 h-4" />
+                    Get Started
+                  </Button>
+                </Link>
+              </div>
             )}
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`lg:hidden p-2 rounded-lg transition-colors ${
-              isScrolled || !isHeroPage ? "hover:bg-slate-100 text-slate-700" : "hover:bg-white/10 text-white"
-            }`}
+            className="lg:hidden p-2 rounded-lg transition-colors hover:bg-slate-800 text-white"
           >
             {isMobileMenuOpen ? (
               <X className="w-6 h-6" />
@@ -207,15 +199,15 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-xl border-t border-slate-200">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-slate-900 shadow-xl border-t border-slate-800">
             <div className="container py-6 space-y-2">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
                   <div 
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                       location === link.href 
-                        ? "bg-amber-50 text-amber-700" 
-                        : "hover:bg-slate-50 text-slate-700"
+                        ? "bg-amber-500/10 text-amber-400" 
+                        : "hover:bg-slate-800 text-slate-300"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -225,10 +217,10 @@ export default function Navbar() {
                 </Link>
               ))}
               
-              <div className="border-t border-slate-100 pt-4 mt-4">
+              <div className="border-t border-slate-800 pt-4 mt-4">
                 <button
                   onClick={() => setLanguage(language === "en" ? "ur" : "en")}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-700 w-full"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-300 w-full"
                 >
                   <Globe className="w-5 h-5" />
                   <span className="font-medium">{language === "en" ? "اردو میں دیکھیں" : "View in English"}</span>
@@ -236,28 +228,34 @@ export default function Navbar() {
               </div>
 
               {isAuthenticated ? (
-                <div className="border-t border-slate-100 pt-4 mt-4 space-y-2">
+                <div className="border-t border-slate-800 pt-4 mt-4 space-y-2">
                   <Link href="/dashboard">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-700">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-300">
                       <LayoutDashboard className="w-5 h-5" />
                       <span className="font-medium">{language === "ur" ? "ڈیش بورڈ" : "Dashboard"}</span>
                     </div>
                   </Link>
                   <button 
                     onClick={() => logout()}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 text-red-600 w-full"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 w-full"
                   >
                     <LogOut className="w-5 h-5" />
                     <span className="font-medium">{language === "ur" ? "لاگ آؤٹ" : "Logout"}</span>
                   </button>
                 </div>
               ) : (
-                <div className="border-t border-slate-100 pt-4 mt-4">
-                  <a href={getLoginUrl()} className="block">
-                    <button className="w-full btn-premium">
-                      {language === "ur" ? "لاگ ان / سائن اپ" : "Login / Sign Up"}
-                    </button>
-                  </a>
+                <div className="border-t border-slate-800 pt-4 mt-4 space-y-3">
+                  <Link href="/login">
+                    <Button variant="outline" className="w-full border-slate-700 text-white hover:bg-slate-800">
+                      Sign In
+                    </Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                      <Sparkles className="mr-2 w-4 h-4" />
+                      Get Started
+                    </Button>
+                  </Link>
                 </div>
               )}
             </div>

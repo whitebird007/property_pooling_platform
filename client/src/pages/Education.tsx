@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { 
-  BookOpen, 
-  Scale, 
-  Shield, 
-  TrendingUp, 
+import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  BookOpen,
+  Shield,
+  Scale,
+  TrendingUp,
   AlertTriangle,
   HelpCircle,
   CheckCircle2,
@@ -20,12 +19,18 @@ import {
   Building2,
   Wallet,
   Zap,
-  Sparkles
+  Sparkles,
+  Play,
+  Star,
+  ChevronDown,
+  ChevronUp,
+  Target
 } from "lucide-react";
 
 export default function Education() {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const [activeTab, setActiveTab] = useState("how-it-works");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const howItWorksSteps = [
     {
@@ -177,39 +182,59 @@ export default function Education() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen bg-slate-950">
       <Navbar />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900"></div>
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 right-20 w-96 h-96 bg-indigo-500 rounded-full filter blur-3xl"></div>
-          <div className="absolute bottom-10 left-10 w-72 h-72 bg-purple-500 rounded-full filter blur-3xl"></div>
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900" />
+        <div 
+          className="absolute inset-0 bg-cover bg-center opacity-10"
+          style={{ backgroundImage: "url('/education-bg.png')" }}
+        />
+        <div className="absolute inset-0 opacity-20" style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(251, 191, 36, 0.15) 1px, transparent 0)`,
+          backgroundSize: '40px 40px'
+        }} />
         
+        {/* Floating Elements */}
+        <div className="absolute top-40 left-20 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
+
         <div className="container relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-sm">
-              <BookOpen className="w-4 h-4 mr-2" />
-              {language === "ur" ? "سیکھیں اور سمجھیں" : "Learn & Understand"}
-            </Badge>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-              {language === "ur" ? (
-                <>
-                  <span className="gradient-text">فریکشنل</span> پراپرٹی انویسٹمنٹ
-                </>
-              ) : (
-                <>
-                  <span className="gradient-text">Fractional</span> Property Investment
-                </>
-              )}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
+              <BookOpen className="w-4 h-4 text-amber-400" />
+              <span className="text-amber-400 text-sm font-medium">
+                {language === "ur" ? "سیکھیں اور سمجھیں" : "Learn & Understand"}
+              </span>
+            </div>
+            
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+              {language === "ur" ? "فریکشنل پراپرٹی" : "Fractional Property"}
+              <span className="block bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">
+                {language === "ur" ? "انویسٹمنٹ" : "Investment"}
+              </span>
             </h1>
-            <p className="text-xl text-white/70 mb-8">
+            
+            <p className="text-xl text-slate-400 mb-8">
               {language === "ur"
                 ? "جانیں کہ PropertyPool کیسے کام کرتا ہے، شریعہ مطابقت، اور روایتی طریقوں سے کیسے بہتر ہے۔"
                 : "Learn how PropertyPool works, understand Shariah compliance, and see how it compares to traditional methods."}
             </p>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
+                <Play className="mr-2 w-5 h-5" />
+                {language === "ur" ? "ویڈیو دیکھیں" : "Watch Video Guide"}
+              </Button>
+              <Link href="/properties">
+                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 px-8 py-6 text-lg rounded-xl">
+                  {language === "ur" ? "پراپرٹیز دیکھیں" : "Browse Properties"}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -218,20 +243,32 @@ export default function Education() {
       <section className="py-16">
         <div className="container">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 h-14 p-1 bg-white shadow-sm rounded-xl">
-              <TabsTrigger value="how-it-works" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsList className="grid w-full max-w-3xl mx-auto grid-cols-4 h-14 p-1 bg-slate-800/50 border border-slate-700 rounded-xl">
+              <TabsTrigger 
+                value="how-it-works" 
+                className="rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold"
+              >
                 <Zap className="w-4 h-4 mr-2 hidden sm:inline" />
                 {language === "ur" ? "طریقہ کار" : "How It Works"}
               </TabsTrigger>
-              <TabsTrigger value="shariah" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+              <TabsTrigger 
+                value="shariah" 
+                className="rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold"
+              >
                 <Shield className="w-4 h-4 mr-2 hidden sm:inline" />
                 {language === "ur" ? "شریعہ" : "Shariah"}
               </TabsTrigger>
-              <TabsTrigger value="comparison" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+              <TabsTrigger 
+                value="comparison" 
+                className="rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold"
+              >
                 <Scale className="w-4 h-4 mr-2 hidden sm:inline" />
                 {language === "ur" ? "موازنہ" : "Comparison"}
               </TabsTrigger>
-              <TabsTrigger value="faq" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+              <TabsTrigger 
+                value="faq" 
+                className="rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold"
+              >
                 <HelpCircle className="w-4 h-4 mr-2 hidden sm:inline" />
                 {language === "ur" ? "سوالات" : "FAQ"}
               </TabsTrigger>
@@ -239,18 +276,18 @@ export default function Education() {
 
             {/* How It Works Tab */}
             <TabsContent value="how-it-works" className="space-y-12">
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {howItWorksSteps.map((step, index) => (
-                  <div key={index} className="relative">
-                    <div className="feature-card text-center h-full">
-                      <div className="process-step">
-                        <div className="step-number mx-auto">{step.step}</div>
+                  <div key={index} className="relative group">
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 hover:border-amber-500/30 transition-all duration-300 h-full">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span className="text-slate-900 font-bold text-xl">{step.step}</span>
                       </div>
-                      <h3 className="text-xl font-bold mb-3">{step.title}</h3>
-                      <p className="text-gray-600">{step.description}</p>
+                      <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+                      <p className="text-slate-400 text-sm">{step.description}</p>
                     </div>
                     {index < howItWorksSteps.length - 1 && (
-                      <div className="hidden lg:block absolute top-16 -right-4 w-8 h-0.5 bg-gradient-to-r from-primary to-transparent"></div>
+                      <div className="hidden lg:block absolute top-1/2 -right-3 w-6 h-0.5 bg-gradient-to-r from-amber-500 to-transparent" />
                     )}
                   </div>
                 ))}
@@ -258,7 +295,7 @@ export default function Education() {
 
               <div className="text-center">
                 <Link href="/properties">
-                  <Button className="btn-premium">
+                  <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
                     {language === "ur" ? "پراپرٹیز دیکھیں" : "Browse Properties"}
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
@@ -269,21 +306,21 @@ export default function Education() {
             {/* Shariah Tab */}
             <TabsContent value="shariah" className="space-y-12">
               <div className="max-w-4xl mx-auto">
-                <div className="glass-card rounded-2xl p-8 mb-8">
+                <div className="p-8 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/30 mb-8">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center">
                       <Shield className="w-8 h-8 text-white" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-bold">
+                      <h2 className="text-2xl font-bold text-white">
                         {language === "ur" ? "مشارکہ متناقصہ ماڈل" : "Diminishing Musharaka Model"}
                       </h2>
-                      <Badge className="mt-2 bg-emerald-100 text-emerald-700">
+                      <Badge className="mt-2 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
                         {language === "ur" ? "شریعہ سرٹیفائیڈ" : "Shariah Certified"}
                       </Badge>
                     </div>
                   </div>
-                  <p className="text-gray-600 text-lg leading-relaxed">
+                  <p className="text-slate-300 text-lg leading-relaxed">
                     {language === "ur"
                       ? "ہمارا پلیٹ فارم مشارکہ متناقصہ کے اصول پر کام کرتا ہے جو کہ اسلامی فقہ کے مطابق ایک جائز شراکت داری کا طریقہ ہے۔"
                       : "Our platform operates on the Diminishing Musharaka principle, which is a legitimate partnership method according to Islamic jurisprudence."}
@@ -292,14 +329,14 @@ export default function Education() {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   {shariahPrinciples.map((principle, index) => (
-                    <div key={index} className="feature-card">
+                    <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                          <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                        <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                          <CheckCircle2 className="w-5 h-5 text-emerald-400" />
                         </div>
                         <div>
-                          <h3 className="font-bold text-lg mb-2">{principle.title}</h3>
-                          <p className="text-gray-600">{principle.description}</p>
+                          <h3 className="font-bold text-lg text-white mb-2">{principle.title}</h3>
+                          <p className="text-slate-400">{principle.description}</p>
                         </div>
                       </div>
                     </div>
@@ -311,58 +348,58 @@ export default function Education() {
             {/* Comparison Tab */}
             <TabsContent value="comparison" className="space-y-8">
               <div className="max-w-5xl mx-auto">
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div className="rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="bg-gradient-to-r from-primary to-emerald-600 text-white">
-                          <th className="px-6 py-4 text-left font-semibold">
+                        <tr className="bg-gradient-to-r from-amber-500 to-amber-600">
+                          <th className="px-6 py-4 text-left font-semibold text-slate-900">
                             {language === "ur" ? "خصوصیت" : "Feature"}
                           </th>
-                          <th className="px-6 py-4 text-center font-semibold">PropertyPool</th>
-                          <th className="px-6 py-4 text-center font-semibold">
+                          <th className="px-6 py-4 text-center font-semibold text-slate-900">PropertyPool</th>
+                          <th className="px-6 py-4 text-center font-semibold text-slate-900">
                             {language === "ur" ? "فائل سسٹم" : "File System"}
                           </th>
-                          <th className="px-6 py-4 text-center font-semibold">
+                          <th className="px-6 py-4 text-center font-semibold text-slate-900">
                             {language === "ur" ? "روایتی" : "Traditional"}
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         {comparisonData.map((row, index) => (
-                          <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
-                            <td className="px-6 py-4 font-medium">{row.feature}</td>
+                          <tr key={index} className={index % 2 === 0 ? "bg-slate-800/30" : "bg-slate-800/10"}>
+                            <td className="px-6 py-4 font-medium text-white">{row.feature}</td>
                             <td className="px-6 py-4 text-center">
                               {typeof row.propertyPool === "boolean" ? (
                                 row.propertyPool ? (
-                                  <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                                  <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto" />
                                 ) : (
-                                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto" />
+                                  <AlertTriangle className="w-6 h-6 text-red-400 mx-auto" />
                                 )
                               ) : (
-                                <span className="font-semibold text-primary">{row.propertyPool}</span>
+                                <span className="font-semibold text-amber-400">{row.propertyPool}</span>
                               )}
                             </td>
                             <td className="px-6 py-4 text-center">
                               {typeof row.fileSystem === "boolean" ? (
                                 row.fileSystem ? (
-                                  <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                                  <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto" />
                                 ) : (
-                                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto" />
+                                  <AlertTriangle className="w-6 h-6 text-red-400 mx-auto" />
                                 )
                               ) : (
-                                <span className="text-gray-600">{row.fileSystem}</span>
+                                <span className="text-slate-400">{row.fileSystem}</span>
                               )}
                             </td>
                             <td className="px-6 py-4 text-center">
                               {typeof row.traditional === "boolean" ? (
                                 row.traditional ? (
-                                  <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                                  <CheckCircle2 className="w-6 h-6 text-emerald-400 mx-auto" />
                                 ) : (
-                                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto" />
+                                  <AlertTriangle className="w-6 h-6 text-red-400 mx-auto" />
                                 )
                               ) : (
-                                <span className="text-gray-600">{row.traditional}</span>
+                                <span className="text-slate-400">{row.traditional}</span>
                               )}
                             </td>
                           </tr>
@@ -376,42 +413,65 @@ export default function Education() {
 
             {/* FAQ Tab */}
             <TabsContent value="faq" className="space-y-8">
-              <div className="max-w-3xl mx-auto">
-                <Accordion type="single" collapsible className="space-y-4">
-                  {faqs.map((faq, index) => (
-                    <AccordionItem key={index} value={`faq-${index}`} className="bg-white rounded-xl px-6 border shadow-sm">
-                      <AccordionTrigger className="text-left font-semibold py-5 hover:no-underline">
-                        {faq.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-gray-600 pb-5">
-                        {faq.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
+              <div className="max-w-3xl mx-auto space-y-4">
+                {faqs.map((faq, index) => (
+                  <div 
+                    key={index}
+                    className="rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 overflow-hidden"
+                  >
+                    <button
+                      onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                      className="w-full flex items-center justify-between p-6 text-left"
+                    >
+                      <span className="font-semibold text-white pr-4">{faq.question}</span>
+                      {openFaq === index ? (
+                        <ChevronUp className="w-5 h-5 text-amber-400 flex-shrink-0" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-slate-400 flex-shrink-0" />
+                      )}
+                    </button>
+                    {openFaq === index && (
+                      <div className="px-6 pb-6">
+                        <p className="text-slate-400">{faq.answer}</p>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </TabsContent>
           </Tabs>
         </div>
       </section>
 
-      {/* Risk Disclosure Section */}
-      <section className="py-16 bg-amber-50 border-y border-amber-200">
+      {/* Risk Disclosure */}
+      <section className="py-20 bg-slate-900/50">
         <div className="container">
           <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-amber-600" />
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/30 mb-6">
+                <AlertTriangle className="w-4 h-4 text-red-400" />
+                <span className="text-red-400 text-sm font-medium">
+                  {language === "ur" ? "رسک انکشاف" : "Risk Disclosure"}
+                </span>
               </div>
-              <h2 className="text-2xl font-bold">
-                {language === "ur" ? "رسک ڈسکلوژر" : "Risk Disclosure"}
+              <h2 className="text-3xl font-bold text-white mb-4">
+                {language === "ur" ? "سرمایہ کاری کے خطرات" : "Investment Risks"}
               </h2>
+              <p className="text-slate-400">
+                {language === "ur"
+                  ? "ہر سرمایہ کاری میں خطرات شامل ہیں۔ سرمایہ کاری سے پہلے ان کو سمجھنا ضروری ہے۔"
+                  : "All investments carry risks. It's important to understand these before investing."}
+              </p>
             </div>
+
             <div className="grid md:grid-cols-3 gap-6">
               {risks.map((risk, index) => (
-                <div key={index} className="bg-white rounded-xl p-6 border border-amber-200">
-                  <h3 className="font-bold mb-2">{risk.title}</h3>
-                  <p className="text-gray-600 text-sm">{risk.description}</p>
+                <div key={index} className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50">
+                  <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center mb-4">
+                    <AlertTriangle className="w-6 h-6 text-red-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-2">{risk.title}</h3>
+                  <p className="text-slate-400 text-sm">{risk.description}</p>
                 </div>
               ))}
             </div>
@@ -420,36 +480,37 @@ export default function Education() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 section-dark relative overflow-hidden">
-        <div className="floating-shapes">
-          <div className="shape shape-1"></div>
-          <div className="shape shape-2"></div>
-        </div>
-        
-        <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center text-white">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              {language === "ur" ? (
-                <>
-                  سرمایہ کاری کے لیے <span className="gradient-text">تیار ہیں؟</span>
-                </>
-              ) : (
-                <>
-                  Ready to <span className="gradient-text">Start Investing?</span>
-                </>
-              )}
+      <section className="py-20 bg-gradient-to-br from-amber-500/10 via-slate-900 to-emerald-500/10">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
+              <Target className="w-4 h-4 text-amber-400" />
+              <span className="text-amber-400 text-sm font-medium">
+                {language === "ur" ? "شروع کریں" : "Get Started"}
+              </span>
+            </div>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              {language === "ur" ? "آج ہی سرمایہ کاری شروع کریں" : "Start Investing Today"}
             </h2>
-            <p className="text-xl text-white/70 mb-8">
+            <p className="text-slate-400 mb-8">
               {language === "ur"
-                ? "آج ہی اپنا اکاؤنٹ بنائیں اور پریمیم پراپرٹیز میں سرمایہ کاری شروع کریں۔"
-                : "Create your account today and start investing in premium properties."}
+                ? "صرف PKR 50,000 سے پراپرٹی کے مالک بنیں۔ مفت اکاؤنٹ بنائیں۔"
+                : "Own property with just PKR 50,000. Create your free account and start building wealth."}
             </p>
-            <Link href="/properties">
-              <Button className="btn-premium">
-                {language === "ur" ? "پراپرٹیز دیکھیں" : "Browse Properties"}
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-            </Link>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/signup">
+                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
+                  <Sparkles className="mr-2 w-5 h-5" />
+                  {language === "ur" ? "مفت اکاؤنٹ بنائیں" : "Create Free Account"}
+                </Button>
+              </Link>
+              <Link href="/properties">
+                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 px-8 py-6 text-lg rounded-xl">
+                  {language === "ur" ? "پراپرٹیز دیکھیں" : "Browse Properties"}
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
