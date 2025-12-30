@@ -14,6 +14,10 @@ import Education from "./pages/Education";
 import About from "./pages/About";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import AreaGuides from "./pages/AreaGuides";
+import AreaDetail from "./pages/AreaDetail";
+import InvestmentCalculator from "./pages/InvestmentCalculator";
+import PriceIndex from "./pages/PriceIndex";
 
 // Investor Pages
 import Dashboard from "./pages/Dashboard";
@@ -39,6 +43,10 @@ function Router() {
       <Route path="/properties/:id" component={PropertyDetail} />
       <Route path="/education" component={Education} />
       <Route path="/about" component={About} />
+      <Route path="/area-guides" component={AreaGuides} />
+      <Route path="/area/:id" component={AreaDetail} />
+      <Route path="/calculator" component={InvestmentCalculator} />
+      <Route path="/price-index" component={PriceIndex} />
       <Route path="/signup" component={SignUp} />
       <Route path="/login" component={Login} />
       

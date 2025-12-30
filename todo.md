@@ -168,3 +168,36 @@
 - [x] Redesign KYC page with premium dark styling
 - [x] Redesign Portfolio page with premium dark styling
 - [x] Redesign PropertyDetail page with premium dark styling
+
+
+## Zameen.com Feature Adoption (User Request)
+
+### Area Guides
+- [x] Create Area Guides page with neighborhood information
+- [x] Add interactive maps for each area (like Zameen.com)
+- [x] Include area statistics and amenities
+- [x] Add nearby landmarks and facilities
+
+### Investment Calculator
+- [x] Enhanced investment calculator with rental yield projections
+- [x] Show earnings per share based on property type
+- [x] Calculate ROI over different time periods
+- [x] Compare different investment amounts
+
+### Price Guides
+- [x] House prices by area/neighborhood
+- [x] Apartment prices by area/neighborhood
+- [x] Historical price trends (YoY change)
+- [x] Price per square foot analysis
+
+### Rental Income Projections
+- [x] Show potential rental income per property
+- [x] Calculate investor earnings based on share ownership
+- [x] Monthly vs annual income projections
+- [x] Occupancy rate impact on returns
+
+### Maps Integration
+- [x] Interactive property location maps
+- [x] Area boundary visualization
+- [x] Nearby amenities markers
+- [x] Distance to key landmarks

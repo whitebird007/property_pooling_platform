@@ -27,7 +27,9 @@ import {
   Info,
   Shield,
   BookOpen,
-  Sparkles
+  Sparkles,
+  MapPin,
+  Calculator
 } from "lucide-react";
 
 export default function Navbar() {
@@ -47,8 +49,8 @@ export default function Navbar() {
   
   const navLinks = [
     { href: "/properties", label: language === "ur" ? "پراپرٹیز" : "Properties", icon: Building2 },
-    { href: "/education", label: language === "ur" ? "سیکھیں" : "Learn", icon: GraduationCap },
-    { href: "/about", label: language === "ur" ? "ہمارے بارے میں" : "About", icon: Info },
+    { href: "/area-guides", label: language === "ur" ? "علاقہ گائیڈز" : "Area Guides", icon: MapPin },
+    { href: "/calculator", label: language === "ur" ? "کیلکولیٹر" : "Calculator", icon: Calculator },
     { href: "/marketplace", label: language === "ur" ? "مارکیٹ پلیس" : "Marketplace", icon: Store },
   ];
 
