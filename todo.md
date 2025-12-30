@@ -111,3 +111,25 @@
 - [x] Generate AI background image for about section
 - [x] Integrate all generated images into website
 - [x] Update CSS with new color palette
+
+
+## Investor Brochure Presentation (User Request)
+- [x] Create slide content outline for Nano Banana presentation
+- [x] Generate Nano Banana image-based slides
+- [x] Combine slides with existing PDF data
+- [x] Create final combined Investor Brochure PDF
+
+
+## Website Redesign - Navy/Gold Aesthetic (User Request)
+- [x] Redesign CSS with navy/gold color scheme matching slides
+- [x] Redesign hero section with premium styling
+- [x] Update Navbar with new color scheme
+- [x] Update Footer with new color scheme
+- [x] Update all pages with consistent premium aesthetic
+
+## Investor Pitch Materials (User Request)
+- [x] Research SECP approval process for fractional property platforms
+- [x] Research FBR compliance requirements
+- [x] Create investor pitch deck slides (Nano Banana)
+- [x] Create detailed PDF guide on SECP/FBR approval
+- [x] Create investor pitch document for raising funding
