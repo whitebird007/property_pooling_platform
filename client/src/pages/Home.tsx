@@ -1,64 +1,161 @@
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { 
   Building2, 
+  Users, 
   TrendingUp, 
   Shield, 
-  Users, 
   ArrowRight,
-  CheckCircle,
-  Percent,
-  Banknote,
-  Scale,
+  CheckCircle2,
+  Star,
+  Wallet,
+  BarChart3,
   FileCheck,
-  ChevronRight
+  Globe,
+  Landmark,
+  PieChart,
+  ChevronDown,
+  Play,
+  Sparkles,
+  Lock,
+  Clock,
+  Award,
+  Heart,
+  Target,
+  Zap
 } from "lucide-react";
 
 export default function Home() {
-  const { t } = useLanguage();
-  const { data: properties, isLoading } = trpc.properties.list.useQuery({ status: "active" });
+  const { user, isAuthenticated } = useAuth();
+  const { t, language } = useLanguage();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const { data: properties } = trpc.properties.list.useQuery({});
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const stats = [
+    { value: "PKR 500M+", label: language === "ur" ? "کل پراپرٹی ویلیو" : "Total Property Value" },
+    { value: "2,500+", label: language === "ur" ? "سرمایہ کار" : "Active Investors" },
+    { value: "8-12%", label: language === "ur" ? "سالانہ منافع" : "Average Annual Yield" },
+    { value: "15+", label: language === "ur" ? "پراپرٹیز" : "Properties Listed" },
+  ];
 
   const features = [
     {
       icon: Shield,
-      title: "Verified Titles",
-      description: "Every property undergoes rigorous legal due diligence. No more Patwari risks.",
+      title: language === "ur" ? "شریعہ مطابق" : "Shariah Compliant",
+      description: language === "ur" 
+        ? "مشارکہ متناقصہ ماڈل پر مبنی، مکمل طور پر حلال سرمایہ کاری"
+        : "Built on Diminishing Musharaka model, 100% halal investment structure approved by Islamic scholars",
     },
     {
-      icon: Scale,
-      title: "Shariah-Compliant",
-      description: "Diminishing Musharaka structure approved by our Shariah board.",
+      icon: FileCheck,
+      title: language === "ur" ? "قانونی تحفظ" : "Legal Protection",
+      description: language === "ur"
+        ? "SPV سٹرکچر کے ذریعے مکمل قانونی ملکیت اور دستاویزات"
+        : "Full legal ownership through SPV structure with verified title documents and FBR compliance",
     },
     {
-      icon: Users,
-      title: "Fractional Ownership",
-      description: "Own a piece of premium properties starting from just PKR 50,000.",
+      icon: PieChart,
+      title: language === "ur" ? "جزوی ملکیت" : "Fractional Ownership",
+      description: language === "ur"
+        ? "صرف 50,000 روپے سے پریمیم پراپرٹی میں سرمایہ کاری شروع کریں"
+        : "Start investing in premium properties from just PKR 50,000 with transparent share ownership",
     },
     {
       icon: TrendingUp,
-      title: "Passive Income",
-      description: "Earn monthly rental income without the hassle of property management.",
+      title: language === "ur" ? "دوہرا منافع" : "Dual Returns",
+      description: language === "ur"
+        ? "ماہانہ کرایہ کی آمدنی اور پراپرٹی کی قدر میں اضافہ"
+        : "Earn monthly rental income plus capital appreciation as property values increase over time",
+    },
+    {
+      icon: Wallet,
+      title: language === "ur" ? "آسان لیکویڈیٹی" : "Easy Liquidity",
+      description: language === "ur"
+        ? "سیکنڈری مارکیٹ پر کسی بھی وقت اپنے حصص فروخت کریں"
+        : "Sell your shares anytime on our secondary marketplace to other verified investors",
+    },
+    {
+      icon: BarChart3,
+      title: language === "ur" ? "شفاف رپورٹنگ" : "Transparent Reporting",
+      description: language === "ur"
+        ? "ریئل ٹائم ڈیش بورڈ سے اپنی سرمایہ کاری کی کارکردگی دیکھیں"
+        : "Real-time dashboard showing property performance, rental collection, and your returns",
     },
   ];
 
-  const steps = [
-    { step: 1, title: "Browse Properties", description: "Explore our curated selection of verified properties" },
-    { step: 2, title: "Complete KYC", description: "Quick identity verification with CNIC or Passport" },
-    { step: 3, title: "Invest", description: "Purchase fractional shares in your chosen property" },
-    { step: 4, title: "Earn Returns", description: "Receive monthly rental income and capital appreciation" },
+  const processSteps = [
+    {
+      step: 1,
+      title: language === "ur" ? "اکاؤنٹ بنائیں" : "Create Account",
+      description: language === "ur" 
+        ? "سائن اپ کریں اور KYC تصدیق مکمل کریں"
+        : "Sign up and complete KYC verification with your CNIC",
+    },
+    {
+      step: 2,
+      title: language === "ur" ? "پراپرٹی منتخب کریں" : "Choose Property",
+      description: language === "ur"
+        ? "تصدیق شدہ پراپرٹیز میں سے اپنی پسند کی منتخب کریں"
+        : "Browse verified properties and select based on your goals",
+    },
+    {
+      step: 3,
+      title: language === "ur" ? "سرمایہ کاری کریں" : "Invest",
+      description: language === "ur"
+        ? "اپنے بجٹ کے مطابق حصص خریدیں"
+        : "Purchase shares according to your budget from PKR 50,000",
+    },
+    {
+      step: 4,
+      title: language === "ur" ? "منافع کمائیں" : "Earn Returns",
+      description: language === "ur"
+        ? "ماہانہ کرایہ اور سرمائے میں اضافہ سے فائدہ اٹھائیں"
+        : "Receive monthly rental income and benefit from appreciation",
+    },
   ];
 
-  const stats = [
-    { value: "PKR 500M+", label: "Total Property Value" },
-    { value: "2,500+", label: "Active Investors" },
-    { value: "8-12%", label: "Average Annual Yield" },
-    { value: "15+", label: "Properties Listed" },
+  const testimonials = [
+    {
+      name: "Ahmed Khan",
+      role: language === "ur" ? "کاروباری شخص، لاہور" : "Businessman, Lahore",
+      content: language === "ur"
+        ? "PropertyPool نے میری زندگی بدل دی۔ میں نے صرف 2 لاکھ روپے سے شروع کیا اور اب میرے پاس 3 مختلف پراپرٹیز میں حصص ہیں۔"
+        : "PropertyPool changed my life. I started with just PKR 200,000 and now I own shares in 3 different premium properties.",
+      rating: 5,
+    },
+    {
+      name: "Fatima Malik",
+      role: language === "ur" ? "ڈاکٹر، کراچی" : "Doctor, Karachi",
+      content: language === "ur"
+        ? "شریعہ مطابق ہونے کی وجہ سے میں بے فکر ہو کر سرمایہ کاری کر سکتی ہوں۔ ہر ماہ کرایہ کی آمدنی ملتی ہے۔"
+        : "Being Shariah-compliant gives me peace of mind. I receive rental income every month without any interest involvement.",
+      rating: 5,
+    },
+    {
+      name: "Usman Ali",
+      role: language === "ur" ? "سافٹ ویئر انجینئر، اسلام آباد" : "Software Engineer, Islamabad",
+      content: language === "ur"
+        ? "فائل سسٹم سے بہت بہتر! یہاں قانونی ملکیت ملتی ہے اور سب کچھ شفاف ہے۔"
+        : "Much better than the file system! Here I get legal ownership and everything is transparent and documented.",
+      rating: 5,
+    },
   ];
 
   return (
@@ -66,320 +163,404 @@ export default function Home() {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-primary/5 to-background py-20 lg:py-32">
-        <div className="container">
+      <section className="hero-section relative min-h-screen flex items-center">
+        {/* Floating Shapes */}
+        <div className="floating-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+          <div className="shape shape-3"></div>
+        </div>
+        
+        <div className="container relative z-10 pt-24 pb-16">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <Badge variant="secondary" className="text-sm">
-                🇵🇰 Pakistan's First Fractional Property Platform
+            {/* Left Content */}
+            <div className="text-white animate-fade-up">
+              <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-sm px-4 py-2">
+                <Sparkles className="w-4 h-4 mr-2" />
+                {language === "ur" ? "پاکستان کا پہلا فریکشنل پراپرٹی پلیٹ فارم" : "Pakistan's First Fractional Property Platform"}
               </Badge>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                {t("hero.title")}
+              
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                {language === "ur" ? (
+                  <>
+                    <span className="gradient-text-white">پراپرٹی کی ملکیت</span>
+                    <br />
+                    <span className="text-white/90">اب سب کے لیے</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="gradient-text-white">Own Property,</span>
+                    <br />
+                    <span className="text-white/90">Together</span>
+                  </>
+                )}
               </h1>
-              <p className="text-lg text-muted-foreground max-w-lg">
-                {t("hero.subtitle")}
+              
+              <p className="text-xl text-white/70 mb-8 max-w-xl leading-relaxed">
+                {language === "ur" 
+                  ? "صرف 50,000 روپے سے پریمیم پاکستانی رئیل اسٹیٹ میں سرمایہ کاری کریں۔ شریعہ مطابق، شفاف، اور پیشہ ورانہ انتظام۔"
+                  : "Invest in premium Pakistani real estate starting from just PKR 50,000. Shariah-compliant, transparent, and professionally managed."}
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Button size="lg" asChild>
-                  <Link href="/properties">
-                    {t("hero.cta.explore")}
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" asChild>
-                  <Link href="/education">
-                    {t("hero.cta.learn")}
-                  </Link>
-                </Button>
+              
+              <div className="flex flex-wrap gap-4 mb-10">
+                <Link href="/properties">
+                  <button className="btn-premium flex items-center gap-2">
+                    {language === "ur" ? "پراپرٹیز دیکھیں" : "Explore Properties"}
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </Link>
+                <Link href="/education">
+                  <button className="btn-secondary-premium flex items-center gap-2">
+                    <Play className="w-5 h-5" />
+                    {language === "ur" ? "کیسے کام کرتا ہے" : "How It Works"}
+                  </button>
+                </Link>
               </div>
               
               {/* Trust Badges */}
-              <div className="flex flex-wrap gap-6 pt-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                  SECP Registered
+              <div className="flex flex-wrap gap-4">
+                <div className="trust-badge-light">
+                  <Shield className="w-4 h-4" />
+                  {language === "ur" ? "SECP رجسٹرڈ" : "SECP Registered"}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                  Shariah Certified
+                <div className="trust-badge-light">
+                  <CheckCircle2 className="w-4 h-4" />
+                  {language === "ur" ? "شریعہ سرٹیفائیڈ" : "Shariah Certified"}
                 </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <CheckCircle className="w-4 h-4 text-primary" />
-                  FBR Compliant
+                <div className="trust-badge-light">
+                  <Landmark className="w-4 h-4" />
+                  {language === "ur" ? "FBR مطابق" : "FBR Compliant"}
                 </div>
               </div>
             </div>
             
-            {/* Hero Image/Stats */}
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
-                {stats.map((stat, index) => (
-                  <Card key={index} className="text-center p-6 card-hover">
-                    <p className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
-                    <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
-                  </Card>
-                ))}
-              </div>
+            {/* Right - Stats Cards */}
+            <div className="grid grid-cols-2 gap-4">
+              {stats.map((stat, index) => (
+                <div 
+                  key={index} 
+                  className="stat-card animate-fade-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <div className="stat-value">{stat.value}</div>
+                  <div className="stat-label">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
+        
+        {/* Scroll Indicator */}
+        <div className="scroll-indicator z-10">
+          <ChevronDown className="w-8 h-8 text-white/50" />
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-24 section-pattern">
         <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose PropertyPool?</h2>
-            <p className="text-muted-foreground">
-              We're transforming how Pakistanis invest in real estate. No more informal file systems, 
-              no more Patwari headaches. Just transparent, secure, and profitable property investment.
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              {language === "ur" ? "ہم کیوں مختلف ہیں" : "Why Choose Us"}
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {language === "ur" ? (
+                <>
+                  <span className="gradient-text">سرمایہ کاری</span> کا نیا طریقہ
+                </>
+              ) : (
+                <>
+                  A <span className="gradient-text">Smarter Way</span> to Invest
+                </>
+              )}
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {language === "ur"
+                ? "روایتی فائل سسٹم کے برعکس، ہم آپ کو قانونی ملکیت، شفافیت، اور لیکویڈیٹی فراہم کرتے ہیں"
+                : "Unlike the traditional file system, we provide legal ownership, complete transparency, and liquidity"}
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center p-6 card-hover">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <feature.icon className="w-6 h-6 text-primary" />
+              <div 
+                key={index} 
+                className="feature-card"
+              >
+                <div className="icon-wrapper">
+                  <feature.icon className="w-8 h-8 text-primary" />
                 </div>
-                <h3 className="font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Properties */}
-      <section className="py-20">
-        <div className="container">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Featured Properties</h2>
-              <p className="text-muted-foreground">Invest in verified, income-generating real estate</p>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href="/properties">
-                View All
-                <ChevronRight className="ml-1 w-4 h-4" />
-              </Link>
-            </Button>
-          </div>
-          
-          {isLoading ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3].map((i) => (
-                <Card key={i} className="animate-pulse">
-                  <div className="h-48 bg-muted rounded-t-lg" />
-                  <CardContent className="p-4 space-y-3">
-                    <div className="h-4 bg-muted rounded w-3/4" />
-                    <div className="h-3 bg-muted rounded w-1/2" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {properties?.slice(0, 6).map((property) => (
-                <Card key={property.id} className="overflow-hidden card-hover">
-                  <div className="relative h-48 bg-muted">
-                    {property.images && property.images[0] ? (
-                      <img 
-                        src={property.images[0]} 
-                        alt={property.title}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Building2 className="w-12 h-12 text-muted-foreground" />
-                      </div>
-                    )}
-                    <Badge className="absolute top-3 left-3">
-                      {property.propertyType.replace("_", " ")}
-                    </Badge>
-                    {property.rentalType === "short_term" && (
-                      <Badge variant="secondary" className="absolute top-3 right-3">
-                        Airbnb Ready
-                      </Badge>
-                    )}
-                  </div>
-                  <CardContent className="p-4">
-                    <h3 className="font-semibold text-lg mb-1">{property.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-3">{property.city}, {property.area}</p>
-                    
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                      <div className="flex items-center gap-1">
-                        <Percent className="w-4 h-4 text-primary" />
-                        <span>{property.expectedRentalYield}% yield</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <TrendingUp className="w-4 h-4 text-primary" />
-                        <span>{property.expectedAppreciation}% growth</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 pt-4 border-t flex justify-between items-center">
-                      <div>
-                        <p className="text-xs text-muted-foreground">Min. Investment</p>
-                        <p className="font-semibold">PKR {Number(property.minInvestment).toLocaleString()}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">{property.availableShares} {t("property.shares")}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="p-4 pt-0">
-                    <Button className="w-full" asChild>
-                      <Link href={`/properties/${property.id}`}>
-                        {t("property.details")}
-                      </Link>
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          )}
-          
-          {(!properties || properties.length === 0) && !isLoading && (
-            <Card className="p-12 text-center">
-              <Building2 className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="font-semibold text-lg mb-2">No Properties Available Yet</h3>
-              <p className="text-muted-foreground mb-4">
-                We're currently sourcing premium properties for our platform. Check back soon!
-              </p>
-              <Button variant="outline" asChild>
-                <Link href="/education">Learn How It Works</Link>
-              </Button>
-            </Card>
-          )}
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-20 bg-muted/30">
-        <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl font-bold mb-4">How It Works</h2>
-            <p className="text-muted-foreground">
-              Start your property investment journey in just 4 simple steps
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {steps.map((step, index) => (
-              <div key={index} className="relative">
-                <div className="text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                    {step.step}
-                  </div>
-                  <h3 className="font-semibold mb-2">{step.title}</h3>
-                  <p className="text-sm text-muted-foreground">{step.description}</p>
-                </div>
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-6 left-[60%] w-[80%] h-0.5 bg-border" />
-                )}
+                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Comparison Section */}
-      <section className="py-20">
+      {/* How It Works Section */}
+      <section className="py-24 bg-white">
         <div className="container">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-3xl font-bold mb-4">PropertyPool vs Traditional Methods</h2>
-            <p className="text-muted-foreground">
-              See why smart investors are choosing our platform over informal file systems
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              {language === "ur" ? "آسان عمل" : "Simple Process"}
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {language === "ur" ? (
+                <>
+                  <span className="gradient-text">چار آسان</span> مراحل
+                </>
+              ) : (
+                <>
+                  <span className="gradient-text">Four Simple</span> Steps
+                </>
+              )}
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              {language === "ur"
+                ? "منٹوں میں اپنی سرمایہ کاری کا سفر شروع کریں"
+                : "Start your investment journey in minutes"}
             </p>
           </div>
           
-          <div className="max-w-4xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="p-6 border-destructive/20 bg-destructive/5">
-                <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                  <span className="text-destructive">✗</span>
-                  Traditional File System
-                </h3>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
-                    High risk of fraud and disputed titles
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
-                    No legal protection for investors
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
-                    Opaque pricing and hidden "own" money
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
-                    Illiquid - hard to sell quickly
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-destructive mt-0.5">•</span>
-                    No passive income until sale
-                  </li>
-                </ul>
-              </Card>
-              
-              <Card className="p-6 border-primary/20 bg-primary/5">
-                <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                  <span className="text-primary">✓</span>
-                  PropertyPool Platform
-                </h3>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
-                    100% verified titles with legal due diligence
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
-                    SECP-registered SPV structure
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
-                    Transparent pricing, no hidden fees
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
-                    Secondary market for easy exit
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-primary mt-0.5">•</span>
-                    Monthly rental income from day one
-                  </li>
-                </ul>
-              </Card>
+          <div className="grid md:grid-cols-4 gap-8">
+            {processSteps.map((step, index) => (
+              <div key={index} className="process-step">
+                <div className="step-number">{step.step}</div>
+                <h3 className="text-xl font-bold mb-3">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-center mt-12">
+            <Link href={isAuthenticated ? "/kyc" : "/properties"}>
+              <button className="btn-premium">
+                {language === "ur" ? "ابھی شروع کریں" : "Get Started Now"}
+                <ArrowRight className="w-5 h-5 ml-2 inline" />
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Properties Section */}
+      <section className="py-24 section-gradient">
+        <div className="container">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
+            <div>
+              <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+                {language === "ur" ? "نمایاں پراپرٹیز" : "Featured Properties"}
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-bold">
+                {language === "ur" ? (
+                  <>
+                    <span className="gradient-text">سرمایہ کاری</span> کے مواقع
+                  </>
+                ) : (
+                  <>
+                    Investment <span className="gradient-text">Opportunities</span>
+                  </>
+                )}
+              </h2>
             </div>
+            <Link href="/properties">
+              <Button variant="outline" className="mt-4 md:mt-0 group">
+                {language === "ur" ? "سب دیکھیں" : "View All"}
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {properties?.slice(0, 3).map((property: any) => (
+              <Link key={property.id} href={`/properties/${property.id}`}>
+                <div className="property-card">
+                  <div className="image-wrapper">
+                    <img 
+                      src={property.images?.[0] || "/city-skyline.jpg"} 
+                      alt={property.title}
+                    />
+                    <div className="badge">
+                      {property.status === "active" 
+                        ? (language === "ur" ? "فعال" : "Active")
+                        : property.status}
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                      <Building2 className="w-4 h-4" />
+                      {property.city} • {property.propertyType === "residential" 
+                        ? (language === "ur" ? "رہائشی" : "Residential")
+                        : (language === "ur" ? "تجارتی" : "Commercial")}
+                    </div>
+                    <h3 className="text-xl font-bold mb-3 line-clamp-1">{property.title}</h3>
+                    
+                    <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {language === "ur" ? "فی حصہ قیمت" : "Share Price"}
+                        </p>
+                        <p className="font-bold text-primary">
+                          PKR {Number(property.sharePrice).toLocaleString()}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground mb-1">
+                          {language === "ur" ? "متوقع منافع" : "Expected Yield"}
+                        </p>
+                        <p className="font-bold text-emerald-600">
+                          {property.expectedRentalYield}% p.a.
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="investment-progress mb-2">
+                      <div 
+                        className="bar" 
+                        style={{ 
+                          width: `${((property.totalShares - property.availableShares) / property.totalShares) * 100}%` 
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {property.totalShares - property.availableShares} / {property.totalShares} {language === "ur" ? "حصص فروخت" : "shares sold"}
+                    </p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+            
+            {/* Placeholder cards if no properties */}
+            {(!properties || properties.length === 0) && [1, 2, 3].map((i) => (
+              <div key={i} className="property-card">
+                <div className="image-wrapper">
+                  <img src="/city-skyline.jpg" alt="Property" />
+                  <div className="badge">{language === "ur" ? "جلد آرہا ہے" : "Coming Soon"}</div>
+                </div>
+                <div className="p-6">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                    <Building2 className="w-4 h-4" />
+                    {language === "ur" ? "لاہور • رہائشی" : "Lahore • Residential"}
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">
+                    {language === "ur" ? "پریمیم اپارٹمنٹ DHA" : "Premium Apartment DHA"}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {language === "ur" ? "فی حصہ قیمت" : "Share Price"}
+                      </p>
+                      <p className="font-bold text-primary">PKR 50,000</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        {language === "ur" ? "متوقع منافع" : "Expected Yield"}
+                      </p>
+                      <p className="font-bold text-emerald-600">10% p.a.</p>
+                    </div>
+                  </div>
+                  <div className="investment-progress mb-2">
+                    <div className="bar" style={{ width: "35%" }} />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    350 / 1000 {language === "ur" ? "حصص فروخت" : "shares sold"}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 bg-white">
+        <div className="container">
+          <div className="text-center mb-16">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              {language === "ur" ? "سرمایہ کاروں کی رائے" : "Investor Stories"}
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {language === "ur" ? (
+                <>
+                  ہمارے <span className="gradient-text">سرمایہ کار</span> کیا کہتے ہیں
+                </>
+              ) : (
+                <>
+                  What Our <span className="gradient-text">Investors</span> Say
+                </>
+              )}
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div key={index} className="testimonial-card">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-muted-foreground mb-6 leading-relaxed">
+                  "{testimonial.content}"
+                </p>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-bold">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 gradient-primary text-white">
-        <div className="container text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Start Building Wealth?
-          </h2>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto mb-8">
-            Join thousands of Pakistanis who are already investing in premium real estate 
-            through our secure, Shariah-compliant platform.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" variant="secondary" asChild>
+      <section className="py-24 section-dark relative overflow-hidden">
+        <div className="floating-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+        </div>
+        
+        <div className="container relative z-10">
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <Badge className="mb-6 bg-white/10 text-white border-white/20">
+              <Zap className="w-4 h-4 mr-2" />
+              {language === "ur" ? "آج ہی شروع کریں" : "Start Today"}
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {language === "ur" ? (
+                <>
+                  اپنی <span className="gradient-text">پراپرٹی ملکیت</span> کا سفر شروع کریں
+                </>
+              ) : (
+                <>
+                  Begin Your <span className="gradient-text">Property Ownership</span> Journey
+                </>
+              )}
+            </h2>
+            <p className="text-xl text-white/70 mb-10">
+              {language === "ur"
+                ? "2,500+ سرمایہ کاروں کے ساتھ شامل ہوں جو پہلے سے ہی PropertyPool کے ذریعے پریمیم پراپرٹیز میں سرمایہ کاری کر رہے ہیں"
+                : "Join 2,500+ investors who are already building wealth through premium property investments with PropertyPool"}
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
               <Link href="/properties">
-                Start Investing
-                <ArrowRight className="ml-2 w-4 h-4" />
+                <button className="btn-premium">
+                  {language === "ur" ? "پراپرٹیز دیکھیں" : "Explore Properties"}
+                  <ArrowRight className="w-5 h-5 ml-2 inline" />
+                </button>
               </Link>
-            </Button>
-            <Button size="lg" variant="outline" className="bg-transparent border-white text-white hover:bg-white/10" asChild>
               <Link href="/education">
-                Learn More
+                <button className="btn-secondary-premium">
+                  {language === "ur" ? "مزید جانیں" : "Learn More"}
+                </button>
               </Link>
-            </Button>
+            </div>
           </div>
         </div>
       </section>

@@ -4,10 +4,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { trpc } from "@/lib/trpc";
 import { 
   BookOpen, 
   Scale, 
@@ -15,456 +14,442 @@ import {
   TrendingUp, 
   AlertTriangle,
   HelpCircle,
-  CheckCircle,
+  CheckCircle2,
   ArrowRight,
-  Play,
-  FileText
+  Users,
+  Building2,
+  Wallet,
+  Zap,
+  Sparkles
 } from "lucide-react";
 
 export default function Education() {
-  const { t } = useLanguage();
-  const { data: content } = trpc.education.getContent.useQuery();
+  const { language, t } = useLanguage();
+  const [activeTab, setActiveTab] = useState("how-it-works");
 
-  const categories = [
+  const howItWorksSteps = [
     {
-      id: "shariah_compliance",
-      icon: Scale,
-      title: t("education.shariah.title"),
-      description: t("education.shariah.desc"),
+      step: 1,
+      icon: Users,
+      title: language === "ur" ? "اکاؤنٹ بنائیں" : "Create Account",
+      description: language === "ur"
+        ? "سائن اپ کریں اور اپنا CNIC یا پاسپورٹ استعمال کرتے ہوئے KYC تصدیق مکمل کریں۔"
+        : "Sign up and complete KYC verification using your CNIC or passport.",
     },
     {
-      id: "platform_guide",
-      icon: BookOpen,
-      title: "Platform Guide",
-      description: "Step-by-step guide to investing through PropertyPool",
+      step: 2,
+      icon: Building2,
+      title: language === "ur" ? "پراپرٹی منتخب کریں" : "Choose Property",
+      description: language === "ur"
+        ? "ہماری تصدیق شدہ پراپرٹیز کی فہرست دیکھیں۔ مکمل تفصیلات اور دستاویزات دستیاب ہیں۔"
+        : "Browse our verified property listings with complete details and documentation.",
     },
     {
-      id: "market_comparison",
+      step: 3,
+      icon: Wallet,
+      title: language === "ur" ? "سرمایہ کاری کریں" : "Invest",
+      description: language === "ur"
+        ? "اپنے بجٹ کے مطابق حصص خریدیں۔ کم از کم سرمایہ کاری صرف 50,000 روپے۔"
+        : "Purchase shares according to your budget. Minimum investment just PKR 50,000.",
+    },
+    {
+      step: 4,
       icon: TrendingUp,
-      title: t("education.vs.title"),
-      description: t("education.vs.desc"),
-    },
-    {
-      id: "risk_disclosure",
-      icon: AlertTriangle,
-      title: t("education.risk.title"),
-      description: t("education.risk.desc"),
+      title: language === "ur" ? "منافع کمائیں" : "Earn Returns",
+      description: language === "ur"
+        ? "ماہانہ کرایہ کی آمدنی حاصل کریں۔ پراپرٹی کی قدر میں اضافے سے بھی فائدہ اٹھائیں۔"
+        : "Receive monthly rental income and benefit from property appreciation.",
     },
   ];
 
-  const shariahContent = {
-    title: "Shariah-Compliant Property Investment",
-    sections: [
-      {
-        title: "What is Diminishing Musharaka?",
-        content: `Diminishing Musharaka (شراکت متناقصہ) is an Islamic financing structure where two or more parties jointly own an asset. Over time, one party gradually buys out the other's share until they become the sole owner.
+  const shariahPrinciples = [
+    {
+      title: language === "ur" ? "حقیقی ملکیت" : "Real Ownership",
+      description: language === "ur"
+        ? "ہر سرمایہ کار پراپرٹی کا حقیقی مالک ہے۔ SPV سٹرکچر کے ذریعے قانونی ملکیت یقینی بنائی جاتی ہے۔"
+        : "Every investor is a real owner of the property. Legal ownership is ensured through SPV structure.",
+    },
+    {
+      title: language === "ur" ? "نفع و نقصان میں شراکت" : "Profit & Loss Sharing",
+      description: language === "ur"
+        ? "تمام سرمایہ کار اپنے حصص کے تناسب سے نفع اور نقصان میں شریک ہیں۔"
+        : "All investors share profits and losses in proportion to their shares.",
+    },
+    {
+      title: language === "ur" ? "حلال آمدنی" : "Halal Income",
+      description: language === "ur"
+        ? "کرایہ کی آمدنی حلال ہے کیونکہ یہ حقیقی اثاثے کے استعمال کا معاوضہ ہے۔"
+        : "Rental income is halal because it is compensation for the use of a real asset.",
+    },
+    {
+      title: language === "ur" ? "شفاف لین دین" : "Transparent Transactions",
+      description: language === "ur"
+        ? "تمام لین دین شفاف ہیں۔ کوئی پوشیدہ فیس یا غیر واضح شرائط نہیں۔"
+        : "All transactions are transparent. No hidden fees or unclear terms.",
+    },
+  ];
 
-In our platform:
-• The SPV (representing all investors) and individual investors jointly own the property
-• Rental income is distributed proportionally to ownership shares
-• Investors can buy more shares or sell their existing shares through the secondary market
-• The structure is approved by our Shariah Advisory Board`
-      },
-      {
-        title: "Why is this Halal?",
-        content: `Our investment structure is Shariah-compliant because:
-
-1. **No Riba (Interest)**: Returns come from actual rental income and property appreciation, not interest
-2. **Asset-Backed**: Every investment is backed by real, tangible property
-3. **Shared Risk**: Investors share both profits and risks proportionally
-4. **Transparent Pricing**: No hidden fees or deceptive practices
-5. **Halal Activities**: Properties are not used for haram activities (no bars, casinos, etc.)`
-      },
-      {
-        title: "Shariah Board Certification",
-        content: `Our investment structure has been reviewed and approved by qualified Islamic scholars. Key certifications:
-
-• Shariah Compliance Certificate from [Shariah Board Name]
-• Annual Shariah Audit conducted by independent auditors
-• All property acquisitions reviewed for Shariah compliance
-• Continuous monitoring of tenant activities`
-      }
-    ]
-  };
-
-  const platformGuide = {
-    title: "How to Invest with PropertyPool",
-    steps: [
-      {
-        step: 1,
-        title: "Create Your Account",
-        description: "Sign up with your email and basic information. It takes less than 2 minutes."
-      },
-      {
-        step: 2,
-        title: "Complete KYC Verification",
-        description: "Upload your CNIC (front and back) and proof of address. Verification typically takes 24-48 hours."
-      },
-      {
-        step: 3,
-        title: "Fund Your Wallet",
-        description: "Add funds via bank transfer, JazzCash, or Easypaisa. Minimum deposit is PKR 10,000."
-      },
-      {
-        step: 4,
-        title: "Browse Properties",
-        description: "Explore our curated selection of verified properties. Review documents, financials, and projections."
-      },
-      {
-        step: 5,
-        title: "Make Your Investment",
-        description: "Select the number of shares you want to purchase. Sign the digital investment agreement."
-      },
-      {
-        step: 6,
-        title: "Receive Returns",
-        description: "Get monthly rental income credited to your wallet. Track your portfolio performance in real-time."
-      }
-    ]
-  };
-
-  const comparisonData = {
-    title: "PropertyPool vs Traditional Methods",
-    comparisons: [
-      {
-        aspect: "Minimum Investment",
-        traditional: "PKR 50 Lakh+ for a plot file",
-        propertyPool: "Starting from PKR 50,000"
-      },
-      {
-        aspect: "Title Verification",
-        traditional: "Buyer's responsibility, high fraud risk",
-        propertyPool: "100% verified by legal team"
-      },
-      {
-        aspect: "Liquidity",
-        traditional: "Months to years to sell",
-        propertyPool: "Secondary market for quick exit"
-      },
-      {
-        aspect: "Passive Income",
-        traditional: "None until property is sold",
-        propertyPool: "Monthly rental income"
-      },
-      {
-        aspect: "Management",
-        traditional: "Self-managed, time-consuming",
-        propertyPool: "Professional management included"
-      },
-      {
-        aspect: "Legal Protection",
-        traditional: "Informal agreements, weak protection",
-        propertyPool: "SECP-registered SPV structure"
-      },
-      {
-        aspect: "Transparency",
-        traditional: "Hidden 'own money', unclear pricing",
-        propertyPool: "Fully transparent pricing and fees"
-      },
-      {
-        aspect: "Diversification",
-        traditional: "All eggs in one basket",
-        propertyPool: "Invest in multiple properties"
-      }
-    ]
-  };
-
-  const riskDisclosure = {
-    title: "Understanding Investment Risks",
-    risks: [
-      {
-        title: "Market Risk",
-        description: "Property values can go down as well as up. Economic conditions, interest rates, and local market dynamics affect property prices.",
-        mitigation: "We conduct thorough market research and only list properties in high-demand areas with strong fundamentals."
-      },
-      {
-        title: "Liquidity Risk",
-        description: "While we offer a secondary market, there's no guarantee you can sell your shares immediately at your desired price.",
-        mitigation: "Our secondary market provides better liquidity than traditional property investment, but investors should plan for a minimum 3-5 year holding period."
-      },
-      {
-        title: "Rental Income Risk",
-        description: "Rental income may vary due to vacancies, tenant defaults, or market rent changes.",
-        mitigation: "We maintain reserve funds and work with professional property managers to minimize vacancies and ensure timely rent collection."
-      },
-      {
-        title: "Regulatory Risk",
-        description: "Changes in tax laws, property regulations, or investment rules could affect returns.",
-        mitigation: "We work with legal experts to ensure compliance and adapt our structure to regulatory changes."
-      }
-    ]
-  };
+  const comparisonData = [
+    {
+      feature: language === "ur" ? "کم از کم سرمایہ کاری" : "Minimum Investment",
+      propertyPool: "PKR 50,000",
+      fileSystem: "PKR 500,000+",
+      traditional: "PKR 5,000,000+",
+    },
+    {
+      feature: language === "ur" ? "قانونی ملکیت" : "Legal Ownership",
+      propertyPool: true,
+      fileSystem: false,
+      traditional: true,
+    },
+    {
+      feature: language === "ur" ? "لیکویڈیٹی" : "Liquidity",
+      propertyPool: language === "ur" ? "آسان" : "Easy",
+      fileSystem: language === "ur" ? "مشکل" : "Difficult",
+      traditional: language === "ur" ? "بہت مشکل" : "Very Difficult",
+    },
+    {
+      feature: language === "ur" ? "شفافیت" : "Transparency",
+      propertyPool: language === "ur" ? "مکمل" : "Complete",
+      fileSystem: language === "ur" ? "کم" : "Low",
+      traditional: language === "ur" ? "درمیانی" : "Medium",
+    },
+    {
+      feature: language === "ur" ? "پیشہ ورانہ انتظام" : "Professional Management",
+      propertyPool: true,
+      fileSystem: false,
+      traditional: false,
+    },
+  ];
 
   const faqs = [
     {
-      question: "What is the minimum investment amount?",
-      answer: "The minimum investment varies by property but typically starts from PKR 50,000. This allows small and medium investors to participate in premium real estate."
+      question: language === "ur" ? "کم از کم سرمایہ کاری کتنی ہے؟" : "What is the minimum investment?",
+      answer: language === "ur"
+        ? "کم از کم سرمایہ کاری صرف 50,000 روپے ہے۔"
+        : "The minimum investment is just PKR 50,000.",
     },
     {
-      question: "How do I receive my rental income?",
-      answer: "Rental income is distributed monthly to your PropertyPool wallet. You can withdraw to your bank account anytime or reinvest in other properties."
+      question: language === "ur" ? "میرا پیسہ کیسے محفوظ ہے؟" : "How is my money protected?",
+      answer: language === "ur"
+        ? "آپ کی سرمایہ کاری SPV کے ذریعے محفوظ ہے۔ تمام دستاویزات SECP کے ساتھ رجسٹرڈ ہیں۔"
+        : "Your investment is protected through an SPV. All documents are registered with SECP.",
     },
     {
-      question: "Can I sell my shares before the property is sold?",
-      answer: "Yes! Our secondary marketplace allows you to list your shares for sale. Other verified investors can purchase them, providing liquidity for your investment."
+      question: language === "ur" ? "کرایہ کی آمدنی کب ملتی ہے؟" : "When do I receive rental income?",
+      answer: language === "ur"
+        ? "کرایہ کی آمدنی ہر ماہ آپ کے والیٹ میں جمع ہوتی ہے۔"
+        : "Rental income is deposited in your wallet every month.",
     },
     {
-      question: "What documents do I need for KYC?",
-      answer: "You need: 1) CNIC (front and back), 2) Proof of address (utility bill or bank statement), 3) Bank account details for withdrawals."
+      question: language === "ur" ? "کیا میں اپنے حصص بیچ سکتا ہوں؟" : "Can I sell my shares?",
+      answer: language === "ur"
+        ? "جی ہاں! آپ کسی بھی وقت اپنے حصص سیکنڈری مارکیٹ پر بیچ سکتے ہیں۔"
+        : "Yes! You can sell your shares anytime on our secondary marketplace.",
     },
     {
-      question: "Is my investment insured?",
-      answer: "Properties are insured against damage and natural disasters. However, investment returns are not guaranteed and depend on market performance."
+      question: language === "ur" ? "کیا یہ شریعہ مطابق ہے؟" : "Is this Shariah-compliant?",
+      answer: language === "ur"
+        ? "جی ہاں! ہمارا ماڈل مشارکہ متناقصہ پر مبنی ہے جو کہ اسلامی فقہ کے مطابق جائز ہے۔"
+        : "Yes! Our model is based on Diminishing Musharaka which is permissible according to Islamic jurisprudence.",
+    },
+  ];
+
+  const risks = [
+    {
+      title: language === "ur" ? "مارکیٹ رسک" : "Market Risk",
+      description: language === "ur"
+        ? "پراپرٹی کی قیمتیں مارکیٹ کے حالات کے مطابق اوپر نیچے ہو سکتی ہیں۔"
+        : "Property prices can fluctuate based on market conditions.",
     },
     {
-      question: "How are properties selected?",
-      answer: "Our team conducts extensive due diligence including title verification, market analysis, rental yield assessment, and physical inspection. Only properties meeting our strict criteria are listed."
+      title: language === "ur" ? "کرایہ داری رسک" : "Tenancy Risk",
+      description: language === "ur"
+        ? "کرایہ دار نہ ملنے کی صورت میں آمدنی متاثر ہو سکتی ہے۔"
+        : "Income may be affected if tenants are not found.",
     },
     {
-      question: "What happens if I want to exit my investment?",
-      answer: "You have two options: 1) Sell your shares on the secondary market, or 2) Wait for the property to be sold at the end of the holding period and receive your share of proceeds."
+      title: language === "ur" ? "لیکویڈیٹی رسک" : "Liquidity Risk",
+      description: language === "ur"
+        ? "سیکنڈری مارکیٹ پر خریدار نہ ملنے کی صورت میں فوری فروخت مشکل ہو سکتی ہے۔"
+        : "Immediate sale may be difficult if buyers are not available.",
     },
-    {
-      question: "Are there any hidden fees?",
-      answer: "No hidden fees. We charge a transparent 2% platform fee on investments and 10% of rental income for property management. All fees are clearly disclosed before you invest."
-    }
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
-      
-      {/* Header */}
-      <section className="bg-muted/30 py-12">
-        <div className="container">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">{t("nav.education")}</h1>
-          <p className="text-muted-foreground max-w-2xl">
-            Everything you need to know about fractional property investment, Shariah compliance, 
-            and how PropertyPool is transforming real estate investment in Pakistan.
-          </p>
-        </div>
-      </section>
 
-      {/* Category Cards */}
-      <section className="py-12">
-        <div className="container">
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {categories.map((category) => (
-              <Card key={category.id} className="card-hover cursor-pointer">
-                <CardContent className="pt-6">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <category.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold mb-2">{category.title}</h3>
-                  <p className="text-sm text-muted-foreground">{category.description}</p>
-                </CardContent>
-              </Card>
-            ))}
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-900"></div>
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 right-20 w-96 h-96 bg-indigo-500 rounded-full filter blur-3xl"></div>
+          <div className="absolute bottom-10 left-10 w-72 h-72 bg-purple-500 rounded-full filter blur-3xl"></div>
+        </div>
+        
+        <div className="container relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <Badge className="mb-6 bg-white/10 text-white border-white/20 backdrop-blur-sm">
+              <BookOpen className="w-4 h-4 mr-2" />
+              {language === "ur" ? "سیکھیں اور سمجھیں" : "Learn & Understand"}
+            </Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+              {language === "ur" ? (
+                <>
+                  <span className="gradient-text">فریکشنل</span> پراپرٹی انویسٹمنٹ
+                </>
+              ) : (
+                <>
+                  <span className="gradient-text">Fractional</span> Property Investment
+                </>
+              )}
+            </h1>
+            <p className="text-xl text-white/70 mb-8">
+              {language === "ur"
+                ? "جانیں کہ PropertyPool کیسے کام کرتا ہے، شریعہ مطابقت، اور روایتی طریقوں سے کیسے بہتر ہے۔"
+                : "Learn how PropertyPool works, understand Shariah compliance, and see how it compares to traditional methods."}
+            </p>
           </div>
         </div>
       </section>
 
-      {/* Main Content */}
-      <section className="py-12 bg-muted/30">
+      {/* Content Tabs */}
+      <section className="py-16">
         <div className="container">
-          <Tabs defaultValue="shariah" className="w-full">
-            <TabsList className="w-full justify-start flex-wrap h-auto gap-2 bg-transparent">
-              <TabsTrigger value="shariah" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                Shariah Compliance
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4 h-14 p-1 bg-white shadow-sm rounded-xl">
+              <TabsTrigger value="how-it-works" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+                <Zap className="w-4 h-4 mr-2 hidden sm:inline" />
+                {language === "ur" ? "طریقہ کار" : "How It Works"}
               </TabsTrigger>
-              <TabsTrigger value="guide" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                How It Works
+              <TabsTrigger value="shariah" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+                <Shield className="w-4 h-4 mr-2 hidden sm:inline" />
+                {language === "ur" ? "شریعہ" : "Shariah"}
               </TabsTrigger>
-              <TabsTrigger value="comparison" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                Platform vs Traditional
+              <TabsTrigger value="comparison" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+                <Scale className="w-4 h-4 mr-2 hidden sm:inline" />
+                {language === "ur" ? "موازنہ" : "Comparison"}
               </TabsTrigger>
-              <TabsTrigger value="risks" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                Risk Disclosure
-              </TabsTrigger>
-              <TabsTrigger value="faq" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                FAQs
+              <TabsTrigger value="faq" className="rounded-lg data-[state=active]:bg-primary data-[state=active]:text-white">
+                <HelpCircle className="w-4 h-4 mr-2 hidden sm:inline" />
+                {language === "ur" ? "سوالات" : "FAQ"}
               </TabsTrigger>
             </TabsList>
-            
-            {/* Shariah Compliance */}
-            <TabsContent value="shariah" className="mt-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Scale className="w-6 h-6 text-primary" />
-                    {shariahContent.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-8">
-                  {shariahContent.sections.map((section, index) => (
-                    <div key={index}>
-                      <h3 className="text-lg font-semibold mb-3">{section.title}</h3>
-                      <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
-                        {section.content}
+
+            {/* How It Works Tab */}
+            <TabsContent value="how-it-works" className="space-y-12">
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {howItWorksSteps.map((step, index) => (
+                  <div key={index} className="relative">
+                    <div className="feature-card text-center h-full">
+                      <div className="process-step">
+                        <div className="step-number mx-auto">{step.step}</div>
+                      </div>
+                      <h3 className="text-xl font-bold mb-3">{step.title}</h3>
+                      <p className="text-gray-600">{step.description}</p>
+                    </div>
+                    {index < howItWorksSteps.length - 1 && (
+                      <div className="hidden lg:block absolute top-16 -right-4 w-8 h-0.5 bg-gradient-to-r from-primary to-transparent"></div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center">
+                <Link href="/properties">
+                  <Button className="btn-premium">
+                    {language === "ur" ? "پراپرٹیز دیکھیں" : "Browse Properties"}
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                </Link>
+              </div>
+            </TabsContent>
+
+            {/* Shariah Tab */}
+            <TabsContent value="shariah" className="space-y-12">
+              <div className="max-w-4xl mx-auto">
+                <div className="glass-card rounded-2xl p-8 mb-8">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center">
+                      <Shield className="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold">
+                        {language === "ur" ? "مشارکہ متناقصہ ماڈل" : "Diminishing Musharaka Model"}
+                      </h2>
+                      <Badge className="mt-2 bg-emerald-100 text-emerald-700">
+                        {language === "ur" ? "شریعہ سرٹیفائیڈ" : "Shariah Certified"}
+                      </Badge>
+                    </div>
+                  </div>
+                  <p className="text-gray-600 text-lg leading-relaxed">
+                    {language === "ur"
+                      ? "ہمارا پلیٹ فارم مشارکہ متناقصہ کے اصول پر کام کرتا ہے جو کہ اسلامی فقہ کے مطابق ایک جائز شراکت داری کا طریقہ ہے۔"
+                      : "Our platform operates on the Diminishing Musharaka principle, which is a legitimate partnership method according to Islamic jurisprudence."}
+                  </p>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-6">
+                  {shariahPrinciples.map((principle, index) => (
+                    <div key={index} className="feature-card">
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                          <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-lg mb-2">{principle.title}</h3>
+                          <p className="text-gray-600">{principle.description}</p>
+                        </div>
                       </div>
                     </div>
                   ))}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
-            
-            {/* Platform Guide */}
-            <TabsContent value="guide" className="mt-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BookOpen className="w-6 h-6 text-primary" />
-                    {platformGuide.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    {platformGuide.steps.map((step, index) => (
-                      <div key={index} className="flex gap-4">
-                        <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shrink-0">
-                          {step.step}
-                        </div>
-                        <div className="flex-1 pb-6 border-b last:border-0">
-                          <h4 className="font-semibold mb-1">{step.title}</h4>
-                          <p className="text-sm text-muted-foreground">{step.description}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-8 text-center">
-                    <Button size="lg" asChild>
-                      <Link href="/properties">
-                        Start Investing Now
-                        <ArrowRight className="ml-2 w-4 h-4" />
-                      </Link>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {/* Comparison */}
-            <TabsContent value="comparison" className="mt-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="w-6 h-6 text-primary" />
-                    {comparisonData.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
+
+            {/* Comparison Tab */}
+            <TabsContent value="comparison" className="space-y-8">
+              <div className="max-w-5xl mx-auto">
+                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead>
-                        <tr className="border-b">
-                          <th className="text-left py-3 px-4 font-semibold">Aspect</th>
-                          <th className="text-left py-3 px-4 font-semibold text-destructive">Traditional File System</th>
-                          <th className="text-left py-3 px-4 font-semibold text-primary">PropertyPool</th>
+                        <tr className="bg-gradient-to-r from-primary to-emerald-600 text-white">
+                          <th className="px-6 py-4 text-left font-semibold">
+                            {language === "ur" ? "خصوصیت" : "Feature"}
+                          </th>
+                          <th className="px-6 py-4 text-center font-semibold">PropertyPool</th>
+                          <th className="px-6 py-4 text-center font-semibold">
+                            {language === "ur" ? "فائل سسٹم" : "File System"}
+                          </th>
+                          <th className="px-6 py-4 text-center font-semibold">
+                            {language === "ur" ? "روایتی" : "Traditional"}
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {comparisonData.comparisons.map((row, index) => (
-                          <tr key={index} className="border-b last:border-0">
-                            <td className="py-3 px-4 font-medium">{row.aspect}</td>
-                            <td className="py-3 px-4 text-muted-foreground">{row.traditional}</td>
-                            <td className="py-3 px-4">
-                              <span className="flex items-center gap-2">
-                                <CheckCircle className="w-4 h-4 text-primary shrink-0" />
-                                {row.propertyPool}
-                              </span>
+                        {comparisonData.map((row, index) => (
+                          <tr key={index} className={index % 2 === 0 ? "bg-gray-50" : "bg-white"}>
+                            <td className="px-6 py-4 font-medium">{row.feature}</td>
+                            <td className="px-6 py-4 text-center">
+                              {typeof row.propertyPool === "boolean" ? (
+                                row.propertyPool ? (
+                                  <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                                ) : (
+                                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto" />
+                                )
+                              ) : (
+                                <span className="font-semibold text-primary">{row.propertyPool}</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              {typeof row.fileSystem === "boolean" ? (
+                                row.fileSystem ? (
+                                  <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                                ) : (
+                                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto" />
+                                )
+                              ) : (
+                                <span className="text-gray-600">{row.fileSystem}</span>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                              {typeof row.traditional === "boolean" ? (
+                                row.traditional ? (
+                                  <CheckCircle2 className="w-6 h-6 text-emerald-500 mx-auto" />
+                                ) : (
+                                  <AlertTriangle className="w-6 h-6 text-red-500 mx-auto" />
+                                )
+                              ) : (
+                                <span className="text-gray-600">{row.traditional}</span>
+                              )}
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             </TabsContent>
-            
-            {/* Risk Disclosure */}
-            <TabsContent value="risks" className="mt-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <AlertTriangle className="w-6 h-6 text-primary" />
-                    {riskDisclosure.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {riskDisclosure.risks.map((risk, index) => (
-                    <div key={index} className="p-4 border rounded-lg">
-                      <h4 className="font-semibold mb-2 flex items-center gap-2">
-                        <AlertTriangle className="w-4 h-4 text-amber-500" />
-                        {risk.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mb-3">{risk.description}</p>
-                      <div className="bg-primary/5 p-3 rounded">
-                        <p className="text-sm">
-                          <strong>Our Mitigation:</strong> {risk.mitigation}
-                        </p>
-                      </div>
-                    </div>
+
+            {/* FAQ Tab */}
+            <TabsContent value="faq" className="space-y-8">
+              <div className="max-w-3xl mx-auto">
+                <Accordion type="single" collapsible className="space-y-4">
+                  {faqs.map((faq, index) => (
+                    <AccordionItem key={index} value={`faq-${index}`} className="bg-white rounded-xl px-6 border shadow-sm">
+                      <AccordionTrigger className="text-left font-semibold py-5 hover:no-underline">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-600 pb-5">
+                        {faq.answer}
+                      </AccordionContent>
+                    </AccordionItem>
                   ))}
-                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                    <p className="text-sm text-amber-800">
-                      <strong>Important:</strong> Past performance is not indicative of future results. 
-                      All investments carry risk, and you may lose some or all of your invested capital. 
-                      Please invest only what you can afford to lose and consider seeking independent financial advice.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            
-            {/* FAQs */}
-            <TabsContent value="faq" className="mt-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <HelpCircle className="w-6 h-6 text-primary" />
-                    Frequently Asked Questions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    {faqs.map((faq, index) => (
-                      <AccordionItem key={index} value={`item-${index}`}>
-                        <AccordionTrigger className="text-left">
-                          {faq.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground">
-                          {faq.answer}
-                        </AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
-                </CardContent>
-              </Card>
+                </Accordion>
+              </div>
             </TabsContent>
           </Tabs>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-16">
-        <div className="container text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Ready to Start Your Investment Journey?</h2>
-          <p className="text-muted-foreground max-w-xl mx-auto mb-8">
-            Join thousands of Pakistanis who are building wealth through fractional property ownership.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Button size="lg" asChild>
-              <Link href="/properties">
-                Browse Properties
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/about">
-                About Us
-              </Link>
-            </Button>
+      {/* Risk Disclosure Section */}
+      <section className="py-16 bg-amber-50 border-y border-amber-200">
+        <div className="container">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-amber-600" />
+              </div>
+              <h2 className="text-2xl font-bold">
+                {language === "ur" ? "رسک ڈسکلوژر" : "Risk Disclosure"}
+              </h2>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {risks.map((risk, index) => (
+                <div key={index} className="bg-white rounded-xl p-6 border border-amber-200">
+                  <h3 className="font-bold mb-2">{risk.title}</h3>
+                  <p className="text-gray-600 text-sm">{risk.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 section-dark relative overflow-hidden">
+        <div className="floating-shapes">
+          <div className="shape shape-1"></div>
+          <div className="shape shape-2"></div>
+        </div>
+        
+        <div className="container relative z-10">
+          <div className="max-w-3xl mx-auto text-center text-white">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              {language === "ur" ? (
+                <>
+                  سرمایہ کاری کے لیے <span className="gradient-text">تیار ہیں؟</span>
+                </>
+              ) : (
+                <>
+                  Ready to <span className="gradient-text">Start Investing?</span>
+                </>
+              )}
+            </h2>
+            <p className="text-xl text-white/70 mb-8">
+              {language === "ur"
+                ? "آج ہی اپنا اکاؤنٹ بنائیں اور پریمیم پراپرٹیز میں سرمایہ کاری شروع کریں۔"
+                : "Create your account today and start investing in premium properties."}
+            </p>
+            <Link href="/properties">
+              <Button className="btn-premium">
+                {language === "ur" ? "پراپرٹیز دیکھیں" : "Browse Properties"}
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
