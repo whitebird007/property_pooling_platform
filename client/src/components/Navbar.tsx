@@ -44,12 +44,12 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isHomePage = location === "/";
-  const navBackground = isScrolled || !isHomePage
-    ? "bg-white/95 backdrop-blur-xl shadow-lg border-b border-gray-100"
+  const isHeroPage = location === "/" || location === "/about";
+  const navBackground = isScrolled || !isHeroPage
+    ? "bg-white/98 backdrop-blur-xl shadow-sm border-b border-slate-200"
     : "bg-transparent";
-  const textColor = isScrolled || !isHomePage ? "text-gray-800" : "text-white";
-  const logoColor = isScrolled || !isHomePage ? "text-primary" : "text-white";
+  const textColor = isScrolled || !isHeroPage ? "text-slate-700" : "text-white";
+  const logoColor = isScrolled || !isHeroPage ? "text-slate-900" : "text-white";
 
   const navLinks = [
     { href: "/properties", label: language === "ur" ? "پراپرٹیز" : "Properties", icon: Building2 },
@@ -66,8 +66,8 @@ export default function Navbar() {
           <Link href="/">
             <div className="flex items-center gap-3 cursor-pointer group">
               <div className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                isScrolled || !isHomePage 
-                  ? "bg-gradient-to-br from-primary to-emerald-600" 
+                isScrolled || !isHeroPage 
+                  ? "bg-slate-800" 
                   : "bg-white/10 backdrop-blur-sm border border-white/20"
               } group-hover:scale-105`}>
                 <Building2 className="w-6 h-6 text-white" />
@@ -83,8 +83,13 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
                 <span className={`relative px-4 py-2 font-medium transition-all duration-300 flex items-center gap-2 rounded-lg ${
-                  isScrolled || !isHomePage ? "text-gray-700 hover:text-primary hover:bg-gray-100" : "text-white/90 hover:text-white hover:bg-white/10"
-                } ${location === link.href ? (isScrolled || !isHomePage ? "text-primary bg-primary/5" : "text-white bg-white/10") : ""}`}>
+                  isScrolled || !isHeroPage 
+                    ? "text-slate-600 hover:text-slate-900 hover:bg-slate-100" 
+                    : "text-white/90 hover:text-white hover:bg-white/10"
+                } ${location === link.href 
+                    ? (isScrolled || !isHeroPage ? "text-slate-900 bg-slate-100" : "text-white bg-white/10") 
+                    : ""
+                }`}>
                   <link.icon className="w-4 h-4" />
                   {link.label}
                 </span>
@@ -98,8 +103,8 @@ export default function Navbar() {
             <button
               onClick={() => setLanguage(language === "en" ? "ur" : "en")}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 ${
-                isScrolled || !isHomePage 
-                  ? "hover:bg-gray-100 text-gray-600" 
+                isScrolled || !isHeroPage 
+                  ? "hover:bg-slate-100 text-slate-600" 
                   : "hover:bg-white/10 text-white/80"
               }`}
             >
@@ -111,11 +116,11 @@ export default function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300 ${
-                    isScrolled || !isHomePage 
-                      ? "bg-gray-100 hover:bg-gray-200 text-gray-800" 
+                    isScrolled || !isHeroPage 
+                      ? "bg-slate-100 hover:bg-slate-200 text-slate-800" 
                       : "bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm border border-white/20"
                   }`}>
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
                       <User className="w-4 h-4 text-white" />
                     </div>
                     <span className="font-medium">{user?.name || "User"}</span>
@@ -151,7 +156,7 @@ export default function Navbar() {
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-primary">
+                        <Link href="/admin" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-700">
                           <Shield className="w-4 h-4" />
                           {language === "ur" ? "ایڈمن پینل" : "Admin Panel"}
                         </Link>
@@ -181,7 +186,11 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <a href={getLoginUrl()}>
-                <button className="btn-premium px-6 py-2.5 text-sm">
+                <button className={`px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 ${
+                  isScrolled || !isHeroPage
+                    ? "bg-slate-800 text-white hover:bg-slate-900"
+                    : "bg-white text-slate-900 hover:bg-white/90"
+                }`}>
                   {language === "ur" ? "لاگ ان / سائن اپ" : "Login / Sign Up"}
                 </button>
               </a>
@@ -192,7 +201,7 @@ export default function Navbar() {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={`lg:hidden p-2 rounded-lg transition-colors ${
-              isScrolled || !isHomePage ? "hover:bg-gray-100" : "hover:bg-white/10"
+              isScrolled || !isHeroPage ? "hover:bg-slate-100" : "hover:bg-white/10"
             }`}
           >
             {isMobileMenuOpen ? (
@@ -205,15 +214,15 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-xl border-t animate-fade-in">
+          <div className="lg:hidden absolute top-full left-0 right-0 bg-white shadow-xl border-t border-slate-200">
             <div className="container py-6 space-y-2">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
                   <div 
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
                       location === link.href 
-                        ? "bg-primary/10 text-primary" 
-                        : "hover:bg-gray-100 text-gray-700"
+                        ? "bg-slate-100 text-slate-900" 
+                        : "hover:bg-slate-50 text-slate-700"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -223,10 +232,10 @@ export default function Navbar() {
                 </Link>
               ))}
               
-              <div className="border-t pt-4 mt-4">
+              <div className="border-t border-slate-100 pt-4 mt-4">
                 <button
                   onClick={() => setLanguage(language === "en" ? "ur" : "en")}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700 w-full"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-700 w-full"
                 >
                   <Globe className="w-5 h-5" />
                   <span className="font-medium">{language === "en" ? "اردو میں دیکھیں" : "View in English"}</span>
@@ -234,9 +243,9 @@ export default function Navbar() {
               </div>
 
               {isAuthenticated ? (
-                <div className="border-t pt-4 mt-4 space-y-2">
+                <div className="border-t border-slate-100 pt-4 mt-4 space-y-2">
                   <Link href="/dashboard">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-100 text-gray-700">
+                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-50 text-slate-700">
                       <LayoutDashboard className="w-5 h-5" />
                       <span className="font-medium">{language === "ur" ? "ڈیش بورڈ" : "Dashboard"}</span>
                     </div>
@@ -250,9 +259,9 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <div className="border-t pt-4 mt-4">
+                <div className="border-t border-slate-100 pt-4 mt-4">
                   <a href={getLoginUrl()} className="block">
-                    <button className="w-full btn-premium">
+                    <button className="w-full bg-slate-800 text-white py-3 rounded-xl font-semibold hover:bg-slate-900 transition-colors">
                       {language === "ur" ? "لاگ ان / سائن اپ" : "Login / Sign Up"}
                     </button>
                   </a>
