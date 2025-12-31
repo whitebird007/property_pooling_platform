@@ -385,3 +385,7 @@
 - [x] Create Admin Tickets page for viewing all tickets
 - [x] Add ability for admin to answer tickets
 - [x] Add ability for admin to mark tickets as solved
+
+
+## Admin Documents Page Fix (User Report)
+- [x] Fix broken /admin/documents page (Select.Item empty value error)

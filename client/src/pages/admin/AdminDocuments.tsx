@@ -315,13 +315,13 @@ For actual documents, please contact support.
                   ))}
                 </SelectContent>
               </Select>
-              <Select value={selectedInvestor} onValueChange={setSelectedInvestor}>
+              <Select value={selectedInvestor || "all"} onValueChange={(v) => setSelectedInvestor(v === "all" ? "" : v)}>
                 <SelectTrigger className="w-full md:w-48">
                   <SelectValue placeholder="All Investors" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Investors</SelectItem>
-                  {investors?.map((investor) => (
+                  <SelectItem value="all">All Investors</SelectItem>
+                  {investors?.filter(investor => investor.id).map((investor) => (
                     <SelectItem key={investor.id} value={investor.id.toString()}>
                       {investor.name}
                     </SelectItem>
