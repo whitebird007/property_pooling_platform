@@ -36,6 +36,7 @@ import KYC from "./pages/KYC";
 import Wallet from "./pages/Wallet";
 import Invest from "./pages/Invest";
 import Transactions from "./pages/Transactions";
+import Documents from "./pages/Documents";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -84,6 +85,7 @@ function Router() {
       <Route path="/wallet" component={Wallet} />
       <Route path="/invest/:id" component={Invest} />
       <Route path="/transactions" component={Transactions} />
+      <Route path="/documents" component={Documents} />
       
       {/* Admin Routes */}
       <Route path="/admin" component={AdminDashboard} />

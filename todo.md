@@ -342,3 +342,8 @@
 - [x] Create tRPC procedure for trade history
 - [x] Connect client marketplace page to backend
 - [x] Connect admin marketplace page to backend
+
+
+## Documents Page Fix (User Report)
+- [x] Create /documents page for investor documents
+- [x] Register route in App.tsx
