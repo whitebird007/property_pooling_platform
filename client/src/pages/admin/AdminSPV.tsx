@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose, DialogDescription } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminLayout from "@/components/AdminLayout";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
@@ -25,25 +27,52 @@ import {
   DollarSign,
   Scale,
   Shield,
-  X
+  Trash2,
+  Download,
+  Calendar,
+  TrendingUp,
+  PieChart
 } from "lucide-react";
+
+type SPV = {
+  id: string;
+  name: string;
+  property: string;
+  status: "active" | "pending" | "draft";
+  totalShares: number;
+  soldShares: number;
+  investors: number;
+  valuation: number;
+  registrationDate: string;
+  secpNumber: string;
+  description?: string;
+  managementFee?: number;
+  distributionFrequency?: string;
+};
 
 export default function AdminSPV() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedSPV, setSelectedSPV] = useState<SPV | null>(null);
+  const [editingSPV, setEditingSPV] = useState<SPV | null>(null);
   const [newSPV, setNewSPV] = useState({
     name: "",
     property: "",
     totalShares: "",
     valuation: "",
     secpNumber: "",
+    description: "",
+    managementFee: "2",
+    distributionFrequency: "quarterly",
   });
 
   // Get properties for dropdown
   const { data: propertiesData } = trpc.properties.list.useQuery({});
 
   // Mock SPV data (in a real app, this would come from the backend)
-  const [spvs, setSPVs] = useState([
+  const [spvs, setSPVs] = useState<SPV[]>([
     { 
       id: "SPV001", 
       name: "DHA Phase 6 Holdings Ltd", 
@@ -54,7 +83,10 @@ export default function AdminSPV() {
       investors: 42,
       valuation: 50000000,
       registrationDate: "2024-01-01",
-      secpNumber: "SECP-2024-001"
+      secpNumber: "SECP-2024-001",
+      description: "Premium residential investment in DHA Phase 6, Lahore. This SPV holds a 3-bedroom luxury apartment with high rental yield potential.",
+      managementFee: 2,
+      distributionFrequency: "quarterly"
     },
     { 
       id: "SPV002", 
@@ -66,7 +98,10 @@ export default function AdminSPV() {
       investors: 67,
       valuation: 120000000,
       registrationDate: "2023-11-15",
-      secpNumber: "SECP-2023-089"
+      secpNumber: "SECP-2023-089",
+      description: "Commercial plaza investment in Bahria Town, Lahore. Fully leased with stable rental income.",
+      managementFee: 1.5,
+      distributionFrequency: "monthly"
     },
     { 
       id: "SPV003", 
@@ -78,7 +113,10 @@ export default function AdminSPV() {
       investors: 23,
       valuation: 75000000,
       registrationDate: "2024-02-01",
-      secpNumber: "Pending"
+      secpNumber: "Pending",
+      description: "Luxury sea-facing apartment in Clifton, Karachi. Premium location with high appreciation potential.",
+      managementFee: 2,
+      distributionFrequency: "quarterly"
     },
     { 
       id: "SPV004", 
@@ -90,7 +128,10 @@ export default function AdminSPV() {
       investors: 0,
       valuation: 40000000,
       registrationDate: "-",
-      secpNumber: "-"
+      secpNumber: "-",
+      description: "Modern office space in Gulberg III, Lahore. Ideal for corporate tenants.",
+      managementFee: 2,
+      distributionFrequency: "quarterly"
     },
   ]);
 
@@ -110,23 +151,91 @@ export default function AdminSPV() {
     const newId = `SPV${String(spvs.length + 1).padStart(3, "0")}`;
     const today = new Date().toISOString().split("T")[0];
     
-    const createdSPV = {
+    const createdSPV: SPV = {
       id: newId,
       name: newSPV.name,
       property: newSPV.property,
-      status: "draft" as const,
+      status: "draft",
       totalShares: parseInt(newSPV.totalShares),
       soldShares: 0,
       investors: 0,
       valuation: parseInt(newSPV.valuation),
       registrationDate: today,
       secpNumber: newSPV.secpNumber || "Pending",
+      description: newSPV.description,
+      managementFee: parseFloat(newSPV.managementFee),
+      distributionFrequency: newSPV.distributionFrequency,
     };
 
     setSPVs([...spvs, createdSPV]);
-    setNewSPV({ name: "", property: "", totalShares: "", valuation: "", secpNumber: "" });
+    setNewSPV({ name: "", property: "", totalShares: "", valuation: "", secpNumber: "", description: "", managementFee: "2", distributionFrequency: "quarterly" });
     setIsCreateDialogOpen(false);
     toast.success("SPV created successfully!");
+  };
+
+  const handleViewSPV = (spv: SPV) => {
+    setSelectedSPV(spv);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleEditSPV = (spv: SPV) => {
+    setEditingSPV({ ...spv });
+    setIsEditDialogOpen(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingSPV) return;
+    
+    setSPVs(spvs.map(s => s.id === editingSPV.id ? editingSPV : s));
+    setIsEditDialogOpen(false);
+    toast.success("SPV updated successfully!");
+  };
+
+  const handleDeleteSPV = (id: string) => {
+    if (confirm("Are you sure you want to delete this SPV?")) {
+      setSPVs(spvs.filter(s => s.id !== id));
+      toast.success("SPV deleted");
+    }
+  };
+
+  const handleActivateSPV = (id: string) => {
+    setSPVs(spvs.map(s => s.id === id ? { ...s, status: "active" as const } : s));
+    toast.success("SPV activated successfully!");
+  };
+
+  const handleDownloadDocuments = (spv: SPV) => {
+    const docContent = `
+PropertyPool SPV Documentation
+==============================
+
+SPV Name: ${spv.name}
+SPV ID: ${spv.id}
+SECP Number: ${spv.secpNumber}
+Property: ${spv.property}
+Valuation: PKR ${spv.valuation.toLocaleString()}
+Total Shares: ${spv.totalShares}
+Sold Shares: ${spv.soldShares}
+Investors: ${spv.investors}
+Registration Date: ${spv.registrationDate}
+Management Fee: ${spv.managementFee}%
+Distribution: ${spv.distributionFrequency}
+
+Description:
+${spv.description || "N/A"}
+
+---
+Generated on: ${new Date().toLocaleString()}
+This is an official document from PropertyPool Pakistan.
+    `;
+    
+    const blob = new Blob([docContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${spv.id}_documentation.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Documents downloaded!");
   };
 
   const getStatusBadge = (status: string) => {
@@ -155,11 +264,12 @@ export default function AdminSPV() {
               Create SPV
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
               <DialogTitle>Create New SPV</DialogTitle>
+              <DialogDescription>Set up a new Special Purpose Vehicle for property investment</DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
               <div className="space-y-2">
                 <Label htmlFor="spv-name">SPV Name *</Label>
                 <Input
@@ -185,13 +295,22 @@ export default function AdminSPV() {
                         {property.title}
                       </SelectItem>
                     ))}
-                    {/* Fallback options if no properties exist */}
                     <SelectItem value="DHA Phase 8 Villa">DHA Phase 8 Villa</SelectItem>
                     <SelectItem value="Bahria Town Apartment">Bahria Town Apartment</SelectItem>
                     <SelectItem value="Clifton Commercial">Clifton Commercial</SelectItem>
                     <SelectItem value="Gulberg Office Space">Gulberg Office Space</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea
+                  placeholder="Describe the investment opportunity..."
+                  value={newSPV.description}
+                  onChange={(e) => setNewSPV({ ...newSPV, description: e.target.value })}
+                  rows={3}
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -214,6 +333,34 @@ export default function AdminSPV() {
                     value={newSPV.valuation}
                     onChange={(e) => setNewSPV({ ...newSPV, valuation: e.target.value })}
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Management Fee (%)</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={newSPV.managementFee}
+                    onChange={(e) => setNewSPV({ ...newSPV, managementFee: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Distribution Frequency</Label>
+                  <Select
+                    value={newSPV.distributionFrequency}
+                    onValueChange={(v) => setNewSPV({ ...newSPV, distributionFrequency: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                      <SelectItem value="annually">Annually</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -332,14 +479,24 @@ export default function AdminSPV() {
                   </div>
                   <div className="flex items-center gap-3">
                     {getStatusBadge(spv.status)}
-                    <Button variant="outline" size="sm" onClick={() => toast.info("View SPV details coming soon")}>
+                    <Button variant="outline" size="sm" onClick={() => handleViewSPV(spv)}>
                       <Eye className="w-4 h-4 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => toast.info("Edit SPV coming soon")}>
+                    <Button variant="outline" size="sm" onClick={() => handleEditSPV(spv)}>
                       <Edit className="w-4 h-4 mr-1" />
                       Edit
                     </Button>
+                    {spv.status === "draft" && (
+                      <Button 
+                        size="sm" 
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={() => handleActivateSPV(spv.id)}
+                      >
+                        <CheckCircle className="w-4 h-4 mr-1" />
+                        Activate
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -426,6 +583,287 @@ export default function AdminSPV() {
           </div>
         </CardContent>
       </Card>
+
+      {/* View SPV Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Landmark className="w-5 h-5 text-purple-600" />
+              {selectedSPV?.name}
+            </DialogTitle>
+            <DialogDescription>SPV ID: {selectedSPV?.id}</DialogDescription>
+          </DialogHeader>
+          
+          {selectedSPV && (
+            <Tabs defaultValue="overview" className="mt-4">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="overview">Overview</TabsTrigger>
+                <TabsTrigger value="investors">Investors</TabsTrigger>
+                <TabsTrigger value="documents">Documents</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="space-y-4 mt-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">Property</p>
+                    <p className="font-medium">{selectedSPV.property}</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">Status</p>
+                    {getStatusBadge(selectedSPV.status)}
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">SECP Number</p>
+                    <p className="font-medium">{selectedSPV.secpNumber}</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">Registration Date</p>
+                    <p className="font-medium">{selectedSPV.registrationDate}</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">Valuation</p>
+                    <p className="font-medium text-lg">PKR {selectedSPV.valuation.toLocaleString()}</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">Share Price</p>
+                    <p className="font-medium text-lg">PKR {(selectedSPV.valuation / selectedSPV.totalShares).toLocaleString()}</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">Management Fee</p>
+                    <p className="font-medium">{selectedSPV.managementFee || 2}%</p>
+                  </div>
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <p className="text-sm text-gray-500">Distribution</p>
+                    <p className="font-medium capitalize">{selectedSPV.distributionFrequency || "Quarterly"}</p>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-500 mb-2">Description</p>
+                  <p className="text-gray-700">{selectedSPV.description || "No description available."}</p>
+                </div>
+                
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm text-gray-500">Funding Progress</p>
+                    <p className="text-sm font-medium">{Math.round((selectedSPV.soldShares / selectedSPV.totalShares) * 100)}%</p>
+                  </div>
+                  <Progress value={(selectedSPV.soldShares / selectedSPV.totalShares) * 100} className="h-3" />
+                  <p className="text-xs text-gray-500 mt-2">{selectedSPV.soldShares.toLocaleString()} of {selectedSPV.totalShares.toLocaleString()} shares sold</p>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="investors" className="mt-4">
+                <div className="text-center py-8">
+                  <Users className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                  <p className="font-medium text-gray-900">{selectedSPV.investors} Investors</p>
+                  <p className="text-sm text-gray-500 mt-2">Investor details are available in the Investors section</p>
+                  <Button variant="outline" className="mt-4" onClick={() => {
+                    setIsViewDialogOpen(false);
+                    window.location.href = "/admin/investors";
+                  }}>
+                    View All Investors
+                  </Button>
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="documents" className="mt-4">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-purple-600" />
+                      <div>
+                        <p className="font-medium">SPV Registration Certificate</p>
+                        <p className="text-sm text-gray-500">PDF • 245 KB</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => handleDownloadDocuments(selectedSPV)}>
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-blue-600" />
+                      <div>
+                        <p className="font-medium">Shariah Compliance Certificate</p>
+                        <p className="text-sm text-gray-500">PDF • 180 KB</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => handleDownloadDocuments(selectedSPV)}>
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <FileText className="w-5 h-5 text-green-600" />
+                      <div>
+                        <p className="font-medium">Property Valuation Report</p>
+                        <p className="text-sm text-gray-500">PDF • 1.2 MB</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => handleDownloadDocuments(selectedSPV)}>
+                      <Download className="w-4 h-4 mr-1" />
+                      Download
+                    </Button>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsViewDialogOpen(false)}>
+              Close
+            </Button>
+            <Button onClick={() => {
+              setIsViewDialogOpen(false);
+              if (selectedSPV) handleEditSPV(selectedSPV);
+            }} className="bg-purple-600 hover:bg-purple-700">
+              <Edit className="w-4 h-4 mr-2" />
+              Edit SPV
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit SPV Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle>Edit SPV</DialogTitle>
+            <DialogDescription>Update SPV details for {editingSPV?.id}</DialogDescription>
+          </DialogHeader>
+          
+          {editingSPV && (
+            <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-2">
+                <Label>SPV Name</Label>
+                <Input
+                  value={editingSPV.name}
+                  onChange={(e) => setEditingSPV({ ...editingSPV, name: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Property</Label>
+                <Input
+                  value={editingSPV.property}
+                  onChange={(e) => setEditingSPV({ ...editingSPV, property: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Textarea
+                  value={editingSPV.description || ""}
+                  onChange={(e) => setEditingSPV({ ...editingSPV, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Total Shares</Label>
+                  <Input
+                    type="number"
+                    value={editingSPV.totalShares}
+                    onChange={(e) => setEditingSPV({ ...editingSPV, totalShares: parseInt(e.target.value) })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Valuation (PKR)</Label>
+                  <Input
+                    type="number"
+                    value={editingSPV.valuation}
+                    onChange={(e) => setEditingSPV({ ...editingSPV, valuation: parseInt(e.target.value) })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Management Fee (%)</Label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    value={editingSPV.managementFee || 2}
+                    onChange={(e) => setEditingSPV({ ...editingSPV, managementFee: parseFloat(e.target.value) })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Distribution Frequency</Label>
+                  <Select
+                    value={editingSPV.distributionFrequency || "quarterly"}
+                    onValueChange={(v) => setEditingSPV({ ...editingSPV, distributionFrequency: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="monthly">Monthly</SelectItem>
+                      <SelectItem value="quarterly">Quarterly</SelectItem>
+                      <SelectItem value="annually">Annually</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>SECP Number</Label>
+                  <Input
+                    value={editingSPV.secpNumber}
+                    onChange={(e) => setEditingSPV({ ...editingSPV, secpNumber: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Status</Label>
+                  <Select
+                    value={editingSPV.status}
+                    onValueChange={(v: "active" | "pending" | "draft") => setEditingSPV({ ...editingSPV, status: v })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter className="flex justify-between">
+            <Button 
+              variant="outline" 
+              className="text-red-600 hover:text-red-700"
+              onClick={() => {
+                if (editingSPV) {
+                  handleDeleteSPV(editingSPV.id);
+                  setIsEditDialogOpen(false);
+                }
+              }}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Delete
+            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSaveEdit} className="bg-purple-600 hover:bg-purple-700">
+                Save Changes
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }

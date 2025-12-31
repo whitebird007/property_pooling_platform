@@ -347,3 +347,20 @@
 ## Documents Page Fix (User Report)
 - [x] Create /documents page for investor documents
 - [x] Register route in App.tsx
+
+
+## Non-Functional Buttons Fix (User Report)
+- [x] Admin Investors - Eye icon button (view investor details)
+- [x] Admin Investors - Send Email button
+- [x] Admin Investors - Three dots menu actions
+- [x] Sales Training - Pitch Scripts content
+- [x] Sales Training - Training Modules content
+- [x] Sales Training - Comparison Charts content
+- [x] Sales Training - Success Stories content
+- [x] Sales Training - Presentations content
+- [x] Sales Training - Training Videos content
+- [x] Admin Reports - Download button
+- [x] Admin Reports - Print button
+- [x] Admin Reports - Edit button
+- [x] SPV Management - View button
+- [x] SPV Management - Edit button
