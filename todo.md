@@ -286,3 +286,10 @@
 
 ## Area Detail Page Fix (User Report)
 - [x] Update /area/:id page to use light theme colors
+
+
+## Analytics & SPV & Property Images (User Report)
+- [x] Fix Analytics page - replace placeholder text with real Chart.js charts
+- [x] Fix time period buttons (Week/Month/Year) hiding text issue
+- [x] Make Create SPV button functional with backend support
+- [x] Add image upload to property creation (main thumbnail + gallery images)

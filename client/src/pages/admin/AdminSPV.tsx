@@ -4,7 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 import AdminLayout from "@/components/AdminLayout";
+import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import { 
   Landmark, 
   Building2,
@@ -19,14 +24,26 @@ import {
   AlertCircle,
   DollarSign,
   Scale,
-  Shield
+  Shield,
+  X
 } from "lucide-react";
 
 export default function AdminSPV() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newSPV, setNewSPV] = useState({
+    name: "",
+    property: "",
+    totalShares: "",
+    valuation: "",
+    secpNumber: "",
+  });
 
-  // Mock SPV data
-  const spvs = [
+  // Get properties for dropdown
+  const { data: propertiesData } = trpc.properties.list.useQuery({});
+
+  // Mock SPV data (in a real app, this would come from the backend)
+  const [spvs, setSPVs] = useState([
     { 
       id: "SPV001", 
       name: "DHA Phase 6 Holdings Ltd", 
@@ -75,13 +92,41 @@ export default function AdminSPV() {
       registrationDate: "-",
       secpNumber: "-"
     },
-  ];
+  ]);
 
   const stats = {
-    totalSPVs: 4,
-    activeSPVs: 2,
-    totalValuation: 285000000,
-    totalInvestors: 132,
+    totalSPVs: spvs.length,
+    activeSPVs: spvs.filter(s => s.status === "active").length,
+    totalValuation: spvs.reduce((sum, s) => sum + s.valuation, 0),
+    totalInvestors: spvs.reduce((sum, s) => sum + s.investors, 0),
+  };
+
+  const handleCreateSPV = () => {
+    if (!newSPV.name || !newSPV.property || !newSPV.totalShares || !newSPV.valuation) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    const newId = `SPV${String(spvs.length + 1).padStart(3, "0")}`;
+    const today = new Date().toISOString().split("T")[0];
+    
+    const createdSPV = {
+      id: newId,
+      name: newSPV.name,
+      property: newSPV.property,
+      status: "draft" as const,
+      totalShares: parseInt(newSPV.totalShares),
+      soldShares: 0,
+      investors: 0,
+      valuation: parseInt(newSPV.valuation),
+      registrationDate: today,
+      secpNumber: newSPV.secpNumber || "Pending",
+    };
+
+    setSPVs([...spvs, createdSPV]);
+    setNewSPV({ name: "", property: "", totalShares: "", valuation: "", secpNumber: "" });
+    setIsCreateDialogOpen(false);
+    toast.success("SPV created successfully!");
   };
 
   const getStatusBadge = (status: string) => {
@@ -103,10 +148,96 @@ export default function AdminSPV() {
       title="SPV Management" 
       description="Manage Special Purpose Vehicles for properties"
       actions={
-        <Button className="bg-purple-600 hover:bg-purple-700">
-          <Plus className="w-4 h-4 mr-2" />
-          Create SPV
-        </Button>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              <Plus className="w-4 h-4 mr-2" />
+              Create SPV
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Create New SPV</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="spv-name">SPV Name *</Label>
+                <Input
+                  id="spv-name"
+                  placeholder="e.g., DHA Phase 8 Holdings Ltd"
+                  value={newSPV.name}
+                  onChange={(e) => setNewSPV({ ...newSPV, name: e.target.value })}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="property">Property *</Label>
+                <Select
+                  value={newSPV.property}
+                  onValueChange={(value) => setNewSPV({ ...newSPV, property: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a property" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {propertiesData?.map((property: any) => (
+                      <SelectItem key={property.id} value={property.title}>
+                        {property.title}
+                      </SelectItem>
+                    ))}
+                    {/* Fallback options if no properties exist */}
+                    <SelectItem value="DHA Phase 8 Villa">DHA Phase 8 Villa</SelectItem>
+                    <SelectItem value="Bahria Town Apartment">Bahria Town Apartment</SelectItem>
+                    <SelectItem value="Clifton Commercial">Clifton Commercial</SelectItem>
+                    <SelectItem value="Gulberg Office Space">Gulberg Office Space</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="total-shares">Total Shares *</Label>
+                  <Input
+                    id="total-shares"
+                    type="number"
+                    placeholder="e.g., 1000"
+                    value={newSPV.totalShares}
+                    onChange={(e) => setNewSPV({ ...newSPV, totalShares: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valuation">Valuation (PKR) *</Label>
+                  <Input
+                    id="valuation"
+                    type="number"
+                    placeholder="e.g., 50000000"
+                    value={newSPV.valuation}
+                    onChange={(e) => setNewSPV({ ...newSPV, valuation: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="secp-number">SECP Number (Optional)</Label>
+                <Input
+                  id="secp-number"
+                  placeholder="e.g., SECP-2024-XXX"
+                  value={newSPV.secpNumber}
+                  onChange={(e) => setNewSPV({ ...newSPV, secpNumber: e.target.value })}
+                />
+                <p className="text-xs text-gray-500">Leave empty if pending registration</p>
+              </div>
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button onClick={handleCreateSPV} className="bg-purple-600 hover:bg-purple-700">
+                Create SPV
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       }
     >
       {/* Stats Cards */}
@@ -201,11 +332,11 @@ export default function AdminSPV() {
                   </div>
                   <div className="flex items-center gap-3">
                     {getStatusBadge(spv.status)}
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => toast.info("View SPV details coming soon")}>
                       <Eye className="w-4 h-4 mr-1" />
                       View
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => toast.info("Edit SPV coming soon")}>
                       <Edit className="w-4 h-4 mr-1" />
                       Edit
                     </Button>
