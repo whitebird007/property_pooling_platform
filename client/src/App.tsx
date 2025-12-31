@@ -31,6 +31,12 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminProperties from "./pages/admin/AdminProperties";
 import AdminInvestors from "./pages/admin/AdminInvestors";
 import AdminKYC from "./pages/admin/AdminKYC";
+import AdminMarketplace from "./pages/admin/AdminMarketplace";
+import AdminTransactions from "./pages/admin/AdminTransactions";
+import AdminSPV from "./pages/admin/AdminSPV";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminReports from "./pages/admin/AdminReports";
+import AdminSettings from "./pages/admin/AdminSettings";
 import PropertyManagement from "./pages/admin/PropertyManagement";
 import SalesTraining from "./pages/admin/SalesTraining";
 
@@ -62,6 +68,12 @@ function Router() {
       <Route path="/admin/properties" component={AdminProperties} />
       <Route path="/admin/investors" component={AdminInvestors} />
       <Route path="/admin/kyc" component={AdminKYC} />
+      <Route path="/admin/marketplace" component={AdminMarketplace} />
+      <Route path="/admin/transactions" component={AdminTransactions} />
+      <Route path="/admin/spv" component={AdminSPV} />
+      <Route path="/admin/analytics" component={AdminAnalytics} />
+      <Route path="/admin/reports" component={AdminReports} />
+      <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin/property-management/:id" component={PropertyManagement} />
       <Route path="/admin/sales-training" component={SalesTraining} />
       

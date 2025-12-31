@@ -272,3 +272,13 @@
 - [x] Update /admin/sales-training to use AdminLayout
 - [x] Create shared ClientLayout component with sidebar
 - [x] Update client portal pages (Dashboard, Portfolio, Wallet, KYC) to use ClientLayout
+
+
+## Missing Admin Pages (User Report)
+- [x] Create /admin/marketplace page
+- [x] Create /admin/transactions page
+- [x] Create /admin/spv page
+- [x] Create /admin/analytics page
+- [x] Create /admin/reports page
+- [x] Create /admin/settings page
+- [x] Register all routes in App.tsx
