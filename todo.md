@@ -427,3 +427,16 @@
 - [x] Create troubleshooting guide
 - [x] Document production security best practices
 - [x] Document monitoring and logging setup
+
+## Google Maps API Setup for Replit (User Request)
+- [x] Create GOOGLE_MAPS_SETUP_GUIDE.md with step-by-step instructions
+- [x] Update Map component to use direct Google Maps API key
+- [x] Add fallback to Manus API key for backward compatibility
+- [ ] Generate Google Cloud project and API key
+- [ ] Enable required Google Maps APIs (Places, Geocoding, Directions)
+- [ ] Restrict API key to Replit domain
+- [ ] Add VITE_GOOGLE_MAPS_API_KEY to Replit Secrets
+- [ ] Test maps on property detail page
+- [ ] Test maps on area guides page
+- [ ] Test maps on admin property management page
+- [ ] Set up billing alerts in Google Cloud Console
