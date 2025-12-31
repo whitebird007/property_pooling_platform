@@ -308,3 +308,16 @@
 ## Missing Invest Page (User Report)
 - [x] Create /invest/:id page for property investment
 - [x] Register route in App.tsx
+
+
+## Missing Legal & Footer Pages (User Report)
+- [x] Create /terms - Terms of Service page
+- [x] Create /privacy - Privacy Policy page
+- [x] Create /refund-policy - Refund Policy page
+- [x] Create /risk-disclosure - Risk Disclosure page
+- [x] Create /shariah - Shariah Certification page
+- [x] Create /contact - Contact Us page
+- [x] Create /faq - Frequently Asked Questions page
+- [x] Create /careers - Careers page
+- [x] Create /press - Press & Media page
+- [x] Register all routes in App.tsx

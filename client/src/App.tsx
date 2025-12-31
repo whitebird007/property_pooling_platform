@@ -18,6 +18,15 @@ import AreaGuides from "./pages/AreaGuides";
 import AreaDetail from "./pages/AreaDetail";
 import InvestmentCalculator from "./pages/InvestmentCalculator";
 import PriceIndex from "./pages/PriceIndex";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import RefundPolicy from "./pages/RefundPolicy";
+import RiskDisclosure from "./pages/RiskDisclosure";
+import Shariah from "./pages/Shariah";
+import Contact from "./pages/Contact";
+import FAQ from "./pages/FAQ";
+import Careers from "./pages/Careers";
+import Press from "./pages/Press";
 
 // Investor Pages
 import Dashboard from "./pages/Dashboard";
@@ -56,6 +65,15 @@ function Router() {
       <Route path="/price-index" component={PriceIndex} />
       <Route path="/signup" component={SignUp} />
       <Route path="/login" component={Login} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/privacy" component={Privacy} />
+      <Route path="/refund-policy" component={RefundPolicy} />
+      <Route path="/risk-disclosure" component={RiskDisclosure} />
+      <Route path="/shariah" component={Shariah} />
+      <Route path="/contact" component={Contact} />
+      <Route path="/faq" component={FAQ} />
+      <Route path="/careers" component={Careers} />
+      <Route path="/press" component={Press} />
       
       {/* Investor Routes */}
       <Route path="/dashboard" component={Dashboard} />
