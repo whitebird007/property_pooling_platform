@@ -373,3 +373,15 @@
 - [x] Create /admin/documents page for document management
 - [x] Add ability to upload documents for individual clients
 - [x] Register all routes in App.tsx
+
+
+## Live Chat & Ticket System (User Request)
+- [x] Create database schema for support tickets
+- [x] Create database schema for chat messages
+- [x] Create tRPC procedures for ticket CRUD operations
+- [x] Create tRPC procedure for AI chat responses
+- [x] Update client Support page with working live chat
+- [x] Update client Support page with working ticket creation
+- [x] Create Admin Tickets page for viewing all tickets
+- [x] Add ability for admin to answer tickets
+- [x] Add ability for admin to mark tickets as solved

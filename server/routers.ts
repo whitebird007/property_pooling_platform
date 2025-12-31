@@ -730,6 +730,231 @@ export const appRouter = router({
         return { dividendId };
       }),
   }),
+
+  // ==================== SUPPORT & CHAT ====================
+  support: router({
+    // Get user's tickets
+    getMyTickets: protectedProcedure
+      .query(async ({ ctx }) => {
+        return db.getSupportTickets(ctx.user.id);
+      }),
+    
+    // Get single ticket with messages
+    getTicket: protectedProcedure
+      .input(z.object({ ticketId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const ticket = await db.getSupportTicketById(input.ticketId);
+        if (!ticket) return null;
+        // Users can only view their own tickets
+        if (ticket.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        const messages = await db.getTicketMessages(input.ticketId);
+        return { ticket, messages };
+      }),
+    
+    // Create new ticket
+    createTicket: protectedProcedure
+      .input(z.object({
+        subject: z.string().min(5).max(255),
+        description: z.string().min(10),
+        category: z.enum(['general', 'investment', 'technical', 'kyc', 'payment', 'other']),
+        priority: z.enum(['low', 'medium', 'high', 'urgent']).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const ticketId = await db.createSupportTicket({
+          userId: ctx.user.id,
+          subject: input.subject,
+          description: input.description,
+          category: input.category,
+          priority: input.priority || 'medium',
+        });
+        // Add initial message
+        if (ticketId) {
+          await db.createTicketMessage({
+            ticketId,
+            senderId: ctx.user.id,
+            senderType: 'user',
+            message: input.description,
+          });
+        }
+        return { ticketId };
+      }),
+    
+    // Add message to ticket
+    addMessage: protectedProcedure
+      .input(z.object({
+        ticketId: z.number(),
+        message: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const ticket = await db.getSupportTicketById(input.ticketId);
+        if (!ticket) throw new TRPCError({ code: 'NOT_FOUND' });
+        if (ticket.userId !== ctx.user.id && ctx.user.role !== 'admin') {
+          throw new TRPCError({ code: 'FORBIDDEN' });
+        }
+        const messageId = await db.createTicketMessage({
+          ticketId: input.ticketId,
+          senderId: ctx.user.id,
+          senderType: ctx.user.role === 'admin' ? 'admin' : 'user',
+          message: input.message,
+        });
+        // Update ticket status if admin responds
+        if (ctx.user.role === 'admin' && ticket.status === 'open') {
+          await db.updateSupportTicket(input.ticketId, { status: 'in_progress' });
+        }
+        return { messageId };
+      }),
+  }),
+
+  chat: router({
+    // Get chat history
+    getHistory: protectedProcedure
+      .input(z.object({ sessionId: z.string() }))
+      .query(async ({ ctx, input }) => {
+        return db.getChatMessages(ctx.user.id, input.sessionId);
+      }),
+    
+    // Send message and get AI response
+    sendMessage: protectedProcedure
+      .input(z.object({
+        sessionId: z.string(),
+        message: z.string().min(1),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Save user message
+        await db.createChatMessage({
+          userId: ctx.user.id,
+          sessionId: input.sessionId,
+          role: 'user',
+          content: input.message,
+        });
+        
+        // Get AI response using LLM
+        const { invokeLLM } = await import('./_core/llm');
+        const history = await db.getChatMessages(ctx.user.id, input.sessionId);
+        
+        const messages = [
+          {
+            role: 'system' as const,
+            content: `You are PropertyPool's helpful AI support assistant. You help investors with questions about:
+- Property investments and fractional ownership
+- KYC verification process
+- Wallet deposits and withdrawals
+- Marketplace trading
+- Returns and dividends
+- Platform features
+
+Be friendly, professional, and concise. If you cannot help with something, suggest creating a support ticket or contacting human support.
+
+User info: ${ctx.user.name || 'Investor'}`
+          },
+          ...history.slice(-10).map(m => ({
+            role: m.role as 'user' | 'assistant',
+            content: m.content
+          })),
+          { role: 'user' as const, content: input.message }
+        ];
+        
+        try {
+          const response = await invokeLLM({ messages });
+          const rawContent = response.choices[0]?.message?.content;
+          const aiMessage = typeof rawContent === 'string' ? rawContent : "I apologize, I'm having trouble responding right now. Please try again or create a support ticket.";
+          
+          // Save AI response
+          await db.createChatMessage({
+            userId: ctx.user.id,
+            sessionId: input.sessionId,
+            role: 'assistant',
+            content: aiMessage,
+          });
+          
+          return { response: aiMessage };
+        } catch (error) {
+          const fallbackMessage = "I apologize, I'm having trouble connecting right now. Please try again in a moment or create a support ticket for assistance.";
+          await db.createChatMessage({
+            userId: ctx.user.id,
+            sessionId: input.sessionId,
+            role: 'assistant',
+            content: fallbackMessage,
+          });
+          return { response: fallbackMessage };
+        }
+      }),
+  }),
+
+  // Admin support management
+  adminSupport: router({
+    // Get all tickets
+    getAllTickets: adminProcedure
+      .input(z.object({
+        status: z.enum(['open', 'in_progress', 'waiting', 'resolved', 'closed']).optional(),
+      }).optional())
+      .query(async ({ input }) => {
+        const tickets = await db.getSupportTickets();
+        if (input?.status) {
+          return tickets.filter(t => t.status === input.status);
+        }
+        return tickets;
+      }),
+    
+    // Get ticket stats
+    getStats: adminProcedure
+      .query(async () => {
+        return db.getTicketStats();
+      }),
+    
+    // Update ticket status
+    updateTicketStatus: adminProcedure
+      .input(z.object({
+        ticketId: z.number(),
+        status: z.enum(['open', 'in_progress', 'waiting', 'resolved', 'closed']),
+      }))
+      .mutation(async ({ input }) => {
+        const updateData: any = { status: input.status };
+        if (input.status === 'resolved' || input.status === 'closed') {
+          updateData.resolvedAt = new Date();
+        }
+        await db.updateSupportTicket(input.ticketId, updateData);
+        return { success: true };
+      }),
+    
+    // Assign ticket to admin
+    assignTicket: adminProcedure
+      .input(z.object({
+        ticketId: z.number(),
+        assignedTo: z.number(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.updateSupportTicket(input.ticketId, { 
+          assignedTo: input.assignedTo,
+          status: 'in_progress' 
+        });
+        return { success: true };
+      }),
+    
+    // Reply to ticket
+    replyToTicket: adminProcedure
+      .input(z.object({
+        ticketId: z.number(),
+        message: z.string().min(1),
+        isInternal: z.boolean().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        await db.createTicketMessage({
+          ticketId: input.ticketId,
+          senderId: ctx.user.id,
+          senderType: 'admin',
+          message: input.message,
+          isInternal: input.isInternal || false,
+        });
+        // Update ticket to waiting for user response
+        if (!input.isInternal) {
+          await db.updateSupportTicket(input.ticketId, { status: 'waiting' });
+        }
+        return { success: true };
+      }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

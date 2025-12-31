@@ -6,7 +6,7 @@ import {
   propertyDocuments, dueDiligenceChecklist, spvs, tenants,
   maintenanceRequests, rentalPayments, airbnbBookings,
   propertyVotes, voteResponses, educationalContent, salesMaterials,
-  dividends, auditLogs
+  dividends, auditLogs, supportTickets, ticketMessages, chatMessages
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -532,5 +532,88 @@ export async function getDashboardStats() {
     totalUsers: userCount?.count || 0,
     totalInvested: investmentSum?.total || "0",
     totalTrades: tradeCount?.count || 0,
+  };
+}
+
+
+// ==================== SUPPORT TICKETS ====================
+export async function createSupportTicket(data: typeof supportTickets.$inferInsert) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.insert(supportTickets).values(data);
+  return result[0].insertId;
+}
+
+export async function getSupportTickets(userId?: number) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  if (userId) {
+    return db.select().from(supportTickets)
+      .where(eq(supportTickets.userId, userId))
+      .orderBy(desc(supportTickets.createdAt));
+  }
+  return db.select().from(supportTickets).orderBy(desc(supportTickets.createdAt));
+}
+
+export async function getSupportTicketById(ticketId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const [ticket] = await db.select().from(supportTickets).where(eq(supportTickets.id, ticketId));
+  return ticket || null;
+}
+
+export async function updateSupportTicket(ticketId: number, data: Partial<typeof supportTickets.$inferInsert>) {
+  const db = await getDb();
+  if (!db) return false;
+  await db.update(supportTickets).set(data).where(eq(supportTickets.id, ticketId));
+  return true;
+}
+
+export async function getTicketMessages(ticketId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(ticketMessages)
+    .where(eq(ticketMessages.ticketId, ticketId))
+    .orderBy(asc(ticketMessages.createdAt));
+}
+
+export async function createTicketMessage(data: typeof ticketMessages.$inferInsert) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.insert(ticketMessages).values(data);
+  return result[0].insertId;
+}
+
+// ==================== CHAT MESSAGES ====================
+export async function getChatMessages(userId: number, sessionId: string) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(chatMessages)
+    .where(and(eq(chatMessages.userId, userId), eq(chatMessages.sessionId, sessionId)))
+    .orderBy(asc(chatMessages.createdAt));
+}
+
+export async function createChatMessage(data: typeof chatMessages.$inferInsert) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.insert(chatMessages).values(data);
+  return result[0].insertId;
+}
+
+export async function getTicketStats() {
+  const db = await getDb();
+  if (!db) return { open: 0, inProgress: 0, resolved: 0, total: 0 };
+  
+  const [openCount] = await db.select({ count: sql<number>`count(*)` }).from(supportTickets).where(eq(supportTickets.status, "open"));
+  const [inProgressCount] = await db.select({ count: sql<number>`count(*)` }).from(supportTickets).where(eq(supportTickets.status, "in_progress"));
+  const [resolvedCount] = await db.select({ count: sql<number>`count(*)` }).from(supportTickets).where(eq(supportTickets.status, "resolved"));
+  const [totalCount] = await db.select({ count: sql<number>`count(*)` }).from(supportTickets);
+  
+  return {
+    open: openCount?.count || 0,
+    inProgress: inProgressCount?.count || 0,
+    resolved: resolvedCount?.count || 0,
+    total: totalCount?.count || 0,
   };
 }

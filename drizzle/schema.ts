@@ -337,7 +337,41 @@ export const auditLogs = mysqlTable("audit_logs", {
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-// ==================== TYPE EXPORTS ====================
+// ==================== SUPPORT & CHAT ====================
+export const supportTickets = mysqlTable("support_tickets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  subject: varchar("subject", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  category: mysqlEnum("category", ["general", "investment", "technical", "kyc", "payment", "other"]).default("general").notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"]).default("medium").notNull(),
+  status: mysqlEnum("status", ["open", "in_progress", "waiting", "resolved", "closed"]).default("open").notNull(),
+  assignedTo: int("assignedTo"),
+  resolvedAt: timestamp("resolvedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const ticketMessages = mysqlTable("ticket_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  ticketId: int("ticketId").notNull(),
+  senderId: int("senderId").notNull(),
+  senderType: mysqlEnum("senderType", ["user", "admin", "system"]).default("user").notNull(),
+  message: text("message").notNull(),
+  isInternal: boolean("isInternal").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const chatMessages = mysqlTable("chat_messages", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  sessionId: varchar("sessionId", { length: 64 }).notNull(),
+  role: mysqlEnum("role", ["user", "assistant", "system"]).notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+// ==================== TYPE EXPORTS ==
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Property = typeof properties.$inferSelect;
@@ -346,3 +380,6 @@ export type Investment = typeof investments.$inferSelect;
 export type Transaction = typeof transactions.$inferSelect;
 export type MarketOrder = typeof marketOrders.$inferSelect;
 export type Trade = typeof trades.$inferSelect;
+export type SupportTicket = typeof supportTickets.$inferSelect;
+export type TicketMessage = typeof ticketMessages.$inferSelect;
+export type ChatMessage = typeof chatMessages.$inferSelect;

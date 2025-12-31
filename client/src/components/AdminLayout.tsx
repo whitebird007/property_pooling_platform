@@ -23,7 +23,8 @@ import {
   User,
   Landmark,
   AlertCircle,
-  FolderOpen
+  FolderOpen,
+  MessageSquare
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -87,6 +88,7 @@ export default function AdminLayout({ children, title, description, actions }: A
     { icon: FileText, label: "Reports", href: "/admin/reports" },
     { icon: Briefcase, label: "Sales Training", href: "/admin/sales-training" },
     { icon: FolderOpen, label: "Documents", href: "/admin/documents" },
+    { icon: MessageSquare, label: "Support Tickets", href: "/admin/tickets" },
     { icon: Settings, label: "Settings", href: "/admin/settings" },
   ];
 

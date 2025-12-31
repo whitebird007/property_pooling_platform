@@ -55,6 +55,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import PropertyManagement from "./pages/admin/PropertyManagement";
 import SalesTraining from "./pages/admin/SalesTraining";
 import AdminDocuments from "./pages/admin/AdminDocuments";
+import AdminTickets from "./pages/admin/AdminTickets";
 
 function Router() {
   return (
@@ -108,6 +109,7 @@ function Router() {
       <Route path="/admin/property-management/:id" component={PropertyManagement} />
       <Route path="/admin/sales-training" component={SalesTraining} />
       <Route path="/admin/documents" component={AdminDocuments} />
+      <Route path="/admin/tickets" component={AdminTickets} />
       
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
