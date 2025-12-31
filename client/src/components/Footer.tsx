@@ -80,15 +80,13 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {/* Brand Column */}
           <div className="col-span-2">
-            <Link href="/">
-              <a className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-white" />
-                </div>
-                <span className="text-2xl font-bold">
-                  Property<span className="text-purple-400">Pool</span>
-                </span>
-              </a>
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold">
+                Property<span className="text-purple-400">Pool</span>
+              </span>
             </Link>
             <p className="text-gray-400 mb-6 text-sm leading-relaxed">
               {language === "ur" 
@@ -122,10 +120,8 @@ export default function Footer() {
             <ul className="space-y-3">
               {footerLinks.properties.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.href}>
-                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
-                      {link.label}
-                    </a>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -140,10 +136,8 @@ export default function Footer() {
             <ul className="space-y-3">
               {footerLinks.resources.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.href}>
-                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
-                      {link.label}
-                    </a>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -158,10 +152,8 @@ export default function Footer() {
             <ul className="space-y-3">
               {footerLinks.company.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.href}>
-                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
-                      {link.label}
-                    </a>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
+                    {link.label}
                   </Link>
                 </li>
               ))}
@@ -176,10 +168,8 @@ export default function Footer() {
             <ul className="space-y-3">
               {footerLinks.legal.map((link, index) => (
                 <li key={index}>
-                  <Link href={link.href}>
-                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
-                      {link.label}
-                    </a>
+                  <Link href={link.href} className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
+                    {link.label}
                   </Link>
                 </li>
               ))}
