@@ -389,3 +389,41 @@
 
 ## Admin Documents Page Fix (User Report)
 - [x] Fix broken /admin/documents page (Select.Item empty value error)
+
+
+## JWT Authentication Migration (User Request)
+- [ ] Update database schema with password, emailVerified, resetToken fields
+- [ ] Install bcryptjs and jsonwebtoken packages
+- [ ] Create server/_core/auth.ts with password hashing and JWT utilities
+- [ ] Add register, login, logout, forgotPassword, resetPassword procedures
+- [ ] Create Login page component
+- [ ] Create Register page component
+- [ ] Update context.ts for JWT verification
+- [ ] Add routes to App.tsx
+- [ ] Test authentication flow
+
+## JWT Authentication Migration (User Request) - COMPLETED
+- [x] Update database schema with password, emailVerified, resetToken fields
+- [x] Install bcryptjs and jsonwebtoken packages
+- [x] Create server/_core/auth.ts with password hashing and JWT utilities
+- [x] Create server/_core/jwtSdk.ts for JWT-based authentication
+- [x] Create server/authRouter.ts with register, login, logout, forgotPassword, resetPassword procedures
+- [x] Update server/routers.ts to integrate authRouter
+- [x] Update server/_core/context.ts for JWT verification
+- [x] Create updated Login page component with JWT auth
+- [x] Create updated SignUp page component with JWT auth
+- [x] Update shared/const.ts to use auth_token cookie name
+- [x] Update client/src/const.ts to remove Manus OAuth references
+- [x] Create comprehensive auth tests (21 tests covering all JWT functionality)
+- [x] All tests passing (32 total tests)
+- [x] Create REPLIT_DEPLOYMENT_GUIDE.md with step-by-step instructions
+- [x] Test authentication flow locally
+
+## Replit Deployment Preparation
+- [x] Create .replit configuration file template
+- [x] Document PlanetScale MySQL setup
+- [x] Document environment variable configuration
+- [x] Document database initialization steps
+- [x] Create troubleshooting guide
+- [x] Document production security best practices
+- [x] Document monitoring and logging setup

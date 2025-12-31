@@ -28,11 +28,15 @@ export function registerOAuthRoutes(app: Express) {
         return;
       }
 
+      // Email is required for new schema - generate placeholder if not provided
+      const email = userInfo.email || `${userInfo.openId}@oauth.placeholder`;
+      const loginMethod = (userInfo.loginMethod ?? userInfo.platform ?? "email") as "email" | "google" | "microsoft" | "apple";
+      
       await db.upsertUser({
         openId: userInfo.openId,
         name: userInfo.name || null,
-        email: userInfo.email ?? null,
-        loginMethod: userInfo.loginMethod ?? userInfo.platform ?? null,
+        email,
+        loginMethod,
         lastSignedIn: new Date(),
       });
 

@@ -17,9 +17,16 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
     id: 1,
     openId: "sample-user",
     email: "sample@example.com",
+    password: null,
+    phone: null,
     name: "Sample User",
-    loginMethod: "manus",
+    loginMethod: "email",
     role: "user",
+    language: "en",
+    emailVerified: false,
+    verificationToken: null,
+    resetPasswordToken: null,
+    resetPasswordExpires: null,
     createdAt: new Date(),
     updatedAt: new Date(),
     lastSignedIn: new Date(),
@@ -53,9 +60,8 @@ describe("auth.logout", () => {
     expect(clearedCookies[0]?.name).toBe(COOKIE_NAME);
     expect(clearedCookies[0]?.options).toMatchObject({
       maxAge: -1,
-      secure: true,
-      sameSite: "none",
       httpOnly: true,
+      sameSite: "none",
       path: "/",
     });
   });

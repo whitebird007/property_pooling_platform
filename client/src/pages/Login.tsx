@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,29 +13,53 @@ import {
   EyeOff,
   Shield,
   TrendingUp,
-  Globe,
   Wallet,
   PieChart,
-  CheckCircle
+  CheckCircle,
+  AlertCircle,
+  Loader2
 } from "lucide-react";
-import { getLoginUrl } from "@/const";
+import { trpc } from "@/lib/trpc";
 
 export default function Login() {
+  const [, setLocation] = useLocation();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     rememberMe: false
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Redirect to OAuth login
-    window.location.href = getLoginUrl();
-  };
+  const loginMutation = trpc.auth.login.useMutation();
 
-  const handleOAuthLogin = () => {
-    window.location.href = getLoginUrl();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      if (!formData.email || !formData.password) {
+        setError("Please enter both email and password");
+        setIsLoading(false);
+        return;
+      }
+
+      const result = await loginMutation.mutateAsync({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (result.success) {
+        // Redirect to dashboard
+        setLocation("/dashboard");
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Login failed. Please try again.";
+      setError(message);
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -61,23 +85,13 @@ export default function Login() {
             <p className="text-gray-600">Sign in to access your investment portfolio</p>
           </div>
 
-          {/* OAuth Button */}
-          <Button 
-            onClick={handleOAuthLogin}
-            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-6 text-lg rounded-xl shadow-lg shadow-purple-500/25"
-          >
-            <Globe className="mr-2 w-5 h-5" />
-            Continue with Manus Account
-          </Button>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+          {/* Error Message */}
+          {error && (
+            <div className="p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-red-700">{error}</p>
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-gray-50 text-gray-500">Or sign in with email</span>
-            </div>
-          </div>
+          )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -92,7 +106,8 @@ export default function Login() {
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="pl-12 py-6 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 rounded-xl"
+                  disabled={isLoading}
+                  className="pl-12 py-6 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 rounded-xl disabled:bg-gray-100"
                 />
               </div>
             </div>
@@ -113,12 +128,14 @@ export default function Login() {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="pl-12 pr-12 py-6 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 rounded-xl"
+                  disabled={isLoading}
+                  className="pl-12 pr-12 py-6 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 rounded-xl disabled:bg-gray-100"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  disabled={isLoading}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 disabled:opacity-50"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -131,6 +148,7 @@ export default function Login() {
                 id="remember" 
                 checked={formData.rememberMe}
                 onCheckedChange={(checked) => setFormData({ ...formData, rememberMe: checked as boolean })}
+                disabled={isLoading}
                 className="border-gray-300 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
               />
               <Label htmlFor="remember" className="text-sm text-gray-600">
@@ -141,10 +159,20 @@ export default function Login() {
             {/* Submit Button */}
             <Button 
               type="submit"
-              className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-6 text-lg rounded-xl"
+              disabled={isLoading}
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-6 text-lg rounded-xl disabled:bg-gray-600"
             >
-              Sign In
-              <ArrowRight className="ml-2 w-5 h-5" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 w-5 h-5 animate-spin" />
+                  Signing In...
+                </>
+              ) : (
+                <>
+                  Sign In
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </>
+              )}
             </Button>
           </form>
 

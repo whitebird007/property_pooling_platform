@@ -3,13 +3,18 @@ import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean,
 // ==================== USER & AUTH ====================
 export const users = mysqlTable("users", {
   id: int("id").autoincrement().primaryKey(),
-  openId: varchar("openId", { length: 64 }).notNull().unique(),
+  openId: varchar("openId", { length: 64 }).unique(), // Made optional for local auth
   name: text("name"),
-  email: varchar("email", { length: 320 }),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  password: varchar("password", { length: 255 }), // NEW: Hashed password for local auth
   phone: varchar("phone", { length: 20 }),
-  loginMethod: varchar("loginMethod", { length: 64 }),
+  loginMethod: mysqlEnum("loginMethod", ["email", "google", "microsoft", "apple"]).default("email").notNull(),
   role: mysqlEnum("role", ["user", "admin", "sales"]).default("user").notNull(),
   language: mysqlEnum("language", ["en", "ur"]).default("en").notNull(),
+  emailVerified: boolean("emailVerified").default(false), // NEW: Email verification status
+  verificationToken: varchar("verificationToken", { length: 255 }), // NEW: Email verification token
+  resetPasswordToken: varchar("resetPasswordToken", { length: 255 }), // NEW: Password reset token
+  resetPasswordExpires: timestamp("resetPasswordExpires"), // NEW: Password reset expiry
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
