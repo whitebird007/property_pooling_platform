@@ -131,42 +131,86 @@ export default function Home() {
                 </div>
               </div>
               
-              {/* Stats Grid */}
-              <div className="grid grid-cols-2 gap-5">
+              {/* Stats Grid - Enhanced 3D Glassmorphism Cards */}
+              <div className="grid grid-cols-2 gap-6">
                 {/* Card 1 - Total Property Value */}
-                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
-                    <Building2 className="w-7 h-7 text-white" />
+                <div className="group relative overflow-hidden rounded-[28px] p-8 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-1"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.18)'
+                  }}
+                >
+                  {/* Glass reflection effect */}
+                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-[28px]" />
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-purple-500 to-purple-700 flex items-center justify-center mb-5 shadow-xl shadow-purple-500/40 transform group-hover:scale-110 transition-transform duration-300">
+                      <Building2 className="w-8 h-8 text-white drop-shadow-lg" />
+                    </div>
+                    <div className="text-4xl font-bold text-white mb-2 drop-shadow-lg">PKR 500M+</div>
+                    <div className="text-base text-white/70 font-medium">Total Property Value</div>
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1">PKR 500M+</div>
-                  <div className="text-sm text-white/60">Total Property Value</div>
                 </div>
                 
                 {/* Card 2 - Active Investors */}
-                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
-                    <Users className="w-7 h-7 text-white" />
+                <div className="group relative overflow-hidden rounded-[28px] p-8 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-1"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.18)'
+                  }}
+                >
+                  {/* Glass reflection effect */}
+                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-[28px]" />
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 via-cyan-500 to-blue-600 flex items-center justify-center mb-5 shadow-xl shadow-blue-500/40 transform group-hover:scale-110 transition-transform duration-300">
+                      <Users className="w-8 h-8 text-white drop-shadow-lg" />
+                    </div>
+                    <div className="text-4xl font-bold text-white mb-2 drop-shadow-lg">2,500+</div>
+                    <div className="text-base text-white/70 font-medium">Active Investors</div>
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1">2,500+</div>
-                  <div className="text-sm text-white/60">Active Investors</div>
                 </div>
                 
                 {/* Card 3 - Annual Returns */}
-                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center mb-4 shadow-lg shadow-green-500/30">
-                    <TrendingUp className="w-7 h-7 text-white" />
+                <div className="group relative overflow-hidden rounded-[28px] p-8 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-1"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.18)'
+                  }}
+                >
+                  {/* Glass reflection effect */}
+                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-[28px]" />
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 flex items-center justify-center mb-5 shadow-xl shadow-green-500/40 transform group-hover:scale-110 transition-transform duration-300">
+                      <TrendingUp className="w-8 h-8 text-white drop-shadow-lg" />
+                    </div>
+                    <div className="text-4xl font-bold text-white mb-2 drop-shadow-lg">8-12%</div>
+                    <div className="text-base text-white/70 font-medium">Annual Returns</div>
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1">8-12%</div>
-                  <div className="text-sm text-white/60">Annual Returns</div>
                 </div>
                 
                 {/* Card 4 - Properties Listed */}
-                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-orange-500/30">
-                    <MapPin className="w-7 h-7 text-white" />
+                <div className="group relative overflow-hidden rounded-[28px] p-8 transition-all duration-500 hover:scale-[1.03] hover:-translate-y-1"
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.2), inset 0 -1px 0 rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.18)'
+                  }}
+                >
+                  {/* Glass reflection effect */}
+                  <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent rounded-t-[28px]" />
+                  <div className="relative z-10">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 via-amber-500 to-orange-600 flex items-center justify-center mb-5 shadow-xl shadow-orange-500/40 transform group-hover:scale-110 transition-transform duration-300">
+                      <MapPin className="w-8 h-8 text-white drop-shadow-lg" />
+                    </div>
+                    <div className="text-4xl font-bold text-white mb-2 drop-shadow-lg">15+</div>
+                    <div className="text-base text-white/70 font-medium">Properties Listed</div>
                   </div>
-                  <div className="text-3xl font-bold text-white mb-1">15+</div>
-                  <div className="text-sm text-white/60">Properties Listed</div>
                 </div>
               </div>
               
