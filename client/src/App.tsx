@@ -37,6 +37,9 @@ import Wallet from "./pages/Wallet";
 import Invest from "./pages/Invest";
 import Transactions from "./pages/Transactions";
 import Documents from "./pages/Documents";
+import Reports from "./pages/Reports";
+import Support from "./pages/Support";
+import Settings from "./pages/Settings";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -51,6 +54,7 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminSettings from "./pages/admin/AdminSettings";
 import PropertyManagement from "./pages/admin/PropertyManagement";
 import SalesTraining from "./pages/admin/SalesTraining";
+import AdminDocuments from "./pages/admin/AdminDocuments";
 
 function Router() {
   return (
@@ -86,6 +90,9 @@ function Router() {
       <Route path="/invest/:id" component={Invest} />
       <Route path="/transactions" component={Transactions} />
       <Route path="/documents" component={Documents} />
+      <Route path="/reports" component={Reports} />
+      <Route path="/support" component={Support} />
+      <Route path="/settings" component={Settings} />
       
       {/* Admin Routes */}
       <Route path="/admin" component={AdminDashboard} />
@@ -100,6 +107,7 @@ function Router() {
       <Route path="/admin/settings" component={AdminSettings} />
       <Route path="/admin/property-management/:id" component={PropertyManagement} />
       <Route path="/admin/sales-training" component={SalesTraining} />
+      <Route path="/admin/documents" component={AdminDocuments} />
       
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

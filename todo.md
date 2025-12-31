@@ -364,3 +364,12 @@
 - [x] Admin Reports - Edit button
 - [x] SPV Management - View button
 - [x] SPV Management - Edit button
+
+
+## Missing Client Portal Pages & Admin Document Management (User Report)
+- [x] Create /reports page for client investment reports
+- [x] Create /support page for client support tickets
+- [x] Create /settings page for client account settings
+- [x] Create /admin/documents page for document management
+- [x] Add ability to upload documents for individual clients
+- [x] Register all routes in App.tsx
