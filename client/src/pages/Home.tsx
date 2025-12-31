@@ -1,184 +1,181 @@
-import { useAuth } from "@/_core/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Building2, Users, TrendingUp, MapPin, ArrowRight, Play } from "lucide-react";
-import { getLoginUrl } from "@/const";
-import { trpc } from "@/lib/trpc";
 import { useLocation } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { 
+  ArrowRight, 
+  Play,
+  Building2, 
+  Users, 
+  TrendingUp, 
+  MapPin,
+  Shield,
+  CheckCircle2,
+  Star,
+  Sparkles
+} from "lucide-react";
 
 export default function Home() {
-  const { user, isAuthenticated } = useAuth();
   const [, navigate] = useLocation();
+  const { language } = useLanguage();
   const { data: properties } = trpc.properties.list.useQuery();
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section with Dark Purple Gradient Background */}
-      <section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      <Navbar />
+      
+      {/* Hero Section with Background Image */}
+      <section 
+        className="relative min-h-screen flex items-center overflow-hidden"
         style={{
-          backgroundImage: "url('/hero-bg-dark.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "center bottom",
-          backgroundAttachment: "fixed",
+          backgroundImage: `url('/hero-bg.png')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center bottom',
+          backgroundRepeat: 'no-repeat'
         }}
       >
-        {/* Dark Purple Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0f3d] via-[#2d1b69] to-[#1a0f3d]" />
-
-        {/* Decorative Dot Pattern - Top Left */}
-        <div className="absolute top-20 left-10 opacity-20">
-          <div className="grid grid-cols-4 gap-2">
-            {[...Array(16)].map((_, i) => (
-              <div
-                key={i}
-                className="w-1 h-1 rounded-full bg-purple-400"
-              />
+        {/* Subtle Overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a3e]/40 via-transparent to-transparent" />
+        
+        {/* Decorative Elements */}
+        <div className="absolute top-20 left-10 w-24 h-24 opacity-20">
+          <div className="grid grid-cols-3 gap-2">
+            {[...Array(9)].map((_, i) => (
+              <div key={i} className="w-2 h-2 bg-white rounded-full" />
             ))}
           </div>
         </div>
-
-        {/* Decorative Dot Pattern - Bottom Right */}
-        <div className="absolute bottom-32 right-10 opacity-20">
-          <div className="grid grid-cols-4 gap-2">
-            {[...Array(16)].map((_, i) => (
-              <div
-                key={i}
-                className="w-1 h-1 rounded-full bg-blue-400"
-              />
+        <div className="absolute bottom-40 right-10 w-24 h-24 opacity-20">
+          <div className="grid grid-cols-3 gap-2">
+            {[...Array(9)].map((_, i) => (
+              <div key={i} className="w-2 h-2 bg-white rounded-full" />
             ))}
           </div>
         </div>
-
-        {/* Content Container */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Text Content */}
+        
+        <div className="container relative z-10 pt-24 pb-16">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
             <div className="space-y-8">
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 w-fit">
-                <div className="w-2 h-2 rounded-full bg-purple-400" />
-                <span className="text-sm font-medium text-white">
-                  Pakistan's First Fractional Property Platform
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                <span className="text-sm text-white/90">
+                  {language === "ur" ? "پاکستان کا پہلا فریکشنل پراپرٹی پلیٹ فارم" : "Pakistan's First Fractional Property Platform"}
                 </span>
               </div>
-
+              
               {/* Heading */}
-              <div className="space-y-4">
-                <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight">
-                  Own Property,{" "}
-                  <span className="bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
-                    Together
-                  </span>
+              <div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+                  Own Property,
                 </h1>
-                <p className="text-lg text-gray-300 leading-relaxed max-w-md">
-                  Invest in premium Pakistani real estate starting from just PKR 50,000.
-                  Shariah-compliant, transparent, and professionally managed.
-                </p>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-purple-400 bg-clip-text text-transparent leading-tight">
+                  Together
+                </h1>
               </div>
-
+              
+              {/* Description */}
+              <p className="text-lg text-white/70 max-w-lg leading-relaxed">
+                {language === "ur" 
+                  ? "صرف PKR 50,000 سے پاکستانی رئیل اسٹیٹ میں سرمایہ کاری کریں۔ شریعہ کے مطابق، شفاف، اور پیشہ ورانہ طور پر منظم۔"
+                  : "Invest in premium Pakistani real estate starting from just PKR 50,000. Shariah-compliant, transparent, and professionally managed."}
+              </p>
+              
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button
+              <div className="flex flex-wrap gap-4">
+                <Button 
                   onClick={() => navigate("/properties")}
-                  className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-8 py-6 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transition-all"
+                  className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-xl shadow-lg shadow-purple-500/30 transition-all hover:shadow-purple-500/50"
                 >
-                  Explore Properties <ArrowRight className="ml-2 w-5 h-5" />
+                  {language === "ur" ? "پراپرٹیز دیکھیں" : "Explore Properties"}
+                  <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
-                <Button
-                  onClick={() => navigate("/education")}
+                <Button 
                   variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 px-8 py-6 rounded-lg font-semibold text-lg backdrop-blur-md"
+                  onClick={() => navigate("/education")}
+                  className="bg-white/10 hover:bg-white/20 text-white border-white/30 px-8 py-6 text-lg rounded-xl backdrop-blur-sm"
                 >
-                  <Play className="w-5 h-5 mr-2" /> How It Works
+                  <Play className="w-5 h-5 mr-2" />
+                  {language === "ur" ? "کیسے کام کرتا ہے" : "How It Works"}
                 </Button>
               </div>
-
+              
               {/* Trust Badges */}
               <div className="flex flex-wrap gap-3 pt-4">
-                <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-purple-400 flex items-center justify-center">
-                    <span className="text-xs text-white font-bold">✓</span>
-                  </div>
-                  <span className="text-sm font-medium text-white">SECP Registered</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                  <CheckCircle2 className="w-4 h-4 text-green-400" />
+                  <span className="text-sm text-white/90">SECP Registered</span>
                 </div>
-                <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-green-400 flex items-center justify-center">
-                    <span className="text-xs text-white font-bold">✓</span>
-                  </div>
-                  <span className="text-sm font-medium text-white">Shariah Certified</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                  <CheckCircle2 className="w-4 h-4 text-green-400" />
+                  <span className="text-sm text-white/90">Shariah Certified</span>
                 </div>
-                <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center gap-2">
-                  <div className="w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center">
-                    <span className="text-xs text-white font-bold">✓</span>
-                  </div>
-                  <span className="text-sm font-medium text-white">FBR Compliant</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
+                  <CheckCircle2 className="w-4 h-4 text-amber-400" />
+                  <span className="text-sm text-white/90">FBR Compliant</span>
                 </div>
               </div>
             </div>
-
-            {/* Right Column - 3D Glassmorphism Cards */}
-            <div className="grid grid-cols-2 gap-6">
-              {/* Card 1 - Total Property Value */}
-              <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-blue-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
-                <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all hover:bg-white/15 h-full">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center shadow-lg">
-                      <Building2 className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-white">PKR 500M+</p>
-                      <p className="text-sm text-gray-300 mt-1">Total Property Value</p>
-                    </div>
-                  </div>
+            
+            {/* Right Content - Stats Cards */}
+            <div className="relative">
+              {/* Decorative dots top right */}
+              <div className="absolute -top-8 -right-8 w-20 h-20 opacity-30">
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[...Array(16)].map((_, i) => (
+                    <div key={i} className="w-1.5 h-1.5 bg-white rounded-full" />
+                  ))}
                 </div>
               </div>
-
-              {/* Card 2 - Active Investors */}
-              <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
-                <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all hover:bg-white/15 h-full">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                      <Users className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-white">2,500+</p>
-                      <p className="text-sm text-gray-300 mt-1">Active Investors</p>
-                    </div>
+              
+              {/* Stats Grid */}
+              <div className="grid grid-cols-2 gap-5">
+                {/* Card 1 - Total Property Value */}
+                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg shadow-purple-500/30">
+                    <Building2 className="w-7 h-7 text-white" />
                   </div>
+                  <div className="text-3xl font-bold text-white mb-1">PKR 500M+</div>
+                  <div className="text-sm text-white/60">Total Property Value</div>
+                </div>
+                
+                {/* Card 2 - Active Investors */}
+                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center mb-4 shadow-lg shadow-blue-500/30">
+                    <Users className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">2,500+</div>
+                  <div className="text-sm text-white/60">Active Investors</div>
+                </div>
+                
+                {/* Card 3 - Annual Returns */}
+                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center mb-4 shadow-lg shadow-green-500/30">
+                    <TrendingUp className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">8-12%</div>
+                  <div className="text-sm text-white/60">Annual Returns</div>
+                </div>
+                
+                {/* Card 4 - Properties Listed */}
+                <div className="group relative bg-white/10 backdrop-blur-md rounded-3xl p-6 border border-white/20 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-500/20">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center mb-4 shadow-lg shadow-orange-500/30">
+                    <MapPin className="w-7 h-7 text-white" />
+                  </div>
+                  <div className="text-3xl font-bold text-white mb-1">15+</div>
+                  <div className="text-sm text-white/60">Properties Listed</div>
                 </div>
               </div>
-
-              {/* Card 3 - Annual Returns */}
-              <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
-                <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all hover:bg-white/15 h-full">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                      <TrendingUp className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-white">8-12%</p>
-                      <p className="text-sm text-gray-300 mt-1">Annual Returns</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 4 - Properties Listed */}
-              <div className="group relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all opacity-0 group-hover:opacity-100" />
-                <div className="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 hover:border-white/40 transition-all hover:bg-white/15 h-full">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
-                      <MapPin className="w-8 h-8 text-white" />
-                    </div>
-                    <div>
-                      <p className="text-3xl font-bold text-white">15+</p>
-                      <p className="text-sm text-gray-300 mt-1">Properties Listed</p>
-                    </div>
-                  </div>
+              
+              {/* Decorative dots bottom left */}
+              <div className="absolute -bottom-8 -left-8 w-20 h-20 opacity-30">
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[...Array(16)].map((_, i) => (
+                    <div key={i} className="w-1.5 h-1.5 bg-white rounded-full" />
+                  ))}
                 </div>
               </div>
             </div>
@@ -186,14 +183,67 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Properties Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Featured Properties</h2>
-            <p className="text-lg text-gray-600">
-              Explore our premium property portfolio and start investing today
+      {/* How It Works Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
+              {language === "ur" ? "سادہ عمل" : "Simple Process"}
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              {language === "ur" ? "یہ کیسے کام کرتا ہے" : "How It Works"}
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              {language === "ur" 
+                ? "چار آسان مراحل میں پراپرٹی کے مالک بنیں"
+                : "Become a property owner in four simple steps"}
             </p>
+          </div>
+          
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              { step: "01", title: language === "ur" ? "سائن اپ کریں" : "Sign Up", desc: language === "ur" ? "اپنا اکاؤنٹ بنائیں اور KYC مکمل کریں" : "Create your account and complete KYC verification" },
+              { step: "02", title: language === "ur" ? "پراپرٹی منتخب کریں" : "Choose Property", desc: language === "ur" ? "ہماری تصدیق شدہ پراپرٹیز میں سے انتخاب کریں" : "Browse and select from our verified properties" },
+              { step: "03", title: language === "ur" ? "سرمایہ کاری کریں" : "Invest", desc: language === "ur" ? "PKR 50,000 سے شروع کریں" : "Start investing from as low as PKR 50,000" },
+              { step: "04", title: language === "ur" ? "کمائی کریں" : "Earn Returns", desc: language === "ur" ? "ماہانہ کرایہ اور سرمائے میں اضافہ" : "Receive monthly rental income and capital appreciation" }
+            ].map((item, index) => (
+              <div key={index} className="relative">
+                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-lg transition-shadow h-full">
+                  <div className="text-5xl font-bold text-purple-100 mb-4">{item.step}</div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+                  <p className="text-gray-600">{item.desc}</p>
+                </div>
+                {index < 3 && (
+                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
+                    <ArrowRight className="w-8 h-8 text-purple-300" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Properties Section */}
+      <section className="py-20 bg-white">
+        <div className="container">
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <span className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
+                {language === "ur" ? "نمایاں پراپرٹیز" : "Featured Properties"}
+              </span>
+              <h2 className="text-4xl font-bold text-gray-900">
+                {language === "ur" ? "سرمایہ کاری کے مواقع" : "Investment Opportunities"}
+              </h2>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/properties")}
+              className="hidden md:flex border-purple-200 text-purple-600 hover:bg-purple-50"
+            >
+              {language === "ur" ? "سب دیکھیں" : "View All"}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
           </div>
 
           {properties && properties.length > 0 ? (
@@ -202,68 +252,157 @@ export default function Home() {
                 <div
                   key={property.id}
                   onClick={() => navigate(`/property/${property.id}`)}
-                  className="group cursor-pointer bg-white rounded-xl shadow-md hover:shadow-xl transition-all overflow-hidden border border-gray-200"
+                  className="group cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden border border-gray-100"
                 >
-                  <div className="h-48 bg-gradient-to-br from-purple-200 to-blue-200 flex items-center justify-center">
-                    <Building2 className="w-12 h-12 text-purple-600 opacity-50" />
+                  <div className="h-48 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center relative overflow-hidden">
+                    <Building2 className="w-16 h-16 text-purple-300" />
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white text-xs font-medium rounded-full">
+                      {language === "ur" ? "فعال" : "Active"}
+                    </div>
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{property.title}</h3>
-                    <p className="text-sm text-gray-600 mb-4">{property.address}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-lg font-bold text-purple-600">
-                        PKR {((Number(property.totalValue) || 0) / 100000).toFixed(1)}L+
-                      </span>
-                      <Button
-                        size="sm"
-                        className="bg-purple-600 hover:bg-purple-700 text-white"
-                      >
-                        Invest Now
-                      </Button>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+                      {property.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-4 flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      {property.address}
+                    </p>
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                      <div>
+                        <div className="text-xs text-gray-500">{language === "ur" ? "کل قیمت" : "Total Value"}</div>
+                        <div className="text-lg font-bold text-purple-600">
+                          PKR {((Number(property.totalValue) || 0) / 1000000).toFixed(1)}M
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500">{language === "ur" ? "متوقع منافع" : "Expected Return"}</div>
+                        <div className="text-lg font-bold text-green-600">8-12%</div>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-600 mb-4">No properties listed yet</p>
-              {isAuthenticated && user?.role === "admin" && (
-                <Button
-                  onClick={() => navigate("/admin/properties")}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { title: "DHA Phase 6 Apartment", location: "DHA, Lahore", price: "25M", returns: "10%" },
+                { title: "Bahria Town Commercial", location: "Bahria Town, Islamabad", price: "45M", returns: "12%" },
+                { title: "Clifton Sea View", location: "Clifton, Karachi", price: "35M", returns: "9%" }
+              ].map((property, index) => (
+                <div
+                  key={index}
+                  onClick={() => navigate("/properties")}
+                  className="group cursor-pointer bg-white rounded-2xl shadow-md hover:shadow-xl transition-all overflow-hidden border border-gray-100"
                 >
-                  Add First Property
-                </Button>
-              )}
+                  <div className="h-48 bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center relative overflow-hidden">
+                    <Building2 className="w-16 h-16 text-purple-300" />
+                    <div className="absolute top-4 left-4 px-3 py-1 bg-green-500 text-white text-xs font-medium rounded-full">
+                      Active
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+                      {property.title}
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-4 flex items-center gap-1">
+                      <MapPin className="w-4 h-4" />
+                      {property.location}
+                    </p>
+                    <div className="flex justify-between items-center pt-4 border-t border-gray-100">
+                      <div>
+                        <div className="text-xs text-gray-500">Total Value</div>
+                        <div className="text-lg font-bold text-purple-600">PKR {property.price}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-xs text-gray-500">Expected Return</div>
+                        <div className="text-lg font-bold text-green-600">{property.returns}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
+          
+          <div className="mt-8 text-center md:hidden">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/properties")}
+              className="border-purple-200 text-purple-600 hover:bg-purple-50"
+            >
+              {language === "ur" ? "سب دیکھیں" : "View All Properties"}
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-            <p className="text-lg text-gray-600">
-              Simple steps to start your property investment journey
-            </p>
+      {/* Why Choose Us Section */}
+      <section className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 text-white">
+        <div className="container">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium mb-4">
+              {language === "ur" ? "ہمیں کیوں منتخب کریں" : "Why Choose Us"}
+            </span>
+            <h2 className="text-4xl font-bold mb-4">
+              {language === "ur" ? "PropertyPool کا فائدہ" : "The PropertyPool Advantage"}
+            </h2>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          <div className="grid md:grid-cols-3 gap-8">
             {[
-              { num: "1", title: "Sign Up", desc: "Create your account and complete KYC verification" },
-              { num: "2", title: "Browse", desc: "Explore our curated property portfolio" },
-              { num: "3", title: "Invest", desc: "Purchase fractional shares starting from PKR 50,000" },
-              { num: "4", title: "Earn", desc: "Receive monthly rental income and capital appreciation" },
-            ].map((step, i) => (
-              <div key={i} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-lg mx-auto mb-4">
-                  {step.num}
+              { icon: Shield, title: language === "ur" ? "محفوظ سرمایہ کاری" : "Secure Investment", desc: language === "ur" ? "SECP ریگولیٹڈ اور شریعہ کے مطابق" : "SECP regulated and Shariah-compliant investment structure" },
+              { icon: TrendingUp, title: language === "ur" ? "زیادہ منافع" : "Higher Returns", desc: language === "ur" ? "بینک ڈپازٹ سے 3 گنا زیادہ منافع" : "Earn 3x higher returns compared to traditional bank deposits" },
+              { icon: Users, title: language === "ur" ? "پیشہ ورانہ انتظام" : "Professional Management", desc: language === "ur" ? "ماہر ٹیم کی طرف سے پراپرٹی کا انتظام" : "Properties managed by experienced real estate professionals" }
+            ].map((item, index) => (
+              <div key={index} className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:bg-white/15 transition-all">
+                <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center mb-6">
+                  <item.icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-gray-600">{step.desc}</p>
+                <h3 className="text-xl font-bold mb-3">{item.title}</h3>
+                <p className="text-white/70">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium mb-4">
+              {language === "ur" ? "سرمایہ کاروں کی رائے" : "Investor Testimonials"}
+            </span>
+            <h2 className="text-4xl font-bold text-gray-900">
+              {language === "ur" ? "ہمارے سرمایہ کار کیا کہتے ہیں" : "What Our Investors Say"}
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { name: "Ahmed Khan", role: language === "ur" ? "سرمایہ کار" : "Investor", quote: language === "ur" ? "PropertyPool نے مجھے صرف 1 لاکھ سے پراپرٹی کا مالک بنا دیا۔" : "PropertyPool made me a property owner with just PKR 100,000. The returns have been consistent." },
+              { name: "Sara Malik", role: language === "ur" ? "سرمایہ کار" : "Investor", quote: language === "ur" ? "شریعہ کے مطابق سرمایہ کاری کا بہترین پلیٹ فارم۔" : "The best Shariah-compliant investment platform. Transparent and professional." },
+              { name: "Usman Ali", role: language === "ur" ? "سرمایہ کار" : "Investor", quote: language === "ur" ? "ہر ماہ باقاعدہ کرایہ ملتا ہے۔ بہت مطمئن ہوں۔" : "I receive regular monthly rental income. Very satisfied with the platform." }
+            ].map((testimonial, index) => (
+              <div key={index} className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+                <p className="text-gray-600 mb-6 italic">"{testimonial.quote}"</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-gray-900">{testimonial.name}</div>
+                    <div className="text-sm text-gray-500">{testimonial.role}</div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -271,22 +410,44 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-600 to-purple-800">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-4">Ready to Start Investing?</h2>
-          <p className="text-xl text-purple-100 mb-8">
-            Join thousands of Pakistani investors building wealth through fractional property ownership
-          </p>
-          <Button
-            onClick={() =>
-              isAuthenticated ? navigate("/properties") : window.location.href = getLoginUrl()
-            }
-            className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-6 rounded-lg font-semibold text-lg"
-          >
-            Get Started Today
-          </Button>
+      <section className="py-20 bg-white">
+        <div className="container">
+          <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-3xl p-12 text-center text-white relative overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 rounded-full translate-x-1/3 translate-y-1/3" />
+            
+            <div className="relative z-10">
+              <h2 className="text-4xl font-bold mb-4">
+                {language === "ur" ? "آج ہی سرمایہ کاری شروع کریں" : "Start Investing Today"}
+              </h2>
+              <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+                {language === "ur" 
+                  ? "صرف PKR 50,000 سے پراپرٹی کے مالک بنیں اور ماہانہ کرایہ کمائیں"
+                  : "Become a property owner with just PKR 50,000 and start earning monthly rental income"}
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Button 
+                  onClick={() => navigate("/properties")}
+                  className="bg-white text-purple-700 hover:bg-gray-100 px-8 py-6 text-lg rounded-xl"
+                >
+                  {language === "ur" ? "پراپرٹیز دیکھیں" : "Explore Properties"}
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate("/calculator")}
+                  className="bg-transparent border-white text-white hover:bg-white/10 px-8 py-6 text-lg rounded-xl"
+                >
+                  {language === "ur" ? "منافع کیلکولیٹر" : "Calculate Returns"}
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

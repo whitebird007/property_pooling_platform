@@ -49,23 +49,30 @@ export default function Navbar() {
   ];
 
   const isActive = (href: string) => location === href;
+  const isHomePage = location === "/";
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
         ? "bg-white/98 backdrop-blur-md shadow-sm border-b border-gray-100" 
-        : "bg-white/95 backdrop-blur-sm"
+        : isHomePage 
+          ? "bg-transparent" 
+          : "bg-white/95 backdrop-blur-sm"
     }`}>
       <div className="container">
         <div className="flex items-center justify-between h-16 lg:h-18">
           {/* Logo */}
           <Link href="/">
             <a className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-md">
+              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shadow-md ${
+                isScrolled || !isHomePage 
+                  ? "bg-gradient-to-br from-purple-500 to-purple-600" 
+                  : "bg-white/20 backdrop-blur-sm border border-white/30"
+              }`}>
                 <Building2 className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900">
-                Property<span className="text-purple-600">Pool</span>
+              <span className={`text-xl font-bold ${isScrolled || !isHomePage ? "text-gray-900" : "text-white"}`}>
+                Property<span className="text-purple-400">Pool</span>
               </span>
             </a>
           </Link>
@@ -74,7 +81,15 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
-                <a className={`nav-link ${isActive(link.href) ? 'active' : ''}`}>
+                <a className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                  isActive(link.href) 
+                    ? isScrolled || !isHomePage 
+                      ? "bg-purple-50 text-purple-700" 
+                      : "bg-white/20 text-white"
+                    : isScrolled || !isHomePage 
+                      ? "text-gray-600 hover:text-purple-600 hover:bg-purple-50" 
+                      : "text-white/80 hover:text-white hover:bg-white/10"
+                }`}>
                   <link.icon className="w-4 h-4" />
                   {link.label}
                 </a>
@@ -84,7 +99,11 @@ export default function Navbar() {
             {/* More Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="nav-link">
+                <button className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                  isScrolled || !isHomePage 
+                    ? "text-gray-600 hover:text-purple-600 hover:bg-purple-50" 
+                    : "text-white/80 hover:text-white hover:bg-white/10"
+                }`}>
                   <BookOpen className="w-4 h-4" />
                   {language === "ur" ? "مزید" : "More"}
                   <ChevronDown className="w-4 h-4" />
@@ -124,7 +143,11 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === "en" ? "ur" : "en")}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
+                isScrolled || !isHomePage 
+                  ? "text-gray-600 hover:text-purple-600 hover:bg-purple-50" 
+                  : "text-white/80 hover:text-white hover:bg-white/10"
+              }`}
             >
               <Globe className="w-4 h-4" />
               {language === "ur" ? "EN" : "اردو"}
@@ -134,14 +157,20 @@ export default function Navbar() {
             {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-2 px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors">
+                  <button className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-colors ${
+                    isScrolled || !isHomePage 
+                      ? "bg-purple-50 hover:bg-purple-100" 
+                      : "bg-white/20 hover:bg-white/30 backdrop-blur-sm"
+                  }`}>
                     <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
                       <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="hidden md:block text-sm font-medium text-gray-700 max-w-[120px] truncate">
+                    <span className={`hidden md:block text-sm font-medium max-w-[120px] truncate ${
+                      isScrolled || !isHomePage ? "text-gray-700" : "text-white"
+                    }`}>
                       {user.name || "Investor"}
                     </span>
-                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                    <ChevronDown className={`w-4 h-4 ${isScrolled || !isHomePage ? "text-gray-500" : "text-white/70"}`} />
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg rounded-xl p-1">
@@ -186,13 +215,21 @@ export default function Navbar() {
             ) : (
               <div className="flex items-center gap-2">
                 <Link href="/login">
-                  <a className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
+                  <a className={`hidden sm:block px-4 py-2 text-sm font-medium transition-colors ${
+                    isScrolled || !isHomePage 
+                      ? "text-gray-700 hover:text-purple-600" 
+                      : "text-white/80 hover:text-white"
+                  }`}>
                     {language === "ur" ? "لاگ ان" : "Login"}
                   </a>
                 </Link>
                 <a 
                   href={getLoginUrl()}
-                  className="btn-primary text-sm px-4 py-2"
+                  className={`text-sm px-4 py-2 rounded-lg font-medium transition-all ${
+                    isScrolled || !isHomePage 
+                      ? "bg-purple-600 hover:bg-purple-700 text-white" 
+                      : "bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm border border-white/30"
+                  }`}
                 >
                   {language === "ur" ? "شروع کریں" : "Get Started"}
                 </a>
@@ -202,7 +239,11 @@ export default function Navbar() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+              className={`lg:hidden p-2 rounded-lg transition-colors ${
+                isScrolled || !isHomePage 
+                  ? "text-gray-600 hover:text-purple-600 hover:bg-purple-50" 
+                  : "text-white hover:bg-white/10"
+              }`}
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -211,7 +252,7 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-gray-100 bg-white">
+          <div className="lg:hidden py-4 border-t border-gray-100 bg-white rounded-b-xl shadow-lg">
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
