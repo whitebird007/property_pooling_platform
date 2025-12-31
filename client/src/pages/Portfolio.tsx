@@ -2,35 +2,26 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ClientLayout from "@/components/ClientLayout";
 import { trpc } from "@/lib/trpc";
 import { 
   Building2, 
   TrendingUp, 
-  Wallet,
   ArrowUpRight,
   Download,
   Eye,
   BarChart3,
-  Sparkles,
-  ChevronRight,
-  CheckCircle,
   DollarSign,
-  Target,
-  Percent,
-  Banknote,
-  Vote,
-  ArrowRight
+  Banknote
 } from "lucide-react";
 
 export default function Portfolio() {
-  const { language, t } = useLanguage();
-  const { user, isAuthenticated, loading } = useAuth();
+  const { language } = useLanguage();
+  const { isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState("holdings");
 
   const { data: investments, isLoading: investmentsLoading } = trpc.investments.myInvestments.useQuery(
@@ -56,342 +47,194 @@ export default function Portfolio() {
   const totalReturn = currentValue - totalInvested + totalDividends;
   const returnPercentage = totalInvested > 0 ? (totalReturn / totalInvested) * 100 : 0;
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600">Loading portfolio...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="container py-24">
-          <div className="max-w-2xl mx-auto text-center space-y-8">
-            <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mx-auto">
-              <Building2 className="w-10 h-10 text-purple-600" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900">Your Investment Portfolio</h1>
-            <p className="text-gray-600 text-lg">
-              Track all your property investments, monitor returns, and manage your fractional ownership shares.
-            </p>
-            <div className="flex justify-center gap-4">
-              <a href={getLoginUrl()}>
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-xl">
-                  Sign In to View Portfolio
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </a>
-            </div>
-          </div>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-
-      {/* Hero Section */}
-      <section className="pt-24 pb-8 bg-gradient-to-b from-purple-50 to-white">
-        <div className="container">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
-            <Link href="/" className="hover:text-purple-600 transition-colors">Home</Link>
-            <ChevronRight className="w-4 h-4" />
-            <Link href="/dashboard" className="hover:text-purple-600 transition-colors">Dashboard</Link>
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900">Portfolio</span>
-          </div>
-
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                {language === "ur" ? "میرا پورٹ فولیو" : "My Portfolio"}
-              </h1>
-              <p className="text-gray-600">
-                {language === "ur" 
-                  ? "اپنی سرمایہ کاری اور منافع کا جائزہ لیں"
-                  : "Track your investments and returns"}
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100 rounded-xl">
-                <Download className="mr-2 w-4 h-4" />
-                Tax Statement
-              </Button>
-              <Link href="/properties">
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl">
-                  <Sparkles className="mr-2 w-4 h-4" />
-                  {language === "ur" ? "مزید سرمایہ کاری" : "Invest More"}
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Portfolio Stats */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
-                  <Wallet className="w-5 h-5 text-purple-600" />
-                </div>
-                <span className="text-gray-600 text-sm">Total Invested</span>
-              </div>
-              <p className="text-2xl font-bold text-gray-900">
-                PKR {totalInvested.toLocaleString()}
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                </div>
-                <span className="text-gray-600 text-sm">Current Value</span>
-              </div>
-              <p className="text-2xl font-bold text-gray-900">
-                PKR {currentValue.toLocaleString()}
-              </p>
-              {currentValue > totalInvested && (
-                <div className="flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="w-4 h-4 text-green-600" />
-                  <span className="text-green-600 text-sm">
-                    +{((currentValue - totalInvested) / totalInvested * 100).toFixed(1)}%
-                  </span>
-                </div>
-              )}
-            </div>
-
-            <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-                  <DollarSign className="w-5 h-5 text-blue-600" />
-                </div>
-                <span className="text-gray-600 text-sm">Total Dividends</span>
-              </div>
-              <p className="text-2xl font-bold text-gray-900">
-                PKR {totalDividends.toLocaleString()}
-              </p>
-            </div>
-
-            <div className="p-6 rounded-2xl bg-green-50 border border-green-200">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-green-200 flex items-center justify-center">
-                  <Target className="w-5 h-5 text-green-700" />
-                </div>
-                <span className="text-gray-600 text-sm">Total Return</span>
-              </div>
-              <p className="text-2xl font-bold text-green-600">
-                PKR {totalReturn.toLocaleString()}
-              </p>
-              <div className="flex items-center gap-1 mt-1">
-                <Percent className="w-4 h-4 text-green-600" />
-                <span className="text-green-600 text-sm">{returnPercentage.toFixed(1)}% ROI</span>
+    <ClientLayout 
+      title={language === "ur" ? "میرا پورٹ فولیو" : "My Portfolio"} 
+      description="View and manage your property investments"
+      actions={
+        <Button variant="outline">
+          <Download className="w-4 h-4 mr-2" />
+          Export Report
+        </Button>
+      }
+    >
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-gray-500">Total Invested</span>
+              <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+                <Banknote className="w-5 h-5 text-purple-600" />
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+            <p className="text-2xl font-bold text-gray-900">PKR {totalInvested.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-gray-500">Current Value</span>
+              <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-blue-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">PKR {currentValue.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-gray-500">Total Returns</span>
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${totalReturn >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
+                <ArrowUpRight className={`w-5 h-5 ${totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+              </div>
+            </div>
+            <p className={`text-2xl font-bold ${totalReturn >= 0 ? "text-green-600" : "text-red-600"}`}>
+              {totalReturn >= 0 ? "+" : ""}PKR {totalReturn.toLocaleString()}
+            </p>
+            <p className={`text-sm ${totalReturn >= 0 ? "text-green-600" : "text-red-600"}`}>
+              {returnPercentage >= 0 ? "+" : ""}{returnPercentage.toFixed(2)}%
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card className="border-0 shadow-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm text-gray-500">Total Shares</span>
+              <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                <BarChart3 className="w-5 h-5 text-amber-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{totalShares.toLocaleString()}</p>
+          </CardContent>
+        </Card>
+      </div>
 
-      {/* Portfolio Content */}
-      <section className="py-12">
-        <div className="container">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="flex w-full max-w-lg h-auto p-1 bg-gray-100 border border-gray-200 rounded-xl gap-1">
-              <TabsTrigger 
-                value="holdings" 
-                className="flex-1 rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
-              >
-                <Building2 className="w-4 h-4 mr-2" />
-                Holdings
-              </TabsTrigger>
-              <TabsTrigger 
-                value="dividends" 
-                className="flex-1 rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
-              >
-                <Banknote className="w-4 h-4 mr-2" />
-                Dividends
-              </TabsTrigger>
-              <TabsTrigger 
-                value="votes" 
-                className="flex-1 rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
-              >
-                <Vote className="w-4 h-4 mr-2" />
-                Voting
-              </TabsTrigger>
-            </TabsList>
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-gray-100 p-1 mb-6">
+          <TabsTrigger value="holdings" className="data-[state=active]:bg-white">
+            <Building2 className="w-4 h-4 mr-2" />
+            Holdings
+          </TabsTrigger>
+          <TabsTrigger value="dividends" className="data-[state=active]:bg-white">
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Dividends
+          </TabsTrigger>
+        </TabsList>
 
-            {/* Holdings Tab */}
-            <TabsContent value="holdings" className="space-y-6">
+        <TabsContent value="holdings">
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">Property Holdings</CardTitle>
+            </CardHeader>
+            <CardContent>
               {investmentsLoading ? (
                 <div className="text-center py-12">
-                  <div className="w-12 h-12 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-gray-600">Loading holdings...</p>
+                  <div className="animate-spin w-8 h-8 border-4 border-purple-600 border-t-transparent rounded-full mx-auto mb-4" />
+                  <p className="text-gray-500">Loading investments...</p>
                 </div>
-              ) : investmentsList.length === 0 ? (
-                <div className="text-center py-16">
-                  <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-6">
-                    <Building2 className="w-10 h-10 text-gray-400" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">No Investments Yet</h3>
-                  <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                    Start building your property portfolio today. Invest in premium properties with as little as PKR 50,000.
-                  </p>
-                  <Link href="/properties">
-                    <Button className="bg-purple-600 hover:bg-purple-700 text-white rounded-xl">
-                      <Sparkles className="mr-2 w-4 h-4" />
-                      Browse Properties
-                    </Button>
-                  </Link>
+              ) : investmentsList.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-gray-100">
+                        <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Property</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Shares</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Invested</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Current Value</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {investmentsList.map((investment) => (
+                        <tr key={investment.id} className="border-b border-gray-50 hover:bg-gray-50">
+                          <td className="py-4 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 rounded-lg bg-purple-100 flex items-center justify-center">
+                                <Building2 className="w-6 h-6 text-purple-600" />
+                              </div>
+                              <span className="font-medium text-gray-900">Property #{investment.propertyId}</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4 text-gray-600">{investment.sharesOwned}</td>
+                          <td className="py-4 px-4 text-gray-900">PKR {Number(investment.totalInvested).toLocaleString()}</td>
+                          <td className="py-4 px-4 font-medium text-gray-900">PKR {Number(investment.currentValue).toLocaleString()}</td>
+                          <td className="py-4 px-4">
+                            <Badge className={investment.status === "active" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"}>
+                              {investment.status}
+                            </Badge>
+                          </td>
+                          <td className="py-4 px-4">
+                            <Button variant="ghost" size="sm" asChild>
+                              <Link href={`/properties/${investment.propertyId}`}>
+                                <Eye className="w-4 h-4 mr-1" />
+                                View
+                              </Link>
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               ) : (
-                <div className="grid gap-6">
-                  {investmentsList.map((investment) => (
-                    <div 
-                      key={investment.id}
-                      className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
-                    >
-                      <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                        {/* Property Image */}
-                        <div className="w-full lg:w-48 h-32 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
-                          <img 
-                            src="/hero-bg.png" 
-                            alt="Property"
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                    <Building2 className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="font-semibold text-gray-900 mb-2">No Investments Yet</h3>
+                  <p className="text-gray-500 mb-4">Start building your property portfolio today</p>
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white" asChild>
+                    <Link href="/properties">Browse Properties</Link>
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
 
-                        {/* Property Info */}
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2 mb-2">
-                            <Badge className="bg-green-100 text-green-700 border-green-200">
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                              {investment.status || 'Active'}
-                            </Badge>
-                            <Badge className="bg-purple-100 text-purple-700 border-purple-200">
-                              {investment.sharesOwned} Shares
-                            </Badge>
-                          </div>
-                          <h3 className="text-xl font-bold text-gray-900 mb-2">
-                            Property #{investment.propertyId}
-                          </h3>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                            <div>
-                              <p className="text-gray-500">Invested</p>
-                              <p className="text-gray-900 font-semibold">PKR {Number(investment.totalInvested || 0).toLocaleString()}</p>
-                            </div>
-                            <div>
-                              <p className="text-gray-500">Avg. Buy Price</p>
-                              <p className="text-gray-900 font-semibold">PKR {Number(investment.averageBuyPrice || 0).toLocaleString()}</p>
-                            </div>
-                            <div>
-                              <p className="text-gray-500">Current Value</p>
-                              <p className="text-green-600 font-semibold">PKR {Number(investment.currentValue || investment.totalInvested || 0).toLocaleString()}</p>
-                            </div>
-                            <div>
-                              <p className="text-gray-500">Date</p>
-                              <p className="text-gray-900 font-semibold">
-                                {new Date(investment.createdAt).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
+        <TabsContent value="dividends">
+          <Card className="border-0 shadow-sm">
+            <CardHeader>
+              <CardTitle className="text-lg">Dividend History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {dividendTransactions.length > 0 ? (
+                <div className="space-y-4">
+                  {dividendTransactions.map((tx) => (
+                    <div key={tx.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                          <TrendingUp className="w-5 h-5 text-green-600" />
                         </div>
-
-                        {/* Actions */}
-                        <div className="flex flex-row lg:flex-col gap-2">
-                          <Link href={`/property/${investment.propertyId}`}>
-                            <Button variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-100 w-full rounded-lg">
-                              <Eye className="w-4 h-4 mr-2" />
-                              View
-                            </Button>
-                          </Link>
-                          <Link href="/marketplace">
-                            <Button size="sm" className="bg-purple-600 hover:bg-purple-700 text-white w-full rounded-lg">
-                              <TrendingUp className="w-4 h-4 mr-2" />
-                              Sell
-                            </Button>
-                          </Link>
+                        <div>
+                          <p className="font-medium text-gray-900">Dividend Payment</p>
+                          <p className="text-sm text-gray-500">{new Date(tx.createdAt).toLocaleDateString()}</p>
                         </div>
                       </div>
+                      <p className="font-bold text-green-600">+PKR {Number(tx.amount).toLocaleString()}</p>
                     </div>
                   ))}
                 </div>
-              )}
-            </TabsContent>
-
-            {/* Dividends Tab */}
-            <TabsContent value="dividends" className="space-y-6">
-              <div className="rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Banknote className="w-5 h-5 text-purple-600" />
-                    Dividend History
-                  </h3>
-                </div>
-                {dividendTransactions.length > 0 ? (
-                  <div className="divide-y divide-gray-100">
-                    {dividendTransactions.map((tx) => (
-                      <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-gray-50">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-                            <DollarSign className="w-5 h-5 text-green-600" />
-                          </div>
-                          <div>
-                            <p className="text-gray-900 font-medium">Dividend Payment</p>
-                            <p className="text-gray-500 text-sm">
-                              {new Date(tx.createdAt).toLocaleDateString()}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-green-600 font-bold">
-                          +PKR {Number(tx.amount).toLocaleString()}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                      <Banknote className="w-8 h-8 text-gray-400" />
-                    </div>
-                    <p className="text-gray-600">No dividend payments yet</p>
-                    <p className="text-gray-500 text-sm mt-1">Dividends are distributed quarterly</p>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-
-            {/* Voting Tab */}
-            <TabsContent value="votes" className="space-y-6">
-              <div className="rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-gray-200">
-                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Vote className="w-5 h-5 text-purple-600" />
-                    Active Proposals
-                  </h3>
-                </div>
+              ) : (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                    <Vote className="w-8 h-8 text-gray-400" />
+                  <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
+                    <TrendingUp className="w-8 h-8 text-gray-400" />
                   </div>
-                  <p className="text-gray-600">No active proposals</p>
-                  <p className="text-gray-500 text-sm mt-1">You'll be notified when there's a vote</p>
+                  <h3 className="font-semibold text-gray-900 mb-2">No Dividends Yet</h3>
+                  <p className="text-gray-500">Dividends will appear here once distributed</p>
                 </div>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </ClientLayout>
   );
 }

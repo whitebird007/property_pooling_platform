@@ -262,3 +262,13 @@
 - [x] Add marketplace monitoring (trades, liquidity)
 - [x] Add user activity tracking and reports
 - [x] Inspired by Zameen.com admin features
+
+
+## Consistent Sidebar Navigation (User Request)
+- [x] Create shared AdminLayout component with sidebar
+- [x] Update /admin/properties to use AdminLayout
+- [x] Update /admin/investors to use AdminLayout
+- [x] Update /admin/kyc to use AdminLayout
+- [x] Update /admin/sales-training to use AdminLayout
+- [x] Create shared ClientLayout component with sidebar
+- [x] Update client portal pages (Dashboard, Portfolio, Wallet, KYC) to use ClientLayout

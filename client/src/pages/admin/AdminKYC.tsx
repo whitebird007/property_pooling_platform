@@ -1,28 +1,25 @@
-import { Link } from "wouter";
-import { useAuth } from "@/_core/hooks/useAuth";
-import { getLoginUrl } from "@/const";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import AdminLayout from "@/components/AdminLayout";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { 
   FileCheck, 
-  AlertCircle,
   CheckCircle,
   X,
   Eye,
-  Clock
+  Clock,
+  Download
 } from "lucide-react";
 
 export default function AdminKYC() {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const [selectedDoc, setSelectedDoc] = useState<any>(null);
   const [rejectionReason, setRejectionReason] = useState("");
 
@@ -42,45 +39,6 @@ export default function AdminKYC() {
     },
   });
 
-  if (!loading && !isAuthenticated) {
-    window.location.href = getLoginUrl();
-    return null;
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
-        </div>
-      </div>
-    );
-  }
-
-  if (user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <Card className="max-w-md">
-            <CardContent className="pt-6 text-center">
-              <AlertCircle className="w-12 h-12 mx-auto text-destructive mb-4" />
-              <h2 className="text-xl font-bold mb-2">Access Denied</h2>
-              <p className="text-muted-foreground mb-4">
-                You don't have permission to access the admin panel.
-              </p>
-              <Button asChild>
-                <Link href="/">Go Home</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
   const handleApprove = (docId: number) => {
     reviewMutation.mutate({
       documentId: docId,
@@ -98,110 +56,103 @@ export default function AdminKYC() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      
-      <main className="flex-1 py-8">
-        <div className="container">
-          {/* Admin Navigation */}
-          <div className="flex flex-wrap gap-2 mb-8 p-4 bg-muted/50 rounded-lg">
-            <Button variant="outline" asChild>
-              <Link href="/admin">Dashboard</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/admin/properties">Properties</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/admin/investors">Investors</Link>
-            </Button>
-            <Button variant="default" asChild>
-              <Link href="/admin/kyc">KYC Approvals</Link>
-            </Button>
-            <Button variant="outline" asChild>
-              <Link href="/admin/sales-training">Sales Training</Link>
-            </Button>
-          </div>
-
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold mb-2">KYC Verification Queue</h1>
-            <p className="text-muted-foreground">
-              Review and approve investor identity documents
-            </p>
-          </div>
-
-          {/* Pending Documents */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Pending Verifications ({pendingDocs?.length || 0})
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {pendingDocs && pendingDocs.length > 0 ? (
-                <div className="space-y-3">
+    <AdminLayout 
+      title="KYC Verification Queue" 
+      description="Review and approve investor identity documents"
+      actions={
+        <Button variant="outline">
+          <Download className="w-4 h-4 mr-2" />
+          Export Report
+        </Button>
+      }
+    >
+      {/* Pending Documents */}
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Clock className="w-5 h-5 text-amber-500" />
+            Pending Verifications ({pendingDocs?.length || 0})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {pendingDocs && pendingDocs.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-gray-100">
+                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">User</th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Document Type</th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
                   {pendingDocs.map((doc: any) => (
-                    <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
-                          <FileCheck className="w-5 h-5 text-amber-600" />
+                    <tr key={doc.id} className="border-b border-gray-50 hover:bg-gray-50">
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                            <FileCheck className="w-5 h-5 text-amber-600" />
+                          </div>
+                          <span className="font-medium text-gray-900">User #{doc.userId}</span>
                         </div>
-                        <div>
-                          <p className="font-medium">User #{doc.userId}</p>
-                          <p className="text-sm text-muted-foreground capitalize">
-                            {doc.documentType.replace("_", " ")}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Submitted {new Date(doc.createdAt).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">
+                      </td>
+                      <td className="py-4 px-4 text-gray-600 capitalize">
+                        {doc.documentType.replace("_", " ")}
+                      </td>
+                      <td className="py-4 px-4 text-gray-500 text-sm">
+                        {new Date(doc.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="py-4 px-4">
+                        <Badge className="bg-amber-100 text-amber-700">
                           <Clock className="w-3 h-3 mr-1" />
                           Pending
                         </Badge>
-                        <Button variant="outline" size="sm" asChild>
-                          <a href={doc.documentUrl} target="_blank" rel="noopener noreferrer">
-                            <Eye className="w-4 h-4 mr-1" />
-                            View
-                          </a>
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          className="bg-green-600 hover:bg-green-700"
-                          onClick={() => handleApprove(doc.id)}
-                          disabled={reviewMutation.isPending}
-                        >
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                          Approve
-                        </Button>
-                        <Button 
-                          variant="destructive" 
-                          size="sm"
-                          onClick={() => setSelectedDoc(doc)}
-                        >
-                          <X className="w-4 h-4 mr-1" />
-                          Reject
-                        </Button>
-                      </div>
-                    </div>
+                      </td>
+                      <td className="py-4 px-4">
+                        <div className="flex items-center gap-2">
+                          <Button variant="outline" size="sm" asChild>
+                            <a href={doc.documentUrl} target="_blank" rel="noopener noreferrer">
+                              <Eye className="w-4 h-4 mr-1" />
+                              View
+                            </a>
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={() => handleApprove(doc.id)}
+                            disabled={reviewMutation.isPending}
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Approve
+                          </Button>
+                          <Button 
+                            variant="destructive" 
+                            size="sm"
+                            onClick={() => setSelectedDoc(doc)}
+                          >
+                            <X className="w-4 h-4 mr-1" />
+                            Reject
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
                   ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-4" />
-                  <h3 className="font-semibold mb-2">All Caught Up!</h3>
-                  <p className="text-muted-foreground">
-                    No pending KYC documents to review
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <CheckCircle className="w-12 h-12 mx-auto text-green-500 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">All Caught Up!</h3>
+              <p className="text-gray-500">
+                No pending KYC documents to review
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Rejection Dialog */}
       <Dialog open={!!selectedDoc} onOpenChange={() => setSelectedDoc(null)}>
@@ -234,8 +185,6 @@ export default function AdminKYC() {
           </div>
         </DialogContent>
       </Dialog>
-
-      <Footer />
-    </div>
+    </AdminLayout>
   );
 }
