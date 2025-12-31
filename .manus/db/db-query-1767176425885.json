@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE properties SET status = 'funding' WHERE status = 'sourcing';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 4NPL8YAmQ49aqo9.f75fb5ccc5d2 --database 3qV7jgPZS2UHUe5KdLaYvF --execute UPDATE properties SET status = 'funding' WHERE status = 'sourcing';",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 121
+}

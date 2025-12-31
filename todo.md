@@ -299,3 +299,7 @@
 - [x] Add Google Maps location search to property creation form
 - [x] Store latitude/longitude coordinates for properties
 - [x] Display property location on Google Maps on property detail page
+
+
+## Properties Page Bug (User Report)
+- [x] Fix /properties page showing "No Properties Found" when properties exist in database (was filtering for 'active' status only, now shows all properties)

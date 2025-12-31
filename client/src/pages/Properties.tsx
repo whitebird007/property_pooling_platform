@@ -39,7 +39,8 @@ export default function Properties() {
   const [showFilters, setShowFilters] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
-  const { data: properties, isLoading } = trpc.properties.list.useQuery({ status: "active" });
+  // Show properties that are in funding or active status (available for investment)
+  const { data: properties, isLoading } = trpc.properties.list.useQuery({});
 
   const filteredProperties = useMemo(() => {
     if (!properties) return [];
