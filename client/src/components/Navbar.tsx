@@ -62,26 +62,26 @@ export default function Navbar() {
       <div className="container">
         <div className="flex items-center justify-between h-16 lg:h-18">
           {/* Logo */}
-          <Link href="/">
-            <a className="flex items-center gap-2">
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shadow-md ${
-                isScrolled || !isHomePage 
-                  ? "bg-gradient-to-br from-purple-500 to-purple-600" 
-                  : "bg-white/20 backdrop-blur-sm border border-white/30"
-              }`}>
-                <Building2 className="w-5 h-5 text-white" />
-              </div>
-              <span className={`text-xl font-bold ${isScrolled || !isHomePage ? "text-gray-900" : "text-white"}`}>
-                Property<span className="text-purple-400">Pool</span>
-              </span>
-            </a>
+          <Link href="/" className="flex items-center gap-2">
+            <div className={`w-9 h-9 rounded-lg flex items-center justify-center shadow-md ${
+              isScrolled || !isHomePage 
+                ? "bg-gradient-to-br from-purple-500 to-purple-600" 
+                : "bg-white/20 backdrop-blur-sm border border-white/30"
+            }`}>
+              <Building2 className="w-5 h-5 text-white" />
+            </div>
+            <span className={`text-xl font-bold ${isScrolled || !isHomePage ? "text-gray-900" : "text-white"}`}>
+              Property<span className="text-purple-400">Pool</span>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
-              <Link key={link.href} href={link.href}>
-                <a className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+              <Link 
+                key={link.href} 
+                href={link.href}
+                className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                   isActive(link.href) 
                     ? isScrolled || !isHomePage 
                       ? "bg-purple-50 text-purple-700" 
@@ -89,10 +89,10 @@ export default function Navbar() {
                     : isScrolled || !isHomePage 
                       ? "text-gray-600 hover:text-purple-600 hover:bg-purple-50" 
                       : "text-white/80 hover:text-white hover:bg-white/10"
-                }`}>
-                  <link.icon className="w-4 h-4" />
-                  {link.label}
-                </a>
+                }`}
+              >
+                <link.icon className="w-4 h-4" />
+                {link.label}
               </Link>
             ))}
             
@@ -111,27 +111,21 @@ export default function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg rounded-xl p-1">
                 <DropdownMenuItem asChild>
-                  <Link href="/education">
-                    <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
-                      <BookOpen className="w-4 h-4" />
-                      {language === "ur" ? "سیکھیں" : "Learn"}
-                    </a>
+                  <Link href="/education" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                    <BookOpen className="w-4 h-4" />
+                    {language === "ur" ? "سیکھیں" : "Learn"}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/price-index">
-                    <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
-                      <Calculator className="w-4 h-4" />
-                      {language === "ur" ? "قیمت انڈیکس" : "Price Index"}
-                    </a>
+                  <Link href="/price-index" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                    <Calculator className="w-4 h-4" />
+                    {language === "ur" ? "قیمت انڈیکس" : "Price Index"}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/about">
-                    <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
-                      <User className="w-4 h-4" />
-                      {language === "ur" ? "ہمارے بارے میں" : "About Us"}
-                    </a>
+                  <Link href="/about" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                    <User className="w-4 h-4" />
+                    {language === "ur" ? "ہمارے بارے میں" : "About Us"}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -179,27 +173,21 @@ export default function Navbar() {
                     <p className="text-xs text-gray-500">{user.email}</p>
                   </div>
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard">
-                      <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
-                        <LayoutDashboard className="w-4 h-4" />
-                        {language === "ur" ? "ڈیش بورڈ" : "Dashboard"}
-                      </a>
+                    <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                      <LayoutDashboard className="w-4 h-4" />
+                      {language === "ur" ? "ڈیش بورڈ" : "Dashboard"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/wallet">
-                      <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
-                        <Wallet className="w-4 h-4" />
-                        {language === "ur" ? "والیٹ" : "Wallet"}
-                      </a>
+                    <Link href="/wallet" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                      <Wallet className="w-4 h-4" />
+                      {language === "ur" ? "والیٹ" : "Wallet"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/kyc">
-                      <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
-                        <FileCheck className="w-4 h-4" />
-                        {language === "ur" ? "KYC تصدیق" : "KYC Verification"}
-                      </a>
+                    <Link href="/kyc" className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                      <FileCheck className="w-4 h-4" />
+                      {language === "ur" ? "KYC تصدیق" : "KYC Verification"}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator className="my-1 bg-gray-100" />
@@ -214,14 +202,15 @@ export default function Navbar() {
               </DropdownMenu>
             ) : (
               <div className="flex items-center gap-2">
-                <Link href="/login">
-                  <a className={`hidden sm:block px-4 py-2 text-sm font-medium transition-colors ${
+                <Link 
+                  href="/login"
+                  className={`hidden sm:block px-4 py-2 text-sm font-medium transition-colors ${
                     isScrolled || !isHomePage 
                       ? "text-gray-700 hover:text-purple-600" 
                       : "text-white/80 hover:text-white"
-                  }`}>
-                    {language === "ur" ? "لاگ ان" : "Login"}
-                  </a>
+                  }`}
+                >
+                  {language === "ur" ? "لاگ ان" : "Login"}
                 </Link>
                 <a 
                   href={getLoginUrl()}
@@ -255,37 +244,35 @@ export default function Navbar() {
           <div className="lg:hidden py-4 border-t border-gray-100 bg-white rounded-b-xl shadow-lg">
             <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  <a 
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                      isActive(link.href) 
-                        ? 'bg-purple-50 text-purple-700' 
-                        : 'text-gray-700 hover:bg-gray-50'
-                    }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <link.icon className="w-5 h-5" />
-                    {link.label}
-                  </a>
+                <Link 
+                  key={link.href} 
+                  href={link.href}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
+                    isActive(link.href) 
+                      ? 'bg-purple-50 text-purple-700' 
+                      : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <link.icon className="w-5 h-5" />
+                  {link.label}
                 </Link>
               ))}
-              <Link href="/education">
-                <a 
-                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <BookOpen className="w-5 h-5" />
-                  {language === "ur" ? "سیکھیں" : "Learn"}
-                </a>
+              <Link 
+                href="/education"
+                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <BookOpen className="w-5 h-5" />
+                {language === "ur" ? "سیکھیں" : "Learn"}
               </Link>
-              <Link href="/about">
-                <a 
-                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <User className="w-5 h-5" />
-                  {language === "ur" ? "ہمارے بارے میں" : "About Us"}
-                </a>
+              <Link 
+                href="/about"
+                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User className="w-5 h-5" />
+                {language === "ur" ? "ہمارے بارے میں" : "About Us"}
               </Link>
             </div>
           </div>
