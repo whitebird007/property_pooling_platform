@@ -25,6 +25,7 @@ import Portfolio from "./pages/Portfolio";
 import Marketplace from "./pages/Marketplace";
 import KYC from "./pages/KYC";
 import Wallet from "./pages/Wallet";
+import Invest from "./pages/Invest";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -62,6 +63,7 @@ function Router() {
       <Route path="/marketplace" component={Marketplace} />
       <Route path="/kyc" component={KYC} />
       <Route path="/wallet" component={Wallet} />
+      <Route path="/invest/:id" component={Invest} />
       
       {/* Admin Routes */}
       <Route path="/admin" component={AdminDashboard} />

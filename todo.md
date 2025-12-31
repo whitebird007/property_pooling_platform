@@ -303,3 +303,8 @@
 
 ## Properties Page Bug (User Report)
 - [x] Fix /properties page showing "No Properties Found" when properties exist in database (was filtering for 'active' status only, now shows all properties)
+
+
+## Missing Invest Page (User Report)
+- [x] Create /invest/:id page for property investment
+- [x] Register route in App.tsx
