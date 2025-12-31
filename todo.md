@@ -293,3 +293,9 @@
 - [x] Fix time period buttons (Week/Month/Year) hiding text issue
 - [x] Make Create SPV button functional with backend support
 - [x] Add image upload to property creation (main thumbnail + gallery images)
+
+
+## Google Maps Integration (User Request)
+- [x] Add Google Maps location search to property creation form
+- [x] Store latitude/longitude coordinates for properties
+- [x] Display property location on Google Maps on property detail page

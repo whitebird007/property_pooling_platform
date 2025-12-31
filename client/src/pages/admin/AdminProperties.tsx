@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import AdminLayout from "@/components/AdminLayout";
+import { MapView } from "@/components/Map";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import { 
@@ -20,15 +21,22 @@ import {
   Trash2,
   Upload,
   Image as ImageIcon,
-  X
+  X,
+  MapPin,
+  Loader2
 } from "lucide-react";
 
 export default function AdminProperties() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [locationSearch, setLocationSearch] = useState("");
+  const [searchingLocation, setSearchingLocation] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const mainImageInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markerRef = useRef<google.maps.marker.AdvancedMarkerElement | null>(null);
 
   type PropertyType = "residential" | "commercial" | "mixed_use" | "vacation_rental";
   const [newProperty, setNewProperty] = useState<{
@@ -38,6 +46,8 @@ export default function AdminProperties() {
     address: string;
     city: string;
     area: string;
+    latitude: string;
+    longitude: string;
     totalValue: string;
     totalShares: number;
     sharePrice: string;
@@ -57,6 +67,8 @@ export default function AdminProperties() {
     address: "",
     city: "",
     area: "",
+    latitude: "",
+    longitude: "",
     totalValue: "",
     totalShares: 1000,
     sharePrice: "",
@@ -93,6 +105,8 @@ export default function AdminProperties() {
       address: "",
       city: "",
       area: "",
+      latitude: "",
+      longitude: "",
       totalValue: "",
       totalShares: 1000,
       sharePrice: "",
@@ -106,6 +120,8 @@ export default function AdminProperties() {
       mainImage: "",
       galleryImages: [],
     });
+    setLocationSearch("");
+    setShowMap(false);
   };
 
   const filteredProperties = properties?.filter(p => 
@@ -113,15 +129,137 @@ export default function AdminProperties() {
     p.city.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
+  // Google Maps location search
+  const handleLocationSearch = useCallback(() => {
+    if (!locationSearch.trim() || !mapRef.current) {
+      toast.error("Please enter a location to search");
+      return;
+    }
+
+    setSearchingLocation(true);
+    const geocoder = new google.maps.Geocoder();
+    
+    // Add Pakistan to search query for better results
+    const searchQuery = locationSearch.includes("Pakistan") 
+      ? locationSearch 
+      : `${locationSearch}, Pakistan`;
+
+    geocoder.geocode({ address: searchQuery }, (results, status) => {
+      setSearchingLocation(false);
+      
+      if (status === "OK" && results && results[0]) {
+        const location = results[0].geometry.location;
+        const lat = location.lat();
+        const lng = location.lng();
+        
+        // Update map center
+        mapRef.current?.setCenter(location);
+        mapRef.current?.setZoom(16);
+
+        // Remove existing marker
+        if (markerRef.current) {
+          markerRef.current.map = null;
+        }
+
+        // Add new marker
+        markerRef.current = new google.maps.marker.AdvancedMarkerElement({
+          map: mapRef.current!,
+          position: location,
+          title: results[0].formatted_address,
+        });
+
+        // Extract address components
+        const addressComponents = results[0].address_components;
+        let city = "";
+        let area = "";
+        
+        for (const component of addressComponents) {
+          if (component.types.includes("locality")) {
+            city = component.long_name;
+          }
+          if (component.types.includes("sublocality") || component.types.includes("neighborhood")) {
+            area = component.long_name;
+          }
+        }
+
+        // Update form
+        setNewProperty(prev => ({
+          ...prev,
+          address: results[0].formatted_address,
+          city: city || prev.city,
+          area: area || prev.area,
+          latitude: lat.toFixed(7),
+          longitude: lng.toFixed(7),
+        }));
+
+        toast.success("Location found! Click on the map to adjust if needed.");
+      } else {
+        toast.error("Location not found. Try a more specific address.");
+      }
+    });
+  }, [locationSearch]);
+
+  // Handle map click to set location
+  const handleMapReady = useCallback((map: google.maps.Map) => {
+    mapRef.current = map;
+
+    // Add click listener to map
+    map.addListener("click", (e: google.maps.MapMouseEvent) => {
+      if (!e.latLng) return;
+
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+
+      // Remove existing marker
+      if (markerRef.current) {
+        markerRef.current.map = null;
+      }
+
+      // Add new marker
+      markerRef.current = new google.maps.marker.AdvancedMarkerElement({
+        map: map,
+        position: e.latLng,
+      });
+
+      // Reverse geocode to get address
+      const geocoder = new google.maps.Geocoder();
+      geocoder.geocode({ location: e.latLng }, (results, status) => {
+        if (status === "OK" && results && results[0]) {
+          const addressComponents = results[0].address_components;
+          let city = "";
+          let area = "";
+          
+          for (const component of addressComponents) {
+            if (component.types.includes("locality")) {
+              city = component.long_name;
+            }
+            if (component.types.includes("sublocality") || component.types.includes("neighborhood")) {
+              area = component.long_name;
+            }
+          }
+
+          setNewProperty(prev => ({
+            ...prev,
+            address: results[0].formatted_address,
+            city: city || prev.city,
+            area: area || prev.area,
+            latitude: lat.toFixed(7),
+            longitude: lng.toFixed(7),
+          }));
+        } else {
+          setNewProperty(prev => ({
+            ...prev,
+            latitude: lat.toFixed(7),
+            longitude: lng.toFixed(7),
+          }));
+        }
+      });
+    });
+  }, []);
+
   const handleImageUpload = async (file: File, isMain: boolean) => {
     setUploadingImages(true);
     try {
-      // Create FormData and upload to storage
-      const formData = new FormData();
-      formData.append("file", file);
-      
-      // For now, we'll use a data URL as a placeholder
-      // In production, this would upload to S3 via the backend
       const reader = new FileReader();
       reader.onloadend = () => {
         const dataUrl = reader.result as string;
@@ -175,7 +313,6 @@ export default function AdminProperties() {
   };
 
   const handleCreateProperty = () => {
-    // Combine main image with gallery images for the images array
     const allImages = newProperty.mainImage 
       ? [newProperty.mainImage, ...newProperty.galleryImages]
       : newProperty.galleryImages;
@@ -183,6 +320,8 @@ export default function AdminProperties() {
     createPropertyMutation.mutate({
       ...newProperty,
       images: allImages,
+      latitude: newProperty.latitude || undefined,
+      longitude: newProperty.longitude || undefined,
       sizeSqFt: newProperty.sizeSqFt ? parseInt(newProperty.sizeSqFt) : undefined,
       bedrooms: newProperty.bedrooms ? parseInt(newProperty.bedrooms) : undefined,
       bathrooms: newProperty.bathrooms ? parseInt(newProperty.bathrooms) : undefined,
@@ -196,14 +335,17 @@ export default function AdminProperties() {
       title="Properties Management" 
       description="Add, edit, and manage property listings"
       actions={
-        <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <Dialog open={showAddDialog} onOpenChange={(open) => {
+          setShowAddDialog(open);
+          if (!open) resetForm();
+        }}>
           <DialogTrigger asChild>
             <Button className="bg-purple-600 hover:bg-purple-700">
               <Plus className="w-4 h-4 mr-2" />
               Add Property
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Add New Property</DialogTitle>
             </DialogHeader>
@@ -337,9 +479,89 @@ export default function AdminProperties() {
                 </div>
               </div>
 
-              {/* Location */}
+              {/* Location with Google Maps */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-gray-900 border-b pb-2">Location</h3>
+                
+                {/* Location Search */}
+                <div className="space-y-2">
+                  <Label>Search Location on Google Maps</Label>
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Input
+                        value={locationSearch}
+                        onChange={(e) => setLocationSearch(e.target.value)}
+                        placeholder="Search address (e.g., DHA Phase 6, Lahore)"
+                        className="pl-10"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            if (!showMap) setShowMap(true);
+                            else handleLocationSearch();
+                          }
+                        }}
+                      />
+                    </div>
+                    <Button 
+                      type="button"
+                      onClick={() => {
+                        if (!showMap) {
+                          setShowMap(true);
+                        } else {
+                          handleLocationSearch();
+                        }
+                      }}
+                      disabled={searchingLocation}
+                      className="bg-purple-600 hover:bg-purple-700"
+                    >
+                      {searchingLocation ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Search className="w-4 h-4 mr-2" />
+                          {showMap ? "Search" : "Open Map"}
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-gray-500">Search for a location or click on the map to set coordinates</p>
+                </div>
+
+                {/* Map */}
+                {showMap && (
+                  <div className="rounded-lg overflow-hidden border">
+                    <MapView
+                      className="h-[300px]"
+                      initialCenter={{ lat: 31.5204, lng: 74.3587 }} // Lahore, Pakistan
+                      initialZoom={12}
+                      onMapReady={handleMapReady}
+                    />
+                  </div>
+                )}
+
+                {/* Coordinates Display */}
+                {(newProperty.latitude && newProperty.longitude) && (
+                  <div className="flex gap-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-green-600" />
+                      <span className="text-sm text-green-700">
+                        Location set: {newProperty.latitude}, {newProperty.longitude}
+                      </span>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setNewProperty(prev => ({ ...prev, latitude: "", longitude: "" }))}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 ml-auto"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                )}
+
+                {/* Manual Address Fields */}
                 <div className="space-y-2">
                   <Label>Address *</Label>
                   <Input
@@ -536,7 +758,15 @@ export default function AdminProperties() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-gray-600">{property.city}</td>
+                      <td className="py-4 px-4">
+                        <div className="text-gray-600">{property.city}</div>
+                        {property.latitude && property.longitude && (
+                          <div className="text-xs text-green-600 flex items-center gap-1">
+                            <MapPin className="w-3 h-3" />
+                            GPS
+                          </div>
+                        )}
+                      </td>
                       <td className="py-4 px-4">
                         <Badge variant="outline" className="capitalize">
                           {property.propertyType.replace('_', ' ')}

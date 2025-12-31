@@ -13,6 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
+import { MapView } from "@/components/Map";
 import { 
   Building2, 
   TrendingUp, 
@@ -334,6 +335,13 @@ export default function PropertyDetail() {
                 <Shield className="w-4 h-4 mr-2" />
                 SPV
               </TabsTrigger>
+              <TabsTrigger 
+                value="location" 
+                className="flex-1 min-w-[100px] rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
+              >
+                <MapPin className="w-4 h-4 mr-2" />
+                Location
+              </TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
@@ -539,6 +547,75 @@ export default function PropertyDetail() {
                     </div>
                   )}
                 </div>
+              </div>
+            </TabsContent>
+
+            {/* Location Tab */}
+            <TabsContent value="location" className="space-y-8">
+              <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-purple-600" />
+                  Property Location
+                </h3>
+                
+                {property.latitude && property.longitude ? (
+                  <div className="space-y-4">
+                    <div className="rounded-xl overflow-hidden border border-gray-200">
+                      <MapView
+                        className="h-[400px]"
+                        initialCenter={{ 
+                          lat: Number(property.latitude), 
+                          lng: Number(property.longitude) 
+                        }}
+                        initialZoom={16}
+                        onMapReady={(map) => {
+                          // Add marker for property location
+                          new google.maps.marker.AdvancedMarkerElement({
+                            map,
+                            position: { 
+                              lat: Number(property.latitude), 
+                              lng: Number(property.longitude) 
+                            },
+                            title: property.title,
+                          });
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">Full Address</p>
+                        <p className="font-semibold text-gray-900">{property.address}</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">City / Area</p>
+                        <p className="font-semibold text-gray-900">{property.city}{property.area ? `, ${property.area}` : ''}</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">Coordinates</p>
+                        <p className="font-semibold text-gray-900">{property.latitude}, {property.longitude}</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">View on Google Maps</p>
+                        <a 
+                          href={`https://www.google.com/maps?q=${property.latitude},${property.longitude}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-semibold text-purple-600 hover:text-purple-700 flex items-center gap-1"
+                        >
+                          Open in Google Maps
+                          <ChevronRight className="w-4 h-4" />
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500 mb-2">Location coordinates not available</p>
+                    <p className="text-gray-400 text-sm">Address: {property.address}, {property.city}</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
 

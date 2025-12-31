@@ -68,6 +68,8 @@ export const appRouter = router({
         address: z.string(),
         city: z.string(),
         area: z.string().optional(),
+        latitude: z.string().optional(),
+        longitude: z.string().optional(),
         totalValue: z.string(),
         totalShares: z.number(),
         sharePrice: z.string(),

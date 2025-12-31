@@ -15,6 +15,13 @@
       "when": 1767120451914,
       "tag": "0001_smiling_ogun",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1767175465715,
+      "tag": "0002_typical_firelord",
+      "breakpoints": true
     }
   ]
 }

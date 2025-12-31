@@ -57,6 +57,8 @@ export const properties = mysqlTable("properties", {
   address: text("address").notNull(),
   city: varchar("city", { length: 100 }).notNull(),
   area: varchar("area", { length: 100 }),
+  latitude: decimal("latitude", { precision: 10, scale: 7 }),
+  longitude: decimal("longitude", { precision: 10, scale: 7 }),
   
   // Financial
   totalValue: decimal("totalValue", { precision: 15, scale: 2 }).notNull(),
