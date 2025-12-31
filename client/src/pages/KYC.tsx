@@ -21,7 +21,8 @@ import {
   Building,
   ChevronRight,
   Shield,
-  Sparkles
+  Sparkles,
+  ArrowRight
 } from "lucide-react";
 
 export default function KYC() {
@@ -44,18 +45,39 @@ export default function KYC() {
     },
   });
 
-  if (!loading && !isAuthenticated) {
-    window.location.href = getLoginUrl();
-    return null;
-  }
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">Loading KYC status...</p>
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading KYC status...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="container py-24">
+          <div className="max-w-2xl mx-auto text-center space-y-8">
+            <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mx-auto">
+              <Shield className="w-10 h-10 text-purple-600" />
+            </div>
+            <h1 className="text-4xl font-bold text-gray-900">KYC Verification</h1>
+            <p className="text-gray-600 text-lg">
+              Complete your identity verification to start investing in premium properties.
+            </p>
+            <a href={getLoginUrl()}>
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-xl">
+                Sign In to Complete KYC
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </a>
+          </div>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -103,25 +125,25 @@ export default function KYC() {
     switch (status) {
       case "verified":
         return (
-          <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+          <Badge className="bg-green-100 text-green-700 border-green-200">
             <CheckCircle className="w-3 h-3 mr-1" /> Verified
           </Badge>
         );
       case "pending":
         return (
-          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+          <Badge className="bg-amber-100 text-amber-700 border-amber-200">
             <Clock className="w-3 h-3 mr-1" /> Pending
           </Badge>
         );
       case "rejected":
         return (
-          <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
+          <Badge className="bg-red-100 text-red-700 border-red-200">
             <AlertCircle className="w-3 h-3 mr-1" /> Rejected
           </Badge>
         );
       default:
         return (
-          <Badge className="bg-slate-700/50 text-slate-400 border-slate-600/50">
+          <Badge className="bg-gray-100 text-gray-600 border-gray-200">
             Not Submitted
           </Badge>
         );
@@ -144,34 +166,26 @@ export default function KYC() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-12 overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900" />
-        <div className="absolute inset-0 bg-[url('/hero-bg.png')] bg-cover bg-center opacity-10" />
-        
-        {/* Animated shapes */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-
-        <div className="container relative z-10 max-w-4xl">
+      <section className="pt-24 pb-8 bg-gradient-to-b from-purple-50 to-white">
+        <div className="container max-w-4xl">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <Link href="/" className="hover:text-purple-600 transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/dashboard" className="hover:text-amber-400 transition-colors">Dashboard</Link>
+            <Link href="/dashboard" className="hover:text-purple-600 transition-colors">Dashboard</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-white">KYC Verification</span>
+            <span className="text-gray-900">KYC Verification</span>
           </div>
 
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
               {language === "ur" ? "شناخت کی تصدیق" : "KYC Verification"}
             </h1>
-            <p className="text-slate-400">
+            <p className="text-gray-600">
               {language === "ur" 
                 ? "سرمایہ کاری شروع کرنے کے لیے اپنی شناخت کی تصدیق کریں"
                 : "Complete your identity verification to start investing in properties"}
@@ -179,31 +193,31 @@ export default function KYC() {
           </div>
 
           {/* Progress Card */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 mb-8">
+          <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm mb-8">
             <div className="flex items-center justify-between mb-4">
-              <span className="text-white font-medium">Verification Progress</span>
-              <span className="text-slate-400 text-sm">{completedDocs}/{requiredDocs} documents verified</span>
+              <span className="text-gray-900 font-medium">Verification Progress</span>
+              <span className="text-gray-500 text-sm">{completedDocs}/{requiredDocs} documents verified</span>
             </div>
-            <Progress value={progress} className="h-3 bg-slate-700" />
+            <Progress value={progress} className="h-3 bg-gray-100" />
             <div className="mt-4 flex items-center gap-3">
-              <span className="text-slate-400 text-sm">Status:</span>
+              <span className="text-gray-500 text-sm">Status:</span>
               {profile?.kycStatus === "verified" ? (
-                <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                <Badge className="bg-green-100 text-green-700 border-green-200">
                   <CheckCircle className="w-3 h-3 mr-1" />
                   Verified
                 </Badge>
               ) : profile?.kycStatus === "pending" ? (
-                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                <Badge className="bg-amber-100 text-amber-700 border-amber-200">
                   <Clock className="w-3 h-3 mr-1" />
                   Under Review
                 </Badge>
               ) : profile?.kycStatus === "rejected" ? (
-                <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
+                <Badge className="bg-red-100 text-red-700 border-red-200">
                   <AlertCircle className="w-3 h-3 mr-1" />
                   Action Required
                 </Badge>
               ) : (
-                <Badge className="bg-slate-700/50 text-slate-400 border-slate-600/50">
+                <Badge className="bg-gray-100 text-gray-600 border-gray-200">
                   Not Started
                 </Badge>
               )}
@@ -212,19 +226,19 @@ export default function KYC() {
 
           {/* Verified Success Message */}
           {profile?.kycStatus === "verified" && (
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border border-emerald-500/30 mb-8">
+            <div className="p-6 rounded-2xl bg-green-50 border border-green-200 mb-8">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center">
-                  <CheckCircle className="w-7 h-7 text-emerald-400" />
+                <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center">
+                  <CheckCircle className="w-7 h-7 text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-lg font-bold text-white">Verification Complete!</h3>
-                  <p className="text-slate-400 text-sm">
+                  <h3 className="text-lg font-bold text-gray-900">Verification Complete!</h3>
+                  <p className="text-gray-600 text-sm">
                     Your identity has been verified. You can now invest in properties.
                   </p>
                 </div>
                 <Link href="/properties">
-                  <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                  <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold">
                     <Sparkles className="mr-2 w-4 h-4" />
                     Browse Properties
                   </Button>
@@ -232,7 +246,12 @@ export default function KYC() {
               </div>
             </div>
           )}
+        </div>
+      </section>
 
+      {/* Document Upload Section */}
+      <section className="py-8">
+        <div className="container max-w-4xl">
           {/* Document Upload Cards */}
           <div className="space-y-4 mb-8">
             {documentTypes.map((docType) => {
@@ -243,26 +262,26 @@ export default function KYC() {
               return (
                 <div 
                   key={docType.type}
-                  className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 hover:border-slate-600/50 transition-colors"
+                  className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-slate-700/50 flex items-center justify-center shrink-0">
-                      <IconComponent className="w-6 h-6 text-amber-400" />
+                    <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
+                      <IconComponent className="w-6 h-6 text-purple-600" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-white">{docType.title}</h3>
+                        <h3 className="font-semibold text-gray-900">{docType.title}</h3>
                         {docType.required && (
-                          <span className="text-xs text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">Required</span>
+                          <span className="text-xs text-purple-600 bg-purple-100 px-2 py-0.5 rounded">Required</span>
                         )}
                       </div>
-                      <p className="text-sm text-slate-400 mb-3">
+                      <p className="text-sm text-gray-600 mb-3">
                         {docType.description}
                       </p>
                       
                       {existingDoc?.status === "rejected" && existingDoc.rejectionReason && (
-                        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 mb-3">
-                          <p className="text-sm text-red-400">
+                        <div className="p-3 rounded-xl bg-red-50 border border-red-200 mb-3">
+                          <p className="text-sm text-red-700">
                             <strong>Rejection Reason:</strong> {existingDoc.rejectionReason}
                           </p>
                         </div>
@@ -277,7 +296,7 @@ export default function KYC() {
                             size="sm"
                             onClick={() => handleFileUpload(docType.type)}
                             disabled={uploadingDoc === docType.type || submitDocMutation.isPending}
-                            className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
+                            className="border-gray-200 text-gray-700 hover:bg-purple-50 hover:text-purple-700 hover:border-purple-300"
                           >
                             <Upload className="w-4 h-4 mr-2" />
                             {uploadingDoc === docType.type ? "Uploading..." : "Upload Document"}
@@ -292,31 +311,31 @@ export default function KYC() {
           </div>
 
           {/* Guidelines */}
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-            <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-amber-400" />
+          <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Shield className="w-5 h-5 text-purple-600" />
               Document Guidelines
             </h3>
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                <span className="text-slate-300">Documents must be clear, legible, and in color</span>
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                <span className="text-gray-700">Documents must be clear, legible, and in color</span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                <span className="text-slate-300">All four corners of the document must be visible</span>
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                <span className="text-gray-700">All four corners of the document must be visible</span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                <span className="text-slate-300">File size should be less than 5MB (PDF, JPG, PNG accepted)</span>
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                <span className="text-gray-700">File size should be less than 5MB (PDF, JPG, PNG accepted)</span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                <span className="text-slate-300">Proof of address must be dated within the last 3 months</span>
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                <span className="text-gray-700">Proof of address must be dated within the last 3 months</span>
               </li>
               <li className="flex items-start gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
-                <span className="text-slate-300">Verification typically takes 24-48 hours</span>
+                <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                <span className="text-gray-700">Verification typically takes 24-48 hours</span>
               </li>
             </ul>
           </div>

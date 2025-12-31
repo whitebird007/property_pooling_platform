@@ -13,10 +13,10 @@ import {
   EyeOff,
   Shield,
   TrendingUp,
-  Sparkles,
   Globe,
   Wallet,
-  PieChart
+  PieChart,
+  CheckCircle
 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 
@@ -39,79 +39,32 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex">
-      {/* Left Side - Visual */}
-      <div className="hidden lg:flex flex-1 relative bg-gradient-to-br from-slate-900 to-slate-950 items-center justify-center p-12">
-        {/* Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-20 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
-          <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-20"
-            style={{ backgroundImage: "url('/hero-bg.png')" }}
-          />
-        </div>
-
-        <div className="relative z-10 max-w-lg space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30">
-            <TrendingUp className="w-4 h-4 text-emerald-400" />
-            <span className="text-emerald-400 text-sm font-medium">Your Portfolio Awaits</span>
-          </div>
-
-          <h2 className="text-4xl font-bold text-white leading-tight">
-            Welcome Back to
-            <span className="block bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">
-              PropertyPool
-            </span>
-          </h2>
-
-          <p className="text-slate-400 text-lg">
-            Access your investment portfolio, track returns, and discover new property opportunities.
-          </p>
-
-          {/* Stats Preview */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center mb-3">
-                <Wallet className="w-5 h-5 text-amber-400" />
-              </div>
-              <p className="text-2xl font-bold text-white">PKR 500M+</p>
-              <p className="text-slate-400 text-sm">Total Investments</p>
-            </div>
-            <div className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-3">
-                <PieChart className="w-5 h-5 text-emerald-400" />
-              </div>
-              <p className="text-2xl font-bold text-white">8-12%</p>
-              <p className="text-slate-400 text-sm">Avg. Returns</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Form */}
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Left Side - Form */}
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8">
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-3 cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-slate-900" />
+              <div className="w-12 h-12 rounded-xl bg-purple-600 flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
               </div>
-              <span className="text-2xl font-bold text-white">PropertyPool</span>
+              <span className="text-2xl font-bold text-gray-900">
+                Property<span className="text-purple-600">Pool</span>
+              </span>
             </div>
           </Link>
 
           {/* Header */}
           <div className="space-y-2">
-            <h1 className="text-3xl font-bold text-white">Welcome Back</h1>
-            <p className="text-slate-400">Sign in to access your investment portfolio</p>
+            <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
+            <p className="text-gray-600">Sign in to access your investment portfolio</p>
           </div>
 
           {/* OAuth Button */}
           <Button 
             onClick={handleOAuthLogin}
-            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-6 text-lg rounded-xl shadow-lg shadow-purple-500/25"
           >
             <Globe className="mr-2 w-5 h-5" />
             Continue with Manus Account
@@ -119,10 +72,10 @@ export default function Login() {
 
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-700"></div>
+              <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-slate-950 text-slate-500">Or sign in with email</span>
+              <span className="px-4 bg-gray-50 text-gray-500">Or sign in with email</span>
             </div>
           </div>
 
@@ -130,16 +83,16 @@ export default function Login() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-slate-300">Email Address</Label>
+              <Label htmlFor="email" className="text-gray-700 font-medium">Email Address</Label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="pl-12 py-6 bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-amber-500 rounded-xl"
+                  className="pl-12 py-6 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 rounded-xl"
                 />
               </div>
             </div>
@@ -147,25 +100,25 @@ export default function Login() {
             {/* Password */}
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <Label htmlFor="password" className="text-slate-300">Password</Label>
-                <Link href="/forgot-password" className="text-sm text-amber-400 hover:underline">
+                <Label htmlFor="password" className="text-gray-700 font-medium">Password</Label>
+                <Link href="/forgot-password" className="text-sm text-purple-600 hover:text-purple-700">
                   Forgot Password?
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="pl-12 pr-12 py-6 bg-slate-900/50 border-slate-700 text-white placeholder:text-slate-500 focus:border-amber-500 rounded-xl"
+                  className="pl-12 pr-12 py-6 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-purple-500 focus:ring-purple-500 rounded-xl"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -178,9 +131,9 @@ export default function Login() {
                 id="remember" 
                 checked={formData.rememberMe}
                 onCheckedChange={(checked) => setFormData({ ...formData, rememberMe: checked as boolean })}
-                className="border-slate-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                className="border-gray-300 data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600"
               />
-              <Label htmlFor="remember" className="text-sm text-slate-400">
+              <Label htmlFor="remember" className="text-sm text-gray-600">
                 Remember me for 30 days
               </Label>
             </div>
@@ -188,7 +141,7 @@ export default function Login() {
             {/* Submit Button */}
             <Button 
               type="submit"
-              className="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-6 text-lg rounded-xl border border-slate-700"
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white font-semibold py-6 text-lg rounded-xl"
             >
               Sign In
               <ArrowRight className="ml-2 w-5 h-5" />
@@ -196,17 +149,80 @@ export default function Login() {
           </form>
 
           {/* Sign Up Link */}
-          <p className="text-center text-slate-400">
+          <p className="text-center text-gray-600">
             Don't have an account?{" "}
-            <Link href="/signup" className="text-amber-400 hover:underline font-medium">
+            <Link href="/signup" className="text-purple-600 hover:text-purple-700 font-semibold">
               Create Account
             </Link>
           </p>
 
           {/* Security Note */}
-          <div className="flex items-center justify-center gap-2 text-slate-500 text-sm">
+          <div className="flex items-center justify-center gap-2 text-gray-500 text-sm">
             <Shield className="w-4 h-4" />
             <span>Your data is protected with bank-level security</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Side - Visual */}
+      <div className="hidden lg:flex flex-1 relative bg-gradient-to-br from-purple-600 to-purple-800 items-center justify-center p-12 overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-20 right-20 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-white/10 rounded-full" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] border border-white/10 rounded-full" />
+        </div>
+
+        <div className="relative z-10 max-w-lg space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20">
+            <TrendingUp className="w-4 h-4 text-white" />
+            <span className="text-white text-sm font-medium">Your Portfolio Awaits</span>
+          </div>
+
+          <h2 className="text-4xl font-bold text-white leading-tight">
+            Welcome Back to
+            <span className="block text-purple-200">
+              PropertyPool
+            </span>
+          </h2>
+
+          <p className="text-purple-200 text-lg">
+            Access your investment portfolio, track returns, and discover new property opportunities.
+          </p>
+
+          {/* Stats Preview */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-5 rounded-xl bg-white/10 border border-white/20 backdrop-blur-sm">
+              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-3">
+                <Wallet className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-2xl font-bold text-white">PKR 500M+</p>
+              <p className="text-purple-200 text-sm">Total Investments</p>
+            </div>
+            <div className="p-5 rounded-xl bg-white/10 border border-white/20 backdrop-blur-sm">
+              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center mb-3">
+                <PieChart className="w-5 h-5 text-white" />
+              </div>
+              <p className="text-2xl font-bold text-white">8-12%</p>
+              <p className="text-purple-200 text-sm">Avg. Returns</p>
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="space-y-3">
+            {[
+              "SECP Registered SPV",
+              "100% Shariah Compliant",
+              "8-12% Annual Returns",
+            ].map((feature, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
+                  <CheckCircle className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-white">{feature}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

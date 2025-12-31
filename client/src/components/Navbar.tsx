@@ -22,27 +22,21 @@ import {
   Globe,
   ChevronDown,
   Building2,
-  GraduationCap,
-  Store,
-  Info,
-  Shield,
-  BookOpen,
-  Sparkles,
   MapPin,
-  Calculator
+  Calculator,
+  Store,
+  BookOpen
 } from "lucide-react";
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
-  const [location] = useLocation();
+  const { language, setLanguage } = useLanguage();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [location] = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -54,115 +48,135 @@ export default function Navbar() {
     { href: "/marketplace", label: language === "ur" ? "مارکیٹ پلیس" : "Marketplace", icon: Store },
   ];
 
+  const isActive = (href: string) => location === href;
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
       isScrolled 
-        ? "bg-slate-900/95 backdrop-blur-lg shadow-lg shadow-black/20 border-b border-slate-800" 
-        : "bg-slate-900/80 backdrop-blur-sm"
+        ? "bg-white/98 backdrop-blur-md shadow-sm border-b border-gray-100" 
+        : "bg-white/95 backdrop-blur-sm"
     }`}>
       <div className="container">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-16 lg:h-18">
           {/* Logo */}
           <Link href="/">
-            <div className="flex items-center gap-3 cursor-pointer group">
-              <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center transition-all duration-300 group-hover:scale-105 shadow-lg shadow-amber-500/25">
-                <Building2 className="w-6 h-6 text-slate-900" />
+            <a className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-md">
+                <Building2 className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-white">
-                PropertyPool
+              <span className="text-xl font-bold text-gray-900">
+                Property<span className="text-purple-600">Pool</span>
               </span>
-            </div>
+            </a>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
-                <span className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-300 ${
-                  location === link.href 
-                    ? "text-amber-400 bg-amber-500/10" 
-                    : "text-slate-300 hover:text-white hover:bg-slate-800"
-                }`}>
+                <a className={`nav-link ${isActive(link.href) ? 'active' : ''}`}>
                   <link.icon className="w-4 h-4" />
                   {link.label}
-                </span>
+                </a>
               </Link>
             ))}
+            
+            {/* More Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="nav-link">
+                  <BookOpen className="w-4 h-4" />
+                  {language === "ur" ? "مزید" : "More"}
+                  <ChevronDown className="w-4 h-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-white border border-gray-200 shadow-lg rounded-xl p-1">
+                <DropdownMenuItem asChild>
+                  <Link href="/education">
+                    <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                      <BookOpen className="w-4 h-4" />
+                      {language === "ur" ? "سیکھیں" : "Learn"}
+                    </a>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/price-index">
+                    <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                      <Calculator className="w-4 h-4" />
+                      {language === "ur" ? "قیمت انڈیکس" : "Price Index"}
+                    </a>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/about">
+                    <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                      <User className="w-4 h-4" />
+                      {language === "ur" ? "ہمارے بارے میں" : "About Us"}
+                    </a>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Right Side */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {/* Language Toggle */}
             <button
               onClick={() => setLanguage(language === "en" ? "ur" : "en")}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-300 hover:bg-slate-800 text-slate-300 hover:text-white"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
             >
               <Globe className="w-4 h-4" />
-              <span className="text-sm font-medium">{language === "en" ? "اردو" : "English"}</span>
+              {language === "ur" ? "EN" : "اردو"}
             </button>
 
-            {isAuthenticated ? (
+            {/* Auth Section */}
+            {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-3 px-4 py-2 rounded-xl transition-all duration-300 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center">
-                      <User className="w-4 h-4 text-slate-900" />
+                  <button className="flex items-center gap-2 px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
                     </div>
-                    <span className="font-medium">{user?.name || "User"}</span>
-                    <ChevronDown className="w-4 h-4 text-slate-400" />
+                    <span className="hidden md:block text-sm font-medium text-gray-700 max-w-[120px] truncate">
+                      {user.name || "Investor"}
+                    </span>
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2 bg-slate-800 border-slate-700">
+                <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 shadow-lg rounded-xl p-1">
+                  <div className="px-3 py-2 border-b border-gray-100 mb-1">
+                    <p className="text-sm font-medium text-gray-900">{user.name || "Investor"}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
-                      <LayoutDashboard className="w-4 h-4" />
-                      {language === "ur" ? "ڈیش بورڈ" : "Dashboard"}
+                    <Link href="/dashboard">
+                      <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                        <LayoutDashboard className="w-4 h-4" />
+                        {language === "ur" ? "ڈیش بورڈ" : "Dashboard"}
+                      </a>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/portfolio" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
-                      <Building2 className="w-4 h-4" />
-                      {language === "ur" ? "پورٹ فولیو" : "Portfolio"}
+                    <Link href="/wallet">
+                      <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                        <Wallet className="w-4 h-4" />
+                        {language === "ur" ? "والیٹ" : "Wallet"}
+                      </a>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/wallet" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
-                      <Wallet className="w-4 h-4" />
-                      {language === "ur" ? "والیٹ" : "Wallet"}
+                    <Link href="/kyc">
+                      <a className="flex items-center gap-2 px-3 py-2 text-gray-700 hover:bg-purple-50 hover:text-purple-700 rounded-lg cursor-pointer w-full">
+                        <FileCheck className="w-4 h-4" />
+                        {language === "ur" ? "KYC تصدیق" : "KYC Verification"}
+                      </a>
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/kyc" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
-                      <FileCheck className="w-4 h-4" />
-                      {language === "ur" ? "KYC تصدیق" : "KYC Verification"}
-                    </Link>
-                  </DropdownMenuItem>
-                  {user?.role === "admin" && (
-                    <>
-                      <DropdownMenuSeparator className="bg-slate-700" />
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-amber-400 hover:text-amber-300 hover:bg-slate-700 rounded-lg">
-                          <Shield className="w-4 h-4" />
-                          {language === "ur" ? "ایڈمن پینل" : "Admin Panel"}
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  {user?.role === "sales" && (
-                    <>
-                      <DropdownMenuSeparator className="bg-slate-700" />
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin/sales-training" className="flex items-center gap-3 px-3 py-2 cursor-pointer text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg">
-                          <BookOpen className="w-4 h-4" />
-                          Sales Training
-                        </Link>
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  <DropdownMenuSeparator className="bg-slate-700" />
+                  <DropdownMenuSeparator className="my-1 bg-gray-100" />
                   <DropdownMenuItem 
                     onClick={() => logout()}
-                    className="flex items-center gap-3 px-3 py-2 cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg"
+                    className="flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
                     {language === "ur" ? "لاگ آؤٹ" : "Logout"}
@@ -170,96 +184,68 @@ export default function Navbar() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <Link href="/login">
-                  <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-slate-800">
-                    Sign In
-                  </Button>
+                  <a className="hidden sm:block px-4 py-2 text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
+                    {language === "ur" ? "لاگ ان" : "Login"}
+                  </a>
                 </Link>
-                <Link href="/signup">
-                  <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-6 rounded-xl shadow-lg shadow-amber-500/25">
-                    <Sparkles className="mr-2 w-4 h-4" />
-                    Get Started
-                  </Button>
-                </Link>
+                <a 
+                  href={getLoginUrl()}
+                  className="btn-primary text-sm px-4 py-2"
+                >
+                  {language === "ur" ? "شروع کریں" : "Get Started"}
+                </a>
               </div>
             )}
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 rounded-lg transition-colors hover:bg-slate-800 text-white"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
-            )}
-          </button>
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-slate-900 shadow-xl border-t border-slate-800">
-            <div className="container py-6 space-y-2">
+          <div className="lg:hidden py-4 border-t border-gray-100 bg-white">
+            <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link key={link.href} href={link.href}>
-                  <div 
+                  <a 
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${
-                      location === link.href 
-                        ? "bg-amber-500/10 text-amber-400" 
-                        : "hover:bg-slate-800 text-slate-300"
+                      isActive(link.href) 
+                        ? 'bg-purple-50 text-purple-700' 
+                        : 'text-gray-700 hover:bg-gray-50'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <link.icon className="w-5 h-5" />
-                    <span className="font-medium">{link.label}</span>
-                  </div>
+                    {link.label}
+                  </a>
                 </Link>
               ))}
-              
-              <div className="border-t border-slate-800 pt-4 mt-4">
-                <button
-                  onClick={() => setLanguage(language === "en" ? "ur" : "en")}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-300 w-full"
+              <Link href="/education">
+                <a 
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl"
+                  onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  <Globe className="w-5 h-5" />
-                  <span className="font-medium">{language === "en" ? "اردو میں دیکھیں" : "View in English"}</span>
-                </button>
-              </div>
-
-              {isAuthenticated ? (
-                <div className="border-t border-slate-800 pt-4 mt-4 space-y-2">
-                  <Link href="/dashboard">
-                    <div className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-slate-800 text-slate-300">
-                      <LayoutDashboard className="w-5 h-5" />
-                      <span className="font-medium">{language === "ur" ? "ڈیش بورڈ" : "Dashboard"}</span>
-                    </div>
-                  </Link>
-                  <button 
-                    onClick={() => logout()}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/10 text-red-400 w-full"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span className="font-medium">{language === "ur" ? "لاگ آؤٹ" : "Logout"}</span>
-                  </button>
-                </div>
-              ) : (
-                <div className="border-t border-slate-800 pt-4 mt-4 space-y-3">
-                  <Link href="/login">
-                    <Button variant="outline" className="w-full border-slate-700 text-white hover:bg-slate-800">
-                      Sign In
-                    </Button>
-                  </Link>
-                  <Link href="/signup">
-                    <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
-                      <Sparkles className="mr-2 w-4 h-4" />
-                      Get Started
-                    </Button>
-                  </Link>
-                </div>
-              )}
+                  <BookOpen className="w-5 h-5" />
+                  {language === "ur" ? "سیکھیں" : "Learn"}
+                </a>
+              </Link>
+              <Link href="/about">
+                <a 
+                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 rounded-xl"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <User className="w-5 h-5" />
+                  {language === "ur" ? "ہمارے بارے میں" : "About Us"}
+                </a>
+              </Link>
             </div>
           </div>
         )}

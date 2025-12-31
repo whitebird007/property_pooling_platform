@@ -201,3 +201,36 @@
 - [x] Area boundary visualization
 - [x] Nearby amenities markers
 - [x] Distance to key landmarks
+
+
+## Light Theme Redesign (User Request - Zameen.com Style)
+
+### Color Scheme
+- [x] Change to light theme with white/light gray backgrounds
+- [x] Use light purple as primary accent color (instead of green)
+- [x] Remove dark navy/black backgrounds
+- [x] Update all text colors for light backgrounds
+
+### Background Images
+- [x] Use AI-generated cityscape images as proper backgrounds
+- [x] Add light overlays instead of dark overlays
+- [x] Ensure text readability on background images
+
+### Page Updates
+- [x] Redesign Home page with light theme
+- [x] Redesign Navbar with light theme
+- [x] Redesign Footer with light theme
+- [x] Update Properties page with light theme
+- [x] Update Area Guides page with light theme
+- [x] Update Calculator page with light theme
+- [x] Update Marketplace page with light theme
+- [x] Update Dashboard page with light theme
+- [x] Update Portfolio page with light theme
+- [x] Update Wallet page with light theme
+- [x] Update KYC page with light theme
+- [x] Update PropertyDetail page with light theme
+- [x] Update Login page with light theme
+- [x] Update SignUp page with light theme
+- [x] Update About page with light theme
+- [x] Update Education page with light theme
+- [x] Update PriceIndex page with light theme

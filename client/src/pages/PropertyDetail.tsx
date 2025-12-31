@@ -25,8 +25,6 @@ import {
   FileCheck,
   Shield,
   Calculator,
-  ArrowLeft,
-  ExternalLink,
   CheckCircle,
   Clock,
   AlertCircle,
@@ -39,8 +37,6 @@ import {
   Download,
   Heart,
   Share2,
-  Target,
-  AlertTriangle,
   Image as ImageIcon
 } from "lucide-react";
 
@@ -58,9 +54,7 @@ export default function PropertyDetail() {
   const property = data?.property;
   const documents = data?.documents || [];
   const spv = data?.spv;
-  const dueDiligence = data?.dueDiligence || [];
 
-  // Sample property images
   const propertyImages = [
     "/hero-bg.png",
     "/properties-bg.png",
@@ -68,7 +62,6 @@ export default function PropertyDetail() {
     "/education-bg.png"
   ];
 
-  // Investment Calculator
   const calculations = useMemo(() => {
     if (!property) return null;
     
@@ -100,10 +93,10 @@ export default function PropertyDetail() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">Loading property details...</p>
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading property details...</p>
         </div>
       </div>
     );
@@ -111,17 +104,17 @@ export default function PropertyDetail() {
 
   if (error || !property) {
     return (
-      <div className="min-h-screen bg-slate-950">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="flex-1 flex items-center justify-center py-32">
-          <div className="p-8 rounded-2xl bg-slate-800/50 border border-slate-700 text-center max-w-md">
-            <AlertCircle className="w-12 h-12 mx-auto text-red-400 mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">Property Not Found</h2>
-            <p className="text-slate-400 mb-6">
+          <div className="p-8 rounded-2xl bg-white border border-gray-200 shadow-sm text-center max-w-md">
+            <AlertCircle className="w-12 h-12 mx-auto text-red-500 mb-4" />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Property Not Found</h2>
+            <p className="text-gray-600 mb-6">
               The property you're looking for doesn't exist or has been removed.
             </p>
             <Link href="/properties">
-              <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold">
                 Browse Properties
               </Button>
             </Link>
@@ -133,24 +126,24 @@ export default function PropertyDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
-      {/* Hero Section with Property Images */}
-      <section className="relative pt-24 pb-8">
+      {/* Hero Section */}
+      <section className="pt-24 pb-8 bg-gradient-to-b from-purple-50 to-white">
         <div className="container">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <Link href="/" className="hover:text-purple-600 transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/properties" className="hover:text-amber-400 transition-colors">Properties</Link>
+            <Link href="/properties" className="hover:text-purple-600 transition-colors">Properties</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-white">{property.title}</span>
+            <span className="text-gray-900">{property.title}</span>
           </div>
 
           {/* Image Gallery */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
-            <div className="lg:col-span-2 relative rounded-2xl overflow-hidden aspect-video">
+            <div className="lg:col-span-2 relative rounded-2xl overflow-hidden aspect-video bg-gray-200">
               {property.images && property.images[0] ? (
                 <img 
                   src={property.images[0]} 
@@ -164,37 +157,37 @@ export default function PropertyDetail() {
                   className="w-full h-full object-cover"
                 />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" />
               <div className="absolute bottom-4 left-4 flex gap-2">
                 {property.virtualTourUrl && (
                   <Button 
                     size="sm" 
-                    className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white"
+                    className="bg-white/90 hover:bg-white text-gray-900"
                     onClick={() => window.open(property.virtualTourUrl!, '_blank')}
                   >
                     <Play className="w-4 h-4 mr-2" />
                     Virtual Tour
                   </Button>
                 )}
-                <Button size="sm" className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white">
+                <Button size="sm" className="bg-white/90 hover:bg-white text-gray-900">
                   <ImageIcon className="w-4 h-4 mr-2" />
                   {propertyImages.length} Photos
                 </Button>
               </div>
               <div className="absolute top-4 right-4 flex gap-2">
-                <Button size="icon" className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full">
+                <Button size="icon" className="bg-white/90 hover:bg-white text-gray-700 rounded-full">
                   <Heart className="w-4 h-4" />
                 </Button>
-                <Button size="icon" className="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white rounded-full">
+                <Button size="icon" className="bg-white/90 hover:bg-white text-gray-700 rounded-full">
                   <Share2 className="w-4 h-4" />
                 </Button>
               </div>
               <div className="absolute top-4 left-4 flex gap-2">
-                <Badge className="bg-slate-900/80 text-white border-0">
+                <Badge className="bg-purple-600 text-white border-0">
                   {property.propertyType.replace("_", " ")}
                 </Badge>
                 {property.rentalType === "short_term" && (
-                  <Badge className="bg-amber-500/80 text-slate-900 border-0">Airbnb Ready</Badge>
+                  <Badge className="bg-amber-500 text-white border-0">Airbnb Ready</Badge>
                 )}
               </div>
             </div>
@@ -204,11 +197,10 @@ export default function PropertyDetail() {
                   key={index}
                   onClick={() => setActiveImageIndex(index + 1)}
                   className={`relative rounded-xl overflow-hidden aspect-video cursor-pointer border-2 transition-all ${
-                    activeImageIndex === index + 1 ? 'border-amber-500' : 'border-transparent hover:border-amber-500/50'
+                    activeImageIndex === index + 1 ? 'border-purple-600' : 'border-transparent hover:border-purple-300'
                   }`}
                 >
                   <img src={img} alt={`Property ${index + 2}`} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-slate-900/30" />
                 </div>
               ))}
             </div>
@@ -218,90 +210,90 @@ export default function PropertyDetail() {
           <div className="grid lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
               <div className="flex flex-wrap items-center gap-3 mb-4">
-                <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                <Badge className="bg-green-100 text-green-700 border-green-200">
                   <CheckCircle className="w-3 h-3 mr-1" />
                   {language === "ur" ? "تصدیق شدہ" : "Verified"}
                 </Badge>
-                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30">
+                <Badge className="bg-purple-100 text-purple-700 border-purple-200">
                   <TrendingUp className="w-3 h-3 mr-1" />
                   {property.expectedRentalYield}% Yield
                 </Badge>
-                <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
+                <Badge className="bg-amber-100 text-amber-700 border-amber-200">
                   <Shield className="w-3 h-3 mr-1" />
                   {language === "ur" ? "شریعہ کمپلائنٹ" : "Shariah Compliant"}
                 </Badge>
               </div>
 
-              <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 {property.title}
               </h1>
 
-              <div className="flex items-center gap-2 text-slate-400 mb-6">
-                <MapPin className="w-5 h-5 text-amber-400" />
+              <div className="flex items-center gap-2 text-gray-600 mb-6">
+                <MapPin className="w-5 h-5 text-purple-600" />
                 <span>{property.address}, {property.city}</span>
               </div>
 
-              <div className="flex flex-wrap gap-6 text-slate-300">
+              <div className="flex flex-wrap gap-6 text-gray-700">
                 {property.bedrooms && (
                   <div className="flex items-center gap-2">
-                    <Bed className="w-5 h-5 text-amber-400" />
+                    <Bed className="w-5 h-5 text-purple-600" />
                     <span>{property.bedrooms} {language === "ur" ? "بیڈ" : "Beds"}</span>
                   </div>
                 )}
                 {property.bathrooms && (
                   <div className="flex items-center gap-2">
-                    <Bath className="w-5 h-5 text-amber-400" />
+                    <Bath className="w-5 h-5 text-purple-600" />
                     <span>{property.bathrooms} {language === "ur" ? "باتھ" : "Baths"}</span>
                   </div>
                 )}
                 {property.sizeSqFt && (
                   <div className="flex items-center gap-2">
-                    <Maximize className="w-5 h-5 text-amber-400" />
+                    <Maximize className="w-5 h-5 text-purple-600" />
                     <span>{property.sizeSqFt.toLocaleString()} sq ft</span>
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-amber-400" />
+                  <Building2 className="w-5 h-5 text-purple-600" />
                   <span>{property.propertyType.replace("_", " ")}</span>
                 </div>
               </div>
             </div>
 
             {/* Investment Summary Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50">
+            <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
               <div className="text-center mb-6">
-                <p className="text-slate-400 text-sm mb-1">{language === "ur" ? "پراپرٹی ویلیو" : "Property Value"}</p>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-gray-500 text-sm mb-1">{language === "ur" ? "پراپرٹی ویلیو" : "Property Value"}</p>
+                <p className="text-3xl font-bold text-gray-900">
                   PKR {(Number(property.totalValue) / 10000000).toFixed(1)} Cr
                 </p>
               </div>
 
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">{language === "ur" ? "شیئر پرائس" : "Share Price"}</span>
-                  <span className="text-white font-semibold">PKR {Number(property.sharePrice).toLocaleString()}</span>
+                  <span className="text-gray-500">{language === "ur" ? "شیئر پرائس" : "Share Price"}</span>
+                  <span className="text-gray-900 font-semibold">PKR {Number(property.sharePrice).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-slate-400">{language === "ur" ? "دستیاب شیئرز" : "Available Shares"}</span>
-                  <span className="text-white font-semibold">{property.availableShares} / {property.totalShares}</span>
+                  <span className="text-gray-500">{language === "ur" ? "دستیاب شیئرز" : "Available Shares"}</span>
+                  <span className="text-gray-900 font-semibold">{property.availableShares} / {property.totalShares}</span>
                 </div>
                 <div>
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-slate-400">{language === "ur" ? "فنڈنگ پروگریس" : "Funding Progress"}</span>
-                    <span className="text-amber-400 font-semibold">{fundingProgress.toFixed(0)}%</span>
+                    <span className="text-gray-500">{language === "ur" ? "فنڈنگ پروگریس" : "Funding Progress"}</span>
+                    <span className="text-purple-600 font-semibold">{fundingProgress.toFixed(0)}%</span>
                   </div>
-                  <Progress value={fundingProgress} className="h-2 bg-slate-700" />
+                  <Progress value={fundingProgress} className="h-2 bg-gray-100" />
                 </div>
               </div>
 
               <Link href={isAuthenticated ? `/invest/${id}` : "/signup"}>
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-6 text-lg rounded-xl">
                   <Sparkles className="mr-2 w-5 h-5" />
                   {language === "ur" ? "ابھی سرمایہ کاری کریں" : "Invest Now"}
                 </Button>
               </Link>
 
-              <p className="text-center text-slate-500 text-sm mt-4">
+              <p className="text-center text-gray-500 text-sm mt-4">
                 {language === "ur" ? "کم از کم سرمایہ کاری" : "Minimum Investment"}: PKR {Number(property.sharePrice).toLocaleString()}
               </p>
             </div>
@@ -313,31 +305,31 @@ export default function PropertyDetail() {
       <section className="py-12">
         <div className="container">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="flex flex-wrap w-full max-w-4xl h-auto p-1 bg-slate-800/50 border border-slate-700 rounded-xl gap-1">
+            <TabsList className="flex flex-wrap w-full max-w-4xl h-auto p-1 bg-white border border-gray-200 rounded-xl gap-1">
               <TabsTrigger 
                 value="overview" 
-                className="flex-1 min-w-[100px] rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold py-3"
+                className="flex-1 min-w-[100px] rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
               >
                 <Building2 className="w-4 h-4 mr-2" />
                 Overview
               </TabsTrigger>
               <TabsTrigger 
                 value="calculator" 
-                className="flex-1 min-w-[100px] rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold py-3"
+                className="flex-1 min-w-[100px] rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
               >
                 <Calculator className="w-4 h-4 mr-2" />
                 Calculator
               </TabsTrigger>
               <TabsTrigger 
                 value="documents" 
-                className="flex-1 min-w-[100px] rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold py-3"
+                className="flex-1 min-w-[100px] rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
               >
                 <FileCheck className="w-4 h-4 mr-2" />
                 Documents
               </TabsTrigger>
               <TabsTrigger 
                 value="spv" 
-                className="flex-1 min-w-[100px] rounded-lg text-slate-400 data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900 data-[state=active]:font-semibold py-3"
+                className="flex-1 min-w-[100px] rounded-lg text-gray-600 data-[state=active]:bg-purple-600 data-[state=active]:text-white data-[state=active]:font-semibold py-3"
               >
                 <Shield className="w-4 h-4 mr-2" />
                 SPV
@@ -349,79 +341,75 @@ export default function PropertyDetail() {
               <div className="grid lg:grid-cols-3 gap-8">
                 <div className="lg:col-span-2 space-y-6">
                   {/* Description */}
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                      <Building2 className="w-5 h-5 text-amber-400" />
+                  <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <Building2 className="w-5 h-5 text-purple-600" />
                       Property Description
                     </h3>
-                    <p className="text-slate-300 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed">
                       {property.description || 
                         "This premium property offers an excellent investment opportunity with verified title and professional management. Located in a prime area with high rental demand and strong appreciation potential."}
                     </p>
                   </div>
 
                   {/* Investment Highlights */}
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                    <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                      <Star className="w-5 h-5 text-amber-400" />
+                  <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                      <Star className="w-5 h-5 text-purple-600" />
                       Investment Highlights
                     </h3>
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
                       {[
-                        "100% verified title with comprehensive legal due diligence",
-                        "Professional property management included",
-                        "Shariah-compliant Diminishing Musharaka structure",
-                        "Monthly rental income distribution",
-                        "Secondary market liquidity for easy exit",
-                        "FBR registered valuation"
-                      ].map((feature, index) => (
-                        <div key={index} className="flex items-center gap-3">
-                          <CheckCircle className="w-5 h-5 text-emerald-400 flex-shrink-0" />
-                          <span className="text-slate-300">{feature}</span>
+                        { icon: TrendingUp, label: "Expected Yield", value: `${property.expectedRentalYield}% p.a.`, color: "text-green-600 bg-green-100" },
+                        { icon: Percent, label: "Appreciation", value: `${property.expectedAppreciation}% p.a.`, color: "text-purple-600 bg-purple-100" },
+                        { icon: Users, label: "Investors", value: "Coming Soon", color: "text-blue-600 bg-blue-100" },
+                        { icon: Calendar, label: "Holding Period", value: "3-5 Years", color: "text-amber-600 bg-amber-100" },
+                      ].map((item, i) => (
+                        <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-gray-50">
+                          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${item.color.split(' ')[1]}`}>
+                            <item.icon className={`w-5 h-5 ${item.color.split(' ')[0]}`} />
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-500">{item.label}</p>
+                            <p className="font-semibold text-gray-900">{item.value}</p>
+                          </div>
                         </div>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Returns Summary */}
+                {/* Sidebar */}
                 <div className="space-y-6">
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/30">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-emerald-400" />
-                      Expected Returns
-                    </h3>
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400">Rental Yield</span>
-                        <span className="text-emerald-400 font-bold text-lg">{property.expectedRentalYield}% p.a.</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400">Capital Appreciation</span>
-                        <span className="text-emerald-400 font-bold text-lg">{property.expectedAppreciation}% p.a.</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-slate-400">Holding Period</span>
-                        <span className="text-white font-semibold">{property.holdingPeriod || 60} months</span>
-                      </div>
+                  {/* Trust Badges */}
+                  <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                    <h3 className="font-bold text-gray-900 mb-4">Trust & Security</h3>
+                    <div className="space-y-3">
+                      {[
+                        { icon: Shield, label: "SECP Registered SPV", color: "text-green-600 bg-green-100" },
+                        { icon: FileCheck, label: "Title Verified", color: "text-purple-600 bg-purple-100" },
+                        { icon: CheckCircle, label: "FBR Valuation Done", color: "text-blue-600 bg-blue-100" },
+                        { icon: Star, label: "Shariah Compliant", color: "text-amber-600 bg-amber-100" },
+                      ].map((badge, i) => (
+                        <div key={i} className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${badge.color.split(' ')[1]}`}>
+                            <badge.icon className={`w-4 h-4 ${badge.color.split(' ')[0]}`} />
+                          </div>
+                          <span className="text-gray-700">{badge.label}</span>
+                        </div>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/10 border border-amber-500/30">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                      <Users className="w-5 h-5 text-amber-400" />
-                      Investors
-                    </h3>
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="flex -space-x-2">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                          <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 border-2 border-slate-800 flex items-center justify-center text-xs font-bold text-slate-900">
-                            {i}
-                          </div>
-                        ))}
-                      </div>
-                      <span className="text-slate-400">+{property.totalShares - property.availableShares} shares sold</span>
-                    </div>
+                  {/* Quick Contact */}
+                  <div className="p-6 rounded-2xl bg-purple-50 border border-purple-200">
+                    <h3 className="font-bold text-gray-900 mb-4">Need Help?</h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      Our investment advisors are here to help you make informed decisions.
+                    </p>
+                    <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                      Contact Advisor
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -430,182 +418,124 @@ export default function PropertyDetail() {
             {/* Calculator Tab */}
             <TabsContent value="calculator" className="space-y-8">
               <div className="grid lg:grid-cols-2 gap-8">
-                {/* Input Section */}
-                <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                    <Calculator className="w-5 h-5 text-amber-400" />
+                <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <Calculator className="w-5 h-5 text-purple-600" />
                     Investment Calculator
                   </h3>
 
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-slate-400 mb-2">
-                        Number of Shares
+                      <label className="block text-gray-700 font-medium mb-2">
+                        Number of Shares: {investmentShares}
                       </label>
-                      <Input
-                        type="number"
-                        value={investmentShares}
-                        onChange={(e) => setInvestmentShares(parseInt(e.target.value) || 1)}
-                        className="bg-slate-700/50 border-slate-600 text-white text-lg"
-                        min={1}
-                        max={property.availableShares}
-                      />
                       <Slider
                         value={[investmentShares]}
                         onValueChange={(value) => setInvestmentShares(value[0])}
                         min={1}
-                        max={Math.min(100, property.availableShares)}
+                        max={Math.min(property.availableShares, 100)}
                         step={1}
-                        className="mt-4"
+                        className="mt-2"
                       />
-                      <div className="flex justify-between text-sm text-slate-500 mt-2">
-                        <span>1 share</span>
-                        <span>{Math.min(100, property.availableShares)} shares</span>
+                      <div className="flex justify-between text-sm text-gray-500 mt-1">
+                        <span>1 Share</span>
+                        <span>{Math.min(property.availableShares, 100)} Shares</span>
                       </div>
                     </div>
 
-                    {calculations && (
-                      <div className="p-4 rounded-xl bg-slate-700/30 border border-slate-600/50">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-slate-400">Total Investment</span>
-                          <span className="text-white font-semibold">PKR {calculations.totalInvestment.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-slate-400">Ownership</span>
-                          <span className="text-amber-400 font-semibold">
-                            {((investmentShares / property.totalShares) * 100).toFixed(2)}%
-                          </span>
-                        </div>
-                      </div>
-                    )}
+                    <div className="p-4 rounded-xl bg-gray-50">
+                      <p className="text-gray-500 text-sm">Total Investment</p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        PKR {calculations?.totalInvestment.toLocaleString()}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {[1, 5, 10, 25, 50].map((shares) => (
+                        <Button
+                          key={shares}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setInvestmentShares(shares)}
+                          className={`border-gray-200 ${investmentShares === shares ? 'bg-purple-100 text-purple-700 border-purple-300' : 'text-gray-700 hover:bg-purple-50'}`}
+                        >
+                          {shares} {shares === 1 ? 'Share' : 'Shares'}
+                        </Button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Results Section */}
                 {calculations && (
                   <div className="space-y-6">
-                    <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/30">
-                      <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <Target className="w-5 h-5 text-emerald-400" />
-                        Projected Returns (5 Years)
-                      </h3>
-
-                      <div className="space-y-4">
-                        <div className="p-4 rounded-xl bg-slate-800/50">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-slate-400">Monthly Rental Income</span>
-                            <span className="text-emerald-400 font-bold">PKR {calculations.monthlyIncome.toLocaleString()}</span>
-                          </div>
+                    <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                      <h4 className="font-bold text-gray-900 mb-4">Projected Returns</h4>
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50">
+                          <span className="text-gray-600">Monthly Income</span>
+                          <span className="font-bold text-green-600">
+                            PKR {calculations.monthlyIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                          </span>
                         </div>
-
-                        <div className="p-4 rounded-xl bg-slate-800/50">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-slate-400">Total Rental Income (5Y)</span>
-                            <span className="text-emerald-400 font-bold">PKR {calculations.fiveYearIncome.toLocaleString()}</span>
-                          </div>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50">
+                          <span className="text-gray-600">Annual Income</span>
+                          <span className="font-bold text-green-600">
+                            PKR {calculations.annualIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                          </span>
                         </div>
-
-                        <div className="p-4 rounded-xl bg-slate-800/50">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-slate-400">Capital Appreciation (5Y)</span>
-                            <span className="text-emerald-400 font-bold">PKR {calculations.fiveYearAppreciation.toLocaleString()}</span>
-                          </div>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50">
+                          <span className="text-gray-600">5-Year Rental Income</span>
+                          <span className="font-bold text-gray-900">
+                            PKR {calculations.fiveYearIncome.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                          </span>
                         </div>
-
-                        <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/20 to-amber-600/20 border border-amber-500/30">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-white font-semibold">Total Value (5Y)</span>
-                            <span className="text-amber-400 font-bold text-xl">PKR {calculations.fiveYearTotal.toLocaleString()}</span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-slate-400 text-sm">ROI</span>
-                            <span className="text-amber-400 font-semibold">{calculations.roi.toFixed(1)}%</span>
-                          </div>
+                        <div className="flex justify-between items-center p-3 rounded-xl bg-gray-50">
+                          <span className="text-gray-600">5-Year Appreciation</span>
+                          <span className="font-bold text-gray-900">
+                            PKR {calculations.fiveYearAppreciation.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                          </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                      <div className="flex items-start gap-3">
-                        <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                        <p className="text-slate-400 text-sm">
-                          These projections are based on historical performance. Actual returns may vary.
-                        </p>
-                      </div>
+                    <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 text-white">
+                      <h4 className="font-bold mb-4">5-Year Total Value</h4>
+                      <p className="text-3xl font-bold mb-2">
+                        PKR {calculations.fiveYearTotal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                      </p>
+                      <p className="text-purple-200">
+                        Total ROI: <span className="text-white font-bold">{calculations.roi.toFixed(1)}%</span>
+                      </p>
                     </div>
-
-                    <Link href={isAuthenticated ? `/invest/${id}` : "/signup"}>
-                      <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
-                        <Sparkles className="mr-2 w-5 h-5" />
-                        Invest Now
-                      </Button>
-                    </Link>
                   </div>
                 )}
               </div>
             </TabsContent>
 
             {/* Documents Tab */}
-            <TabsContent value="documents" className="space-y-6">
-              <div className="max-w-3xl mx-auto">
-                <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                    <FileCheck className="w-5 h-5 text-amber-400" />
-                    Verification Documents
-                  </h3>
-
-                  {documents.length > 0 ? (
-                    <div className="space-y-4">
-                      {documents.map((doc) => (
-                        <div 
-                          key={doc.id}
-                          className="flex items-center justify-between p-4 rounded-xl bg-slate-700/30 border border-slate-600/50"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              doc.verificationStatus === 'verified' 
-                                ? 'bg-emerald-500/20' 
-                                : 'bg-amber-500/20'
-                            }`}>
-                              {doc.verificationStatus === 'verified' 
-                                ? <CheckCircle className="w-5 h-5 text-emerald-400" />
-                                : <Clock className="w-5 h-5 text-amber-400" />
-                              }
-                            </div>
-                            <div>
-                              <p className="text-white font-medium">{doc.title}</p>
-                              <p className="text-sm text-slate-400 capitalize">
-                                {doc.documentType.replace("_", " ")}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Badge className={
-                              doc.verificationStatus === 'verified'
-                                ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30'
-                                : 'bg-amber-500/20 text-amber-400 border-amber-500/30'
-                            }>
-                              {doc.verificationStatus}
-                            </Badge>
-                            {doc.documentUrl && (
-                              <Button 
-                                variant="outline" 
-                                size="sm"
-                                className="border-slate-600 text-slate-300 hover:bg-slate-700"
-                              >
-                                <Download className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
+            <TabsContent value="documents" className="space-y-8">
+              <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Legal Documents</h3>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {documents.length > 0 ? documents.map((doc, i) => (
+                    <div key={i} className="p-4 rounded-xl bg-gray-50 border border-gray-200 hover:border-purple-300 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                          <FileCheck className="w-5 h-5 text-purple-600" />
                         </div>
-                      ))}
+                        <div className="flex-1">
+                          <p className="font-medium text-gray-900">{doc.documentType}</p>
+                          <p className="text-sm text-green-600">{doc.verificationStatus}</p>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700">
+                          <Download className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <FileCheck className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-                      <p className="text-slate-400">
-                        Document verification in progress. Check back soon.
-                      </p>
+                  )) : (
+                    <div className="col-span-full text-center py-8">
+                      <FileCheck className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500">Documents will be available after KYC verification</p>
                     </div>
                   )}
                 </div>
@@ -613,89 +543,53 @@ export default function PropertyDetail() {
             </TabsContent>
 
             {/* SPV Tab */}
-            <TabsContent value="spv" className="space-y-6">
-              <div className="max-w-3xl mx-auto">
-                <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                  <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                    <Shield className="w-5 h-5 text-amber-400" />
-                    SPV Structure
-                  </h3>
-
-                  {spv ? (
-                    <div className="space-y-6">
-                      <div className="grid md:grid-cols-2 gap-4">
-                        <div className="p-4 rounded-xl bg-slate-700/30 border border-slate-600/50">
-                          <p className="text-slate-400 text-sm mb-1">SPV Name</p>
-                          <p className="text-white font-semibold">{spv.spvName}</p>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-700/30 border border-slate-600/50">
-                          <p className="text-slate-400 text-sm mb-1">Registration Number</p>
-                          <p className="text-white font-semibold">{spv.registrationNumber || "Pending"}</p>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-700/30 border border-slate-600/50">
-                          <p className="text-slate-400 text-sm mb-1">Status</p>
-                          <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
-                            {spv.status}
-                          </Badge>
-                        </div>
-                        <div className="p-4 rounded-xl bg-slate-700/30 border border-slate-600/50">
-                          <p className="text-slate-400 text-sm mb-1">Legal Structure</p>
-                          <p className="text-white font-semibold">{spv.legalStructure || "Private Limited"}</p>
-                        </div>
+            <TabsContent value="spv" className="space-y-8">
+              <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-purple-600" />
+                  Special Purpose Vehicle (SPV)
+                </h3>
+                
+                {spv ? (
+                  <div className="space-y-6">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">Company Name</p>
+                        <p className="font-semibold text-gray-900">{spv.spvName}</p>
                       </div>
-
-                      <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-                        <div className="flex items-start gap-3">
-                          <Shield className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-white font-medium mb-1">Your Investment is Protected</p>
-                            <p className="text-slate-400 text-sm">
-                              The SPV structure ensures your ownership is legally protected and registered with SECP.
-                            </p>
-                          </div>
-                        </div>
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">Registration Number</p>
+                        <p className="font-semibold text-gray-900">{spv.registrationNumber}</p>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">Status</p>
+                        <Badge className="bg-green-100 text-green-700">{spv.status}</Badge>
+                      </div>
+                      <div className="p-4 rounded-xl bg-gray-50">
+                        <p className="text-sm text-gray-500">Registered Date</p>
+                        <p className="font-semibold text-gray-900">
+                          {new Date(spv.createdAt).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Shield className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-                      <p className="text-slate-400">
-                        SPV structure is being established. Details will be available soon.
+                    
+                    <div className="p-4 rounded-xl bg-purple-50 border border-purple-200">
+                      <h4 className="font-semibold text-gray-900 mb-2">What is an SPV?</h4>
+                      <p className="text-gray-600 text-sm">
+                        A Special Purpose Vehicle (SPV) is a legal entity created specifically to hold this property. 
+                        Your investment gives you shares in this SPV, providing legal ownership rights and protection.
                       </p>
                     </div>
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <Shield className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                    <p className="text-gray-500">SPV details will be available once the property is fully funded</p>
+                  </div>
+                )}
               </div>
             </TabsContent>
           </Tabs>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-br from-amber-500/10 via-slate-900 to-emerald-500/10">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              {language === "ur" ? "اس پراپرٹی میں سرمایہ کاری کریں" : "Invest in This Property"}
-            </h2>
-            <p className="text-slate-400 mb-8">
-              Start with just PKR {Number(property.sharePrice).toLocaleString()} and earn {property.expectedRentalYield}% annual rental yield
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Link href={isAuthenticated ? `/invest/${id}` : "/signup"}>
-                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
-                  <Sparkles className="mr-2 w-5 h-5" />
-                  Invest Now
-                </Button>
-              </Link>
-              <Link href="/properties">
-                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 px-8 py-6 text-lg rounded-xl">
-                  More Properties
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
 

@@ -10,145 +10,194 @@ import {
   Instagram,
   Linkedin,
   Youtube,
-  Shield,
-  CheckCircle2,
-  Award,
   ArrowRight
 } from "lucide-react";
 
 export default function Footer() {
   const { language } = useLanguage();
 
-  const quickLinks = [
-    { href: "/properties", label: language === "ur" ? "پراپرٹیز" : "Properties" },
-    { href: "/education", label: language === "ur" ? "سیکھیں" : "Learn" },
-    { href: "/about", label: language === "ur" ? "ہمارے بارے میں" : "About Us" },
-    { href: "/marketplace", label: language === "ur" ? "مارکیٹ پلیس" : "Marketplace" },
-  ];
-
-  const investorLinks = [
-    { href: "/dashboard", label: language === "ur" ? "ڈیش بورڈ" : "Dashboard" },
-    { href: "/portfolio", label: language === "ur" ? "پورٹ فولیو" : "Portfolio" },
-    { href: "/wallet", label: language === "ur" ? "والیٹ" : "Wallet" },
-    { href: "/kyc", label: language === "ur" ? "KYC تصدیق" : "KYC Verification" },
-  ];
-
-  const legalLinks = [
-    { href: "#", label: language === "ur" ? "رازداری کی پالیسی" : "Privacy Policy" },
-    { href: "#", label: language === "ur" ? "شرائط و ضوابط" : "Terms of Service" },
-    { href: "#", label: language === "ur" ? "رسک ڈسکلوژر" : "Risk Disclosure" },
-    { href: "#", label: language === "ur" ? "شریعہ سرٹیفکیٹ" : "Shariah Certificate" },
-  ];
+  const footerLinks = {
+    properties: [
+      { label: language === "ur" ? "تمام پراپرٹیز" : "All Properties", href: "/properties" },
+      { label: language === "ur" ? "اپارٹمنٹس" : "Apartments", href: "/properties?type=apartment" },
+      { label: language === "ur" ? "کمرشل" : "Commercial", href: "/properties?type=commercial" },
+      { label: language === "ur" ? "پلاٹس" : "Plots", href: "/properties?type=plot" },
+    ],
+    resources: [
+      { label: language === "ur" ? "سیکھیں" : "Learn", href: "/education" },
+      { label: language === "ur" ? "علاقہ گائیڈز" : "Area Guides", href: "/area-guides" },
+      { label: language === "ur" ? "قیمت انڈیکس" : "Price Index", href: "/price-index" },
+      { label: language === "ur" ? "کیلکولیٹر" : "Calculator", href: "/calculator" },
+    ],
+    company: [
+      { label: language === "ur" ? "ہمارے بارے میں" : "About Us", href: "/about" },
+      { label: language === "ur" ? "رابطہ کریں" : "Contact", href: "/about#contact" },
+      { label: language === "ur" ? "کیریئرز" : "Careers", href: "/careers" },
+      { label: language === "ur" ? "پریس" : "Press", href: "/press" },
+    ],
+    legal: [
+      { label: language === "ur" ? "رازداری پالیسی" : "Privacy Policy", href: "/privacy" },
+      { label: language === "ur" ? "شرائط و ضوابط" : "Terms of Service", href: "/terms" },
+      { label: language === "ur" ? "رسک ڈسکلوژر" : "Risk Disclosure", href: "/risk-disclosure" },
+      { label: language === "ur" ? "شریعت سرٹیفیکیشن" : "Shariah Certification", href: "/shariah" },
+    ],
+  };
 
   return (
-    <footer className="footer-premium text-white pt-20 pb-8">
-      {/* Main Footer Content */}
-      <div className="container">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+    <footer className="bg-gray-900 text-white">
+      {/* Newsletter Section */}
+      <div className="border-b border-gray-800">
+        <div className="container py-12">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="text-xl font-bold mb-2">
+                {language === "ur" ? "اپ ڈیٹ رہیں" : "Stay Updated"}
+              </h3>
+              <p className="text-gray-400">
+                {language === "ur" 
+                  ? "نئی پراپرٹیز اور سرمایہ کاری کے مواقع کے بارے میں جانیں"
+                  : "Get notified about new properties and investment opportunities"
+                }
+              </p>
+            </div>
+            <div className="flex w-full md:w-auto gap-2">
+              <input
+                type="email"
+                placeholder={language === "ur" ? "آپ کا ای میل" : "Enter your email"}
+                className="flex-1 md:w-72 px-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+              />
+              <button className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-semibold transition-colors flex items-center gap-2">
+                {language === "ur" ? "سبسکرائب" : "Subscribe"}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Footer */}
+      <div className="container py-16">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8">
           {/* Brand Column */}
-          <div className="lg:col-span-1">
+          <div className="col-span-2">
             <Link href="/">
-              <div className="flex items-center gap-3 mb-6 cursor-pointer group">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center group-hover:scale-105 transition-transform">
-                  <Building2 className="w-7 h-7 text-white" />
+              <a className="flex items-center gap-2 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                  <Building2 className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold">PropertyPool</span>
-              </div>
+                <span className="text-2xl font-bold">
+                  Property<span className="text-purple-400">Pool</span>
+                </span>
+              </a>
             </Link>
-            <p className="text-white/60 mb-6 leading-relaxed">
+            <p className="text-gray-400 mb-6 text-sm leading-relaxed">
               {language === "ur" 
-                ? "پاکستان کا پہلا شریعہ مطابق فریکشنل پراپرٹی انویسٹمنٹ پلیٹ فارم۔ صرف 50,000 روپے سے پریمیم رئیل اسٹیٹ میں سرمایہ کاری شروع کریں۔"
-                : "Pakistan's first Shariah-compliant fractional property investment platform. Start investing in premium real estate from just PKR 50,000."}
+                ? "پاکستان کا پہلا فریکشنل پراپرٹی انویسٹمنٹ پلیٹ فارم۔ صرف PKR 50,000 سے پریمیم رئیل اسٹیٹ میں سرمایہ کاری کریں۔"
+                : "Pakistan's first fractional property investment platform. Invest in premium real estate starting from just PKR 50,000."
+              }
             </p>
             
-            {/* Trust Badges */}
-            <div className="flex flex-wrap gap-3">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs">
-                <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400">SECP</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400">Shariah</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-xs">
-                <Award className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400">FBR</span>
+            {/* Contact Info */}
+            <div className="space-y-3 text-sm">
+              <a href="mailto:info@propertypool.pk" className="flex items-center gap-3 text-gray-400 hover:text-purple-400 transition-colors">
+                <Mail className="w-4 h-4" />
+                info@propertypool.pk
+              </a>
+              <a href="tel:+923001234567" className="flex items-center gap-3 text-gray-400 hover:text-purple-400 transition-colors">
+                <Phone className="w-4 h-4" />
+                +92 300 123 4567
+              </a>
+              <div className="flex items-start gap-3 text-gray-400">
+                <MapPin className="w-4 h-4 mt-0.5" />
+                <span>DHA Phase 5, Lahore, Pakistan</span>
               </div>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Properties */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-yellow-600 rounded-full"></div>
-              {language === "ur" ? "فوری لنکس" : "Quick Links"}
+            <h4 className="font-semibold text-white mb-4">
+              {language === "ur" ? "پراپرٹیز" : "Properties"}
             </h4>
             <ul className="space-y-3">
-              {quickLinks.map((link) => (
-                <li key={link.href}>
+              {footerLinks.properties.map((link, index) => (
+                <li key={index}>
                   <Link href={link.href}>
-                    <span className="text-white/60 hover:text-amber-400 transition-colors flex items-center gap-2 group cursor-pointer">
-                      <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
                       {link.label}
-                    </span>
+                    </a>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Investor Links */}
+          {/* Resources */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-yellow-600 rounded-full"></div>
-              {language === "ur" ? "سرمایہ کاروں کے لیے" : "For Investors"}
+            <h4 className="font-semibold text-white mb-4">
+              {language === "ur" ? "وسائل" : "Resources"}
             </h4>
             <ul className="space-y-3">
-              {investorLinks.map((link) => (
-                <li key={link.href}>
+              {footerLinks.resources.map((link, index) => (
+                <li key={index}>
                   <Link href={link.href}>
-                    <span className="text-white/60 hover:text-amber-400 transition-colors flex items-center gap-2 group cursor-pointer">
-                      <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all" />
+                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
                       {link.label}
-                    </span>
+                    </a>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Company */}
           <div>
-            <h4 className="text-lg font-semibold mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-amber-500 to-yellow-600 rounded-full"></div>
-              {language === "ur" ? "رابطہ کریں" : "Contact Us"}
+            <h4 className="font-semibold text-white mb-4">
+              {language === "ur" ? "کمپنی" : "Company"}
             </h4>
-            <ul className="space-y-4">
-              <li>
-                <a href="mailto:info@propertypool.pk" className="flex items-start gap-3 text-white/60 hover:text-amber-400 transition-colors">
-                  <Mail className="w-5 h-5 mt-0.5 text-amber-400" />
-                  <span>info@propertypool.pk</span>
-                </a>
-              </li>
-              <li>
-                <a href="tel:+923001234567" className="flex items-start gap-3 text-white/60 hover:text-amber-400 transition-colors">
-                  <Phone className="w-5 h-5 mt-0.5 text-amber-400" />
-                  <span>+92 300 1234567</span>
-                </a>
-              </li>
-              <li className="flex items-start gap-3 text-white/60">
-                <MapPin className="w-5 h-5 mt-0.5 text-amber-400 flex-shrink-0" />
-                <span>
-                  {language === "ur" 
-                    ? "آفس 501، ایمرالڈ ٹاور، گلبرگ III، لاہور"
-                    : "Office 501, Emerald Tower, Gulberg III, Lahore"}
-                </span>
-              </li>
+            <ul className="space-y-3">
+              {footerLinks.company.map((link, index) => (
+                <li key={index}>
+                  <Link href={link.href}>
+                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
+                      {link.label}
+                    </a>
+                  </Link>
+                </li>
+              ))}
             </ul>
+          </div>
 
+          {/* Legal */}
+          <div>
+            <h4 className="font-semibold text-white mb-4">
+              {language === "ur" ? "قانونی" : "Legal"}
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.legal.map((link, index) => (
+                <li key={index}>
+                  <Link href={link.href}>
+                    <a className="text-sm text-gray-400 hover:text-purple-400 transition-colors">
+                      {link.label}
+                    </a>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-gray-800">
+        <div className="container py-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-gray-500">
+              © {new Date().getFullYear()} PropertyPool. {language === "ur" ? "جملہ حقوق محفوظ ہیں" : "All rights reserved"}.
+            </p>
+            
             {/* Social Links */}
-            <div className="flex gap-3 mt-6">
+            <div className="flex items-center gap-4">
               {[
                 { icon: Facebook, href: "#" },
                 { icon: Twitter, href: "#" },
@@ -159,55 +208,17 @@ export default function Footer() {
                 <a
                   key={index}
                   href={social.href}
-                  className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-amber-400 hover:bg-amber-500/10 hover:border-amber-500/30 transition-all"
+                  className="w-9 h-9 rounded-lg bg-gray-800 hover:bg-purple-600 flex items-center justify-center transition-colors"
                 >
-                  <social.icon className="w-5 h-5" />
+                  <social.icon className="w-4 h-4" />
                 </a>
               ))}
             </div>
-          </div>
-        </div>
-
-        {/* Newsletter Section */}
-        <div className="border-t border-white/10 pt-12 mb-12">
-          <div className="max-w-2xl mx-auto text-center">
-            <h4 className="text-xl font-semibold mb-3">
-              {language === "ur" ? "نیوز لیٹر سبسکرائب کریں" : "Subscribe to Our Newsletter"}
-            </h4>
-            <p className="text-white/60 mb-6">
-              {language === "ur" 
-                ? "نئی پراپرٹیز اور سرمایہ کاری کے مواقع کے بارے میں سب سے پہلے جانیں"
-                : "Be the first to know about new properties and investment opportunities"}
-            </p>
-            <div className="flex gap-3 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder={language === "ur" ? "اپنا ای میل درج کریں" : "Enter your email"}
-                className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-amber-500/50 transition-colors"
-              />
-              <button className="btn-premium px-6 py-3">
-                {language === "ur" ? "سبسکرائب" : "Subscribe"}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="border-t border-white/10 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-white/50 text-sm">
-              © {new Date().getFullYear()} PropertyPool. {language === "ur" ? "جملہ حقوق محفوظ ہیں" : "All rights reserved."}
-            </p>
-            <div className="flex flex-wrap justify-center gap-6">
-              {legalLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="text-white/50 hover:text-amber-400 text-sm transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
+            
+            {/* Badges */}
+            <div className="flex items-center gap-3 text-xs text-gray-500">
+              <span className="px-3 py-1 bg-gray-800 rounded-full">SECP Registered</span>
+              <span className="px-3 py-1 bg-gray-800 rounded-full">Shariah Certified</span>
             </div>
           </div>
         </div>

@@ -2,79 +2,88 @@ import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { 
   Building2, 
-  Target, 
-  Eye, 
   Users, 
-  Shield,
+  Shield, 
+  Target,
   Award,
-  ArrowRight,
   CheckCircle2,
-  Heart,
-  TrendingUp,
-  Sparkles,
+  ArrowRight,
   Linkedin,
-  Twitter,
   Mail,
-  Globe
+  MapPin,
+  Phone,
+  Clock,
+  TrendingUp,
+  Heart,
+  Eye,
+  Globe,
+  Sparkles
 } from "lucide-react";
 
 export default function About() {
-  const { t } = useLanguage();
+  const { language } = useLanguage();
 
   const stats = [
-    { value: "PKR 500M+", label: "Total Investments" },
+    { value: "PKR 500M+", label: "Total Property Value" },
     { value: "2,500+", label: "Active Investors" },
     { value: "15+", label: "Properties Listed" },
-    { value: "12%", label: "Avg. Annual Returns" },
+    { value: "8-12%", label: "Average Returns" },
   ];
 
   const values = [
     {
       icon: Shield,
-      title: "Trust & Transparency",
-      description: "Every transaction, document, and fee is fully transparent. No hidden costs, no surprises."
+      title: "Transparency",
+      description: "Complete visibility into every investment, from property documents to financial reports.",
+      color: "purple"
+    },
+    {
+      icon: CheckCircle2,
+      title: "Shariah Compliance",
+      description: "All investments follow Diminishing Musharaka model, certified by our Shariah board.",
+      color: "green"
     },
     {
       icon: Users,
+      title: "Community First",
+      description: "Building wealth together through collective ownership and shared success.",
+      color: "blue"
+    },
+    {
+      icon: Target,
       title: "Accessibility",
-      description: "Making premium real estate investment accessible to everyone, not just the wealthy."
+      description: "Making property investment accessible to everyone, starting from PKR 50,000.",
+      color: "amber"
     },
-    {
-      icon: Award,
-      title: "Excellence",
-      description: "We only list properties that meet our rigorous due diligence standards."
-    },
-    {
-      icon: Heart,
-      title: "Shariah Compliance",
-      description: "All investments structured according to Islamic finance principles."
-    }
   ];
 
   const team = [
     {
-      name: "Muhammad Ali",
-      role: "CEO & Founder",
-      bio: "Former investment banker with 15 years in real estate finance."
+      name: "Ahmed Khan",
+      role: "CEO & Co-Founder",
+      bio: "15+ years in real estate development and investment banking.",
+      image: null
     },
     {
-      name: "Fatima Khan",
-      role: "Chief Legal Officer",
-      bio: "Property law expert specializing in SPV structures and SECP compliance."
+      name: "Sara Malik",
+      role: "COO & Co-Founder",
+      bio: "Former McKinsey consultant with expertise in fintech operations.",
+      image: null
     },
     {
-      name: "Ahmed Hassan",
-      role: "Head of Property Sourcing",
-      bio: "20+ years experience in Pakistani real estate market."
+      name: "Usman Ali",
+      role: "CTO",
+      bio: "Tech veteran with experience at Google and local startups.",
+      image: null
     },
     {
-      name: "Dr. Usman Qureshi",
-      role: "Shariah Advisor",
-      bio: "Islamic finance scholar and former advisor to major Islamic banks."
-    }
+      name: "Fatima Zahra",
+      role: "Head of Compliance",
+      bio: "Legal expert specializing in SECP regulations and Shariah finance.",
+      image: null
+    },
   ];
 
   const milestones = [
@@ -86,87 +95,78 @@ export default function About() {
   ];
 
   const problems = [
-    { title: "High Entry Barriers", description: "Buying property requires millions of rupees, excluding most Pakistanis from the market." },
-    { title: "Fraud & Title Issues", description: "The informal 'file system' is rife with fraud, disputed titles, and Patwari corruption." },
-    { title: "Illiquidity", description: "Traditional property investments are hard to exit, often taking months or years to sell." },
-    { title: "No Passive Income", description: "Plot files generate no income until sold, and rental properties require active management." },
+    { title: "High Entry Barriers", description: "Buying property requires millions of rupees, excluding most Pakistanis." },
+    { title: "Fraud & Title Issues", description: "The informal 'file system' is rife with fraud and disputed titles." },
+    { title: "Illiquidity", description: "Traditional property investments are hard to exit quickly." },
+    { title: "No Passive Income", description: "Plot files generate no income until sold." },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-white">
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900" />
-        <div 
-          className="absolute inset-0 bg-cover bg-center opacity-10"
-          style={{ backgroundImage: "url('/about-bg.png')" }}
-        />
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(251, 191, 36, 0.15) 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
-        }} />
-        
-        {/* Floating Elements */}
-        <div className="absolute top-40 left-20 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl" />
-
-        <div className="container relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">Our Story</span>
+      <section className="pt-24 pb-16 bg-gradient-to-b from-purple-50 to-white">
+        <div className="container">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 border border-purple-200 mb-6">
+              <Sparkles className="w-4 h-4 text-purple-600" />
+              <span className="text-purple-700 text-sm font-medium">About PropertyPool</span>
             </div>
             
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Making Property Investment
-              <span className="block bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">
-                Accessible to Everyone
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              {language === "ur" ? "پراپرٹی کی ملکیت کو" : "Making Property Ownership"}
+              <span className="block text-purple-600">
+                {language === "ur" ? "سب کے لیے ممکن بنانا" : "Accessible to Everyone"}
               </span>
             </h1>
             
-            <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
-              Pakistan's first Shariah-compliant fractional property ownership platform. We're on a mission to democratize real estate investment.
+            <p className="text-xl text-gray-600 mb-8">
+              {language === "ur"
+                ? "ہم پاکستان میں رئیل اسٹیٹ سرمایہ کاری کو جمہوری بنا رہے ہیں، ایک وقت میں ایک شیئر۔"
+                : "We're democratizing real estate investment in Pakistan, one share at a time."
+              }
             </p>
+          </div>
+        </div>
+      </section>
 
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
-              {stats.map((stat, index) => (
-                <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 backdrop-blur-sm">
-                  <p className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">
-                    {stat.value}
-                  </p>
-                  <p className="text-slate-400 text-sm mt-1">{stat.label}</p>
-                </div>
-              ))}
-            </div>
+      {/* Stats Section */}
+      <section className="py-12 bg-white">
+        <div className="container">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center p-6 rounded-2xl bg-gray-50 border border-gray-100">
+                <p className="text-3xl font-bold text-purple-600 mb-2">{stat.value}</p>
+                <p className="text-gray-600">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-20 bg-slate-900/50">
+      <section className="py-16 bg-white">
         <div className="container">
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center mb-5 border border-amber-500/30">
-                <Target className="w-7 h-7 text-amber-400" />
+            <div className="p-8 rounded-2xl bg-purple-50 border border-purple-100">
+              <div className="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center mb-5">
+                <Target className="w-7 h-7 text-purple-600" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">Our Mission</h2>
-              <p className="text-slate-400">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
+              <p className="text-gray-600">
                 To transform how Pakistanis invest in real estate by providing a transparent, 
                 secure, and accessible platform that enables anyone to build wealth through 
                 property ownership, regardless of their financial background.
               </p>
             </div>
             
-            <div className="p-8 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mb-5 border border-emerald-500/30">
-                <Eye className="w-7 h-7 text-emerald-400" />
+            <div className="p-8 rounded-2xl bg-green-50 border border-green-100">
+              <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mb-5">
+                <Eye className="w-7 h-7 text-green-600" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-4">Our Vision</h2>
-              <p className="text-slate-400">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Vision</h2>
+              <p className="text-gray-600">
                 A Pakistan where every citizen has the opportunity to participate in real estate 
                 investment, where property transactions are transparent and fraud-free, and where 
                 wealth creation through property is no longer limited to the privileged few.
@@ -177,43 +177,43 @@ export default function About() {
       </section>
 
       {/* The Problem We Solve */}
-      <section className="py-20">
+      <section className="py-16 bg-gray-50">
         <div className="container">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-500/10 border border-red-500/30 mb-6">
-              <Globe className="w-4 h-4 text-red-400" />
-              <span className="text-red-400 text-sm font-medium">The Challenge</span>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-100 border border-red-200 mb-6">
+              <Globe className="w-4 h-4 text-red-600" />
+              <span className="text-red-700 text-sm font-medium">The Challenge</span>
             </div>
-            <h2 className="text-4xl font-bold text-white mb-4">The Problem We Solve</h2>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">The Problem We Solve</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
               Pakistan's real estate market has long been plagued by issues that keep ordinary citizens from participating
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {problems.map((problem, index) => (
-              <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+              <div key={index} className="p-6 rounded-2xl bg-white border border-gray-100 shadow-sm">
                 <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-red-400 font-bold">✗</span>
+                  <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0">
+                    <span className="text-red-500 font-bold">✗</span>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white mb-2">{problem.title}</h3>
-                    <p className="text-slate-400">{problem.description}</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{problem.title}</h3>
+                    <p className="text-gray-600">{problem.description}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 p-8 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 border border-emerald-500/30 max-w-4xl mx-auto">
+          <div className="mt-8 p-6 rounded-2xl bg-green-50 border border-green-200 max-w-4xl mx-auto">
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+              <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+                <CheckCircle2 className="w-6 h-6 text-green-600" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-white mb-2">PropertyPool Solves All These Problems</h3>
-                <p className="text-slate-400">
+                <h3 className="text-xl font-bold text-gray-900 mb-2">PropertyPool Solves All These Problems</h3>
+                <p className="text-gray-600">
                   Through fractional ownership, rigorous due diligence, professional management, and a secondary marketplace for liquidity.
                 </p>
               </div>
@@ -223,27 +223,34 @@ export default function About() {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 bg-slate-900/50">
+      <section className="py-16 bg-white">
         <div className="container">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <Heart className="w-4 h-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">Our Values</span>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 border border-purple-200 mb-6">
+              <Heart className="w-4 h-4 text-purple-600" />
+              <span className="text-purple-700 text-sm font-medium">Our Values</span>
             </div>
-            <h2 className="text-4xl font-bold text-white mb-4">What We Stand For</h2>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-              Our values guide every decision we make and every property we list
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              {language === "ur" ? "ہماری اقدار" : "What We Stand For"}
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Our core values guide everything we do, from selecting properties to serving our investors.
             </p>
           </div>
-
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => (
-              <div key={index} className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 hover:border-amber-500/30 transition-all duration-300 group text-center">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center mb-5 mx-auto group-hover:scale-110 transition-transform border border-amber-500/30">
-                  <value.icon className="w-7 h-7 text-amber-400" />
+              <div key={index} className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-purple-200 hover:shadow-lg transition-all">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                  value.color === 'purple' ? 'bg-purple-100 text-purple-600' :
+                  value.color === 'green' ? 'bg-green-100 text-green-600' :
+                  value.color === 'blue' ? 'bg-blue-100 text-blue-600' :
+                  'bg-amber-100 text-amber-600'
+                }`}>
+                  <value.icon className="w-6 h-6" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-3">{value.title}</h3>
-                <p className="text-slate-400">{value.description}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{value.title}</h3>
+                <p className="text-gray-600 text-sm">{value.description}</p>
               </div>
             ))}
           </div>
@@ -251,32 +258,32 @@ export default function About() {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-20">
+      <section className="py-16 bg-gray-50">
         <div className="container">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 mb-6">
-              <TrendingUp className="w-4 h-4 text-emerald-400" />
-              <span className="text-emerald-400 text-sm font-medium">Our Journey</span>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-100 border border-green-200 mb-6">
+              <TrendingUp className="w-4 h-4 text-green-600" />
+              <span className="text-green-700 text-sm font-medium">Our Journey</span>
             </div>
-            <h2 className="text-4xl font-bold text-white mb-4">Milestones</h2>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Milestones</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
               From idea to Pakistan's leading fractional property platform
             </p>
           </div>
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             <div className="relative">
               {/* Timeline Line */}
-              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-amber-500 via-emerald-500 to-slate-700" />
+              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 via-green-500 to-gray-300" />
               
               {milestones.map((milestone, index) => (
-                <div key={index} className="relative flex gap-8 mb-12 last:mb-0">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/25 z-10">
-                    <span className="text-slate-900 font-bold text-sm">{milestone.year}</span>
+                <div key={index} className="relative flex gap-6 mb-8 last:mb-0">
+                  <div className="w-16 h-16 rounded-2xl bg-purple-600 flex items-center justify-center flex-shrink-0 shadow-lg z-10">
+                    <span className="text-white font-bold text-sm">{milestone.year}</span>
                   </div>
-                  <div className="flex-1 p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                    <h3 className="text-xl font-bold text-white mb-2">{milestone.title}</h3>
-                    <p className="text-slate-400">{milestone.description}</p>
+                  <div className="flex-1 p-6 rounded-2xl bg-white border border-gray-100 shadow-sm">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{milestone.title}</h3>
+                    <p className="text-gray-600">{milestone.description}</p>
                   </div>
                 </div>
               ))}
@@ -286,121 +293,170 @@ export default function About() {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-slate-900/50">
+      <section className="py-16 bg-white">
         <div className="container">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-6">
-              <Users className="w-4 h-4 text-amber-400" />
-              <span className="text-amber-400 text-sm font-medium">Our Team</span>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 border border-purple-200 mb-6">
+              <Users className="w-4 h-4 text-purple-600" />
+              <span className="text-purple-700 text-sm font-medium">Our Team</span>
             </div>
-            <h2 className="text-4xl font-bold text-white mb-4">Leadership Team</h2>
-            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-              Experienced professionals committed to transforming property investment in Pakistan
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              {language === "ur" ? "ہماری ٹیم" : "Meet the Team"}
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Experienced professionals dedicated to transforming property investment in Pakistan.
             </p>
           </div>
-
+          
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {team.map((member, index) => (
-              <div key={index} className="group text-center">
-                <div className="relative rounded-2xl overflow-hidden mb-4">
-                  <div className="w-full h-64 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center border border-amber-500/30">
-                      <Users className="w-12 h-12 text-amber-400" />
-                    </div>
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-4">
-                    <div className="flex gap-3">
-                      <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
-                        <Linkedin className="w-5 h-5 text-white" />
-                      </button>
-                      <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
-                        <Twitter className="w-5 h-5 text-white" />
-                      </button>
-                      <button className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center hover:bg-white/20 transition-colors">
-                        <Mail className="w-5 h-5 text-white" />
-                      </button>
-                    </div>
-                  </div>
+              <div key={index} className="bg-white p-6 rounded-2xl border border-gray-100 hover:border-purple-200 hover:shadow-lg transition-all text-center">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-10 h-10 text-purple-400" />
                 </div>
-                <h3 className="text-lg font-bold text-white">{member.name}</h3>
-                <p className="text-amber-400 text-sm mb-2">{member.role}</p>
-                <p className="text-slate-400 text-sm">{member.bio}</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">{member.name}</h3>
+                <p className="text-purple-600 text-sm font-medium mb-3">{member.role}</p>
+                <p className="text-gray-600 text-sm mb-4">{member.bio}</p>
+                <a href="#" className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-gray-100 text-gray-500 hover:bg-purple-100 hover:text-purple-600 transition-colors">
+                  <Linkedin className="w-4 h-4" />
+                </a>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Regulatory Compliance */}
-      <section className="py-20">
+      {/* Contact Section */}
+      <section id="contact" className="py-16 bg-gray-50">
         <div className="container">
-          <div className="max-w-4xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 mb-6">
-              <Shield className="w-4 h-4 text-emerald-400" />
-              <span className="text-emerald-400 text-sm font-medium">Compliance</span>
+          <div className="grid lg:grid-cols-2 gap-12">
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 border border-purple-200 mb-6">
+                <Mail className="w-4 h-4 text-purple-600" />
+                <span className="text-purple-700 text-sm font-medium">Contact Us</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                {language === "ur" ? "ہم سے رابطہ کریں" : "Get in Touch"}
+              </h2>
+              <p className="text-gray-600 mb-8">
+                Have questions about investing? Our team is here to help you start your property investment journey.
+              </p>
+              
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Office Address</h4>
+                    <p className="text-gray-600">Office 501, Emerald Tower, Gulberg III, Lahore, Pakistan</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Email</h4>
+                    <a href="mailto:info@propertypool.pk" className="text-purple-600 hover:underline">info@propertypool.pk</a>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Phone</h4>
+                    <a href="tel:+923001234567" className="text-purple-600 hover:underline">+92 300 123 4567</a>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
+                    <Clock className="w-6 h-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Business Hours</h4>
+                    <p className="text-gray-600">Mon - Fri: 9:00 AM - 6:00 PM</p>
+                    <p className="text-gray-600">Sat: 10:00 AM - 2:00 PM</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h2 className="text-4xl font-bold text-white mb-4">Regulatory Compliance</h2>
-            <p className="text-slate-400 text-lg mb-12">
-              PropertyPool operates with full regulatory compliance and transparency
-            </p>
             
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 flex items-center justify-center mb-5 mx-auto border border-emerald-500/30">
-                  <Shield className="w-7 h-7 text-emerald-400" />
+            <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm">
+              <h3 className="text-xl font-semibold text-gray-900 mb-6">Send us a Message</h3>
+              <form className="space-y-4">
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input 
+                      type="email" 
+                      className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all"
+                      placeholder="your@email.com"
+                    />
+                  </div>
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">SECP Registered</h3>
-                <p className="text-slate-400 text-sm">
-                  All SPVs registered with Securities and Exchange Commission of Pakistan
-                </p>
-              </div>
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center mb-5 mx-auto border border-amber-500/30">
-                  <Award className="w-7 h-7 text-amber-400" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                  <input 
+                    type="tel" 
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all"
+                    placeholder="+92 300 1234567"
+                  />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">Shariah Certified</h3>
-                <p className="text-slate-400 text-sm">
-                  Investment structure approved by qualified Islamic scholars
-                </p>
-              </div>
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center mb-5 mx-auto border border-blue-500/30">
-                  <CheckCircle2 className="w-7 h-7 text-blue-400" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                  <textarea 
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-300 focus:ring-2 focus:ring-purple-100 outline-none transition-all resize-none"
+                    placeholder="How can we help you?"
+                  />
                 </div>
-                <h3 className="text-lg font-bold text-white mb-2">FBR Compliant</h3>
-                <p className="text-slate-400 text-sm">
-                  Full tax compliance with proper documentation and reporting
-                </p>
-              </div>
+                <button 
+                  type="submit"
+                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+                >
+                  Send Message
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </form>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-amber-500/10 via-slate-900 to-emerald-500/10">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-4xl font-bold text-white mb-6">
-              Join the Property Revolution
-            </h2>
-            <p className="text-slate-400 text-lg mb-8">
-              Be part of Pakistan's first fractional property ownership platform. Start building your real estate portfolio today.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/signup">
-                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl shadow-lg shadow-amber-500/25">
-                  <Sparkles className="mr-2 w-5 h-5" />
-                  Get Started Free
-                </Button>
-              </Link>
-              <Link href="/properties">
-                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 px-8 py-6 text-lg rounded-xl">
-                  Explore Properties
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-            </div>
+      <section className="py-16 bg-gradient-to-br from-purple-600 to-purple-800 text-white">
+        <div className="container text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            {language === "ur" ? "آج ہی اپنی سرمایہ کاری کا سفر شروع کریں" : "Ready to Start Investing?"}
+          </h2>
+          <p className="text-purple-100 mb-8 max-w-2xl mx-auto">
+            Join thousands of Pakistanis who are building wealth through fractional property ownership.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/properties">
+              <a className="inline-flex items-center gap-2 px-8 py-4 bg-white text-purple-700 font-semibold rounded-xl hover:bg-purple-50 transition-all shadow-lg">
+                Explore Properties
+                <ArrowRight className="w-5 h-5" />
+              </a>
+            </Link>
+            <Link href="/calculator">
+              <a className="inline-flex items-center gap-2 px-8 py-4 bg-purple-500/30 text-white font-semibold rounded-xl border border-white/30 hover:bg-purple-500/50 transition-all">
+                Calculate Returns
+              </a>
+            </Link>
           </div>
         </div>
       </section>

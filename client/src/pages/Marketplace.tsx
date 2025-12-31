@@ -28,15 +28,17 @@ import {
   BarChart3,
   Activity,
   RefreshCw,
-  Info,
-  ChevronDown,
+  ChevronRight,
   Sparkles,
-  X
+  X,
+  ShoppingCart,
+  Tag,
+  Shield
 } from "lucide-react";
 
 export default function Marketplace() {
   const { user, isAuthenticated, loading } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selectedProperty, setSelectedProperty] = useState<string>("all");
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy");
   const [orderShares, setOrderShares] = useState(1);
@@ -70,10 +72,10 @@ export default function Marketplace() {
 
   // Market stats
   const marketStats = [
-    { label: "24h Volume", value: "PKR 12.5M", change: "+15.2%", positive: true, icon: BarChart3 },
-    { label: "Active Listings", value: "156", change: "+8", positive: true, icon: Activity },
-    { label: "Avg. Price/Share", value: "PKR 5,420", change: "-2.1%", positive: false, icon: TrendingDown },
-    { label: "Total Trades Today", value: "89", change: "+23", positive: true, icon: RefreshCw },
+    { label: "24h Volume", value: "PKR 12.5M", change: "+15.2%", positive: true, icon: BarChart3, color: "purple" },
+    { label: "Active Listings", value: "156", change: "+8", positive: true, icon: Activity, color: "blue" },
+    { label: "Avg. Price/Share", value: "PKR 5,420", change: "-2.1%", positive: false, icon: TrendingDown, color: "amber" },
+    { label: "Total Trades Today", value: "89", change: "+23", positive: true, icon: RefreshCw, color: "green" },
   ];
 
   // Sample marketplace data
@@ -89,13 +91,6 @@ export default function Marketplace() {
     { id: 1, property: "DHA Phase 6 Apartment", shares: 40, pricePerShare: 5400, total: 216000, buyer: "Usman T.", time: "1 min ago" },
     { id: 2, property: "Commercial Plaza Gulberg", shares: 60, pricePerShare: 8800, total: 528000, buyer: "Zara K.", time: "8 min ago" },
     { id: 3, property: "Bahria Town Villa", shares: 80, pricePerShare: 5000, total: 400000, buyer: "Imran S.", time: "15 min ago" },
-  ];
-
-  const recentTrades = [
-    { id: 1, property: "DHA Phase 6 Apartment", shares: 25, price: 5300, type: "buy", time: "Just now", status: "completed" },
-    { id: 2, property: "Bahria Town Villa", shares: 50, price: 4900, type: "sell", time: "3 min ago", status: "completed" },
-    { id: 3, property: "Commercial Plaza", shares: 15, price: 8600, type: "buy", time: "10 min ago", status: "completed" },
-    { id: 4, property: "DHA Phase 5 Plot", shares: 30, price: 6100, type: "sell", time: "22 min ago", status: "pending" },
   ];
 
   const handlePlaceOrder = () => {
@@ -116,29 +111,39 @@ export default function Marketplace() {
     });
   };
 
+  const getColorClasses = (color: string) => {
+    const colors: Record<string, string> = {
+      purple: "bg-purple-100 text-purple-600",
+      blue: "bg-blue-100 text-blue-600",
+      amber: "bg-amber-100 text-amber-600",
+      green: "bg-green-100 text-green-600",
+    };
+    return colors[color] || colors.purple;
+  };
+
   // Not authenticated view
   if (!loading && !isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-950">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="container py-24">
           <div className="max-w-2xl mx-auto text-center space-y-8">
-            <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/20 flex items-center justify-center mx-auto border border-amber-500/30">
-              <Building2 className="w-10 h-10 text-amber-400" />
+            <div className="w-20 h-20 rounded-2xl bg-purple-100 flex items-center justify-center mx-auto">
+              <ShoppingCart className="w-10 h-10 text-purple-600" />
             </div>
-            <h1 className="text-4xl font-bold text-white">Secondary Marketplace</h1>
-            <p className="text-slate-400 text-lg">
+            <h1 className="text-4xl font-bold text-gray-900">Secondary Marketplace</h1>
+            <p className="text-gray-600 text-lg">
               Trade your property shares with other verified investors. Buy low, sell high, and maintain liquidity in your portfolio.
             </p>
             <div className="flex justify-center gap-4">
-              <Link href="/login">
-                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8 py-6 text-lg rounded-xl">
+              <a href={getLoginUrl()}>
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-6 text-lg rounded-xl">
                   Sign In to Trade
                   <ArrowRight className="ml-2 w-5 h-5" />
                 </Button>
-              </Link>
+              </a>
               <Link href="/signup">
-                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 px-8 py-6 text-lg rounded-xl">
+                <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100 px-8 py-6 text-lg rounded-xl">
                   Create Account
                 </Button>
               </Link>
@@ -153,60 +158,60 @@ export default function Marketplace() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="animate-spin w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin w-10 h-10 border-4 border-purple-600 border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-950" />
-        <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(251, 191, 36, 0.15) 1px, transparent 0)`,
-          backgroundSize: '40px 40px'
-        }} />
-        
-        <div className="container relative z-10">
+      <section className="pt-24 pb-12 bg-gradient-to-b from-purple-50 to-white">
+        <div className="container">
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <Link href="/" className="hover:text-purple-600 transition-colors">Home</Link>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-gray-900">Marketplace</span>
+          </div>
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/30 mb-4">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <span className="text-amber-400 text-sm font-medium">Secondary Market</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-100 border border-purple-200 mb-4">
+                <Sparkles className="w-4 h-4 text-purple-600" />
+                <span className="text-purple-700 text-sm font-medium">Secondary Market</span>
               </div>
-              <h1 className="text-4xl font-bold text-white mb-2">
-                Trade Property <span className="bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">Shares</span>
+              <h1 className="text-4xl font-bold text-gray-900 mb-2">
+                Trade Property <span className="text-purple-600">Shares</span>
               </h1>
-              <p className="text-slate-400">Buy and sell fractional property shares with other verified investors</p>
+              <p className="text-gray-600">Buy and sell fractional property shares with other verified investors</p>
             </div>
             <div className="flex gap-3">
               <Link href="/wallet">
-                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800 rounded-xl">
+                <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100 rounded-xl">
                   <Wallet className="mr-2 w-4 h-4" />
-                  Wallet Balance: PKR 250,000
+                  Wallet Balance
                 </Button>
               </Link>
             </div>
           </div>
 
           {/* Market Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {marketStats.map((stat, index) => (
-              <div key={index} className="p-5 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50 backdrop-blur-sm">
+              <div key={index} className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-slate-700/50 flex items-center justify-center">
-                    <stat.icon className="w-5 h-5 text-slate-400" />
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${getColorClasses(stat.color)}`}>
+                    <stat.icon className="w-5 h-5" />
                   </div>
-                  <span className={`text-sm font-medium ${stat.positive ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`text-sm font-medium ${stat.positive ? 'text-green-600' : 'text-red-600'}`}>
                     {stat.change}
                   </span>
                 </div>
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-slate-500 text-sm">{stat.label}</p>
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-gray-500 text-sm">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -214,7 +219,7 @@ export default function Marketplace() {
       </section>
 
       {/* Main Trading Section */}
-      <section className="py-10 bg-slate-900/50">
+      <section className="py-10">
         <div className="container">
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Order Book - Left Side */}
@@ -222,15 +227,15 @@ export default function Marketplace() {
               {/* Search and Filter */}
               <div className="flex gap-4">
                 <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <Input
                     placeholder="Search properties..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 py-6 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500 rounded-xl"
+                    className="pl-12 py-6 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 rounded-xl"
                   />
                 </div>
-                <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 px-6 rounded-xl">
+                <Button variant="outline" className="border-gray-200 text-gray-700 hover:bg-gray-100 px-6 rounded-xl">
                   <Filter className="mr-2 w-4 h-4" />
                   Filter
                 </Button>
@@ -238,17 +243,17 @@ export default function Marketplace() {
 
               {/* Buy/Sell Tabs */}
               <Tabs defaultValue="buy" className="w-full">
-                <TabsList className="w-full bg-slate-800/50 p-1.5 rounded-xl h-auto">
+                <TabsList className="w-full bg-gray-100 p-1.5 rounded-xl h-auto">
                   <TabsTrigger 
                     value="buy" 
-                    className="flex-1 py-3 rounded-lg data-[state=active]:bg-emerald-500 data-[state=active]:text-white text-slate-400"
+                    className="flex-1 py-3 rounded-lg data-[state=active]:bg-green-500 data-[state=active]:text-white text-gray-600"
                   >
                     <ArrowDownRight className="mr-2 w-4 h-4" />
                     Buy Orders ({buyOrders.length})
                   </TabsTrigger>
                   <TabsTrigger 
                     value="sell" 
-                    className="flex-1 py-3 rounded-lg data-[state=active]:bg-red-500 data-[state=active]:text-white text-slate-400"
+                    className="flex-1 py-3 rounded-lg data-[state=active]:bg-red-500 data-[state=active]:text-white text-gray-600"
                   >
                     <ArrowUpRight className="mr-2 w-4 h-4" />
                     Sell Orders ({sellOrders.length})
@@ -256,9 +261,9 @@ export default function Marketplace() {
                 </TabsList>
 
                 <TabsContent value="buy" className="mt-6">
-                  <div className="rounded-2xl bg-slate-800/30 border border-slate-700/50 overflow-hidden">
+                  <div className="rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden">
                     {/* Table Header */}
-                    <div className="grid grid-cols-6 gap-4 p-4 bg-slate-800/50 text-slate-400 text-sm font-medium">
+                    <div className="grid grid-cols-6 gap-4 p-4 bg-gray-50 text-gray-600 text-sm font-medium border-b border-gray-200">
                       <div className="col-span-2">Property</div>
                       <div className="text-right">Shares</div>
                       <div className="text-right">Price/Share</div>
@@ -267,18 +272,18 @@ export default function Marketplace() {
                     </div>
                     
                     {/* Table Body */}
-                    <div className="divide-y divide-slate-700/50">
+                    <div className="divide-y divide-gray-100">
                       {buyOrders.map((order) => (
-                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-slate-800/30 transition-colors">
+                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50 transition-colors">
                           <div className="col-span-2">
-                            <p className="text-white font-medium">{order.property}</p>
-                            <p className="text-slate-500 text-sm">by {order.seller} • {order.time}</p>
+                            <p className="text-gray-900 font-medium">{order.property}</p>
+                            <p className="text-gray-500 text-sm">by {order.seller} • {order.time}</p>
                           </div>
-                          <div className="text-right text-white font-medium">{order.shares}</div>
-                          <div className="text-right text-emerald-400 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
-                          <div className="text-right text-white font-bold">PKR {order.total.toLocaleString()}</div>
+                          <div className="text-right text-gray-900 font-medium">{order.shares}</div>
+                          <div className="text-right text-green-600 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
+                          <div className="text-right text-gray-900 font-bold">PKR {order.total.toLocaleString()}</div>
                           <div className="text-right">
-                            <Button size="sm" className="bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg">
+                            <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white rounded-lg">
                               Buy
                             </Button>
                           </div>
@@ -289,9 +294,9 @@ export default function Marketplace() {
                 </TabsContent>
 
                 <TabsContent value="sell" className="mt-6">
-                  <div className="rounded-2xl bg-slate-800/30 border border-slate-700/50 overflow-hidden">
+                  <div className="rounded-2xl bg-white border border-gray-200 shadow-sm overflow-hidden">
                     {/* Table Header */}
-                    <div className="grid grid-cols-6 gap-4 p-4 bg-slate-800/50 text-slate-400 text-sm font-medium">
+                    <div className="grid grid-cols-6 gap-4 p-4 bg-gray-50 text-gray-600 text-sm font-medium border-b border-gray-200">
                       <div className="col-span-2">Property</div>
                       <div className="text-right">Shares</div>
                       <div className="text-right">Price/Share</div>
@@ -300,16 +305,16 @@ export default function Marketplace() {
                     </div>
                     
                     {/* Table Body */}
-                    <div className="divide-y divide-slate-700/50">
+                    <div className="divide-y divide-gray-100">
                       {sellOrders.map((order) => (
-                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-slate-800/30 transition-colors">
+                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50 transition-colors">
                           <div className="col-span-2">
-                            <p className="text-white font-medium">{order.property}</p>
-                            <p className="text-slate-500 text-sm">wanted by {order.buyer} • {order.time}</p>
+                            <p className="text-gray-900 font-medium">{order.property}</p>
+                            <p className="text-gray-500 text-sm">wanted by {order.buyer} • {order.time}</p>
                           </div>
-                          <div className="text-right text-white font-medium">{order.shares}</div>
-                          <div className="text-right text-red-400 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
-                          <div className="text-right text-white font-bold">PKR {order.total.toLocaleString()}</div>
+                          <div className="text-right text-gray-900 font-medium">{order.shares}</div>
+                          <div className="text-right text-red-600 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
+                          <div className="text-right text-gray-900 font-bold">PKR {order.total.toLocaleString()}</div>
                           <div className="text-right">
                             <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white rounded-lg">
                               Sell
@@ -324,30 +329,31 @@ export default function Marketplace() {
 
               {/* My Open Orders */}
               {myOrders && myOrders.filter(o => o.status === "open").length > 0 && (
-                <div className="rounded-2xl bg-slate-800/30 border border-slate-700/50 p-6">
-                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-amber-400" />
+                <div className="rounded-2xl bg-white border border-gray-200 shadow-sm p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-purple-600" />
                     My Open Orders
                   </h3>
                   <div className="space-y-3">
                     {myOrders.filter(o => o.status === "open").map((order) => (
-                      <div key={order.id} className="flex items-center justify-between p-4 rounded-xl bg-slate-700/30">
+                      <div key={order.id} className="flex items-center justify-between p-4 rounded-xl bg-gray-50">
                         <div className="flex items-center gap-4">
-                          <Badge className={order.orderType === "buy" ? "bg-emerald-500" : "bg-red-500"}>
-                            {order.orderType}
+                          <Badge className={order.orderType === "buy" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}>
+                            {order.orderType.toUpperCase()}
                           </Badge>
                           <div>
-                            <p className="text-white font-medium">{order.shares} shares</p>
-                            <p className="text-slate-400 text-sm">@ PKR {Number(order.pricePerShare).toLocaleString()}</p>
+                            <p className="text-gray-900 font-medium">{order.shares} shares @ PKR {Number(order.pricePerShare).toLocaleString()}</p>
+                            <p className="text-gray-500 text-sm">Property #{order.propertyId}</p>
                           </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          className="border-red-200 text-red-600 hover:bg-red-50"
                           onClick={() => cancelOrderMutation.mutate({ orderId: order.id })}
-                          className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                         >
-                          <X className="w-4 h-4" />
+                          <X className="w-4 h-4 mr-1" />
+                          Cancel
                         </Button>
                       </div>
                     ))}
@@ -356,157 +362,152 @@ export default function Marketplace() {
               )}
             </div>
 
-            {/* Right Sidebar - Create Order & Recent Trades */}
+            {/* Place Order - Right Side */}
             <div className="space-y-6">
-              {/* Create Order Card */}
-              <div className="rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 p-6">
-                <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-amber-400" />
-                  Create Order
-                </h3>
-
-                <div className="space-y-5">
-                  {/* Buy/Sell Toggle */}
+              {/* Place Order Card */}
+              <div className="rounded-2xl bg-white border border-gray-200 shadow-sm p-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-6">Place Order</h3>
+                
+                <div className="space-y-4">
+                  {/* Order Type */}
                   <div className="grid grid-cols-2 gap-2">
                     <Button 
                       variant={orderType === "buy" ? "default" : "outline"}
+                      className={orderType === "buy" 
+                        ? "bg-green-500 hover:bg-green-600 text-white" 
+                        : "border-gray-200 text-gray-700 hover:bg-gray-100"
+                      }
                       onClick={() => setOrderType("buy")}
-                      className={`rounded-lg ${orderType === "buy" ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "border-slate-700 text-slate-400 hover:bg-slate-800"}`}
                     >
+                      <ArrowDownRight className="mr-2 w-4 h-4" />
                       Buy
                     </Button>
                     <Button 
                       variant={orderType === "sell" ? "default" : "outline"}
+                      className={orderType === "sell" 
+                        ? "bg-red-500 hover:bg-red-600 text-white" 
+                        : "border-gray-200 text-gray-700 hover:bg-gray-100"
+                      }
                       onClick={() => setOrderType("sell")}
-                      className={`rounded-lg ${orderType === "sell" ? "bg-red-500 hover:bg-red-600 text-white" : "border-slate-700 text-slate-400 hover:bg-slate-800"}`}
                     >
+                      <ArrowUpRight className="mr-2 w-4 h-4" />
                       Sell
                     </Button>
                   </div>
 
                   {/* Property Select */}
                   <div>
-                    <Label className="text-slate-400 text-sm mb-2 block">Select Property</Label>
+                    <Label className="text-gray-700 mb-2 block">Property</Label>
                     <Select value={selectedProperty} onValueChange={setSelectedProperty}>
-                      <SelectTrigger className="w-full bg-slate-700/50 border-slate-600 text-white rounded-lg">
-                        <SelectValue placeholder="Choose property" />
+                      <SelectTrigger className="bg-white border-gray-200 text-gray-900">
+                        <SelectValue placeholder="Select property" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-800 border-slate-700">
-                        {properties?.map((property) => (
-                          <SelectItem key={property.id} value={String(property.id)} className="text-white hover:bg-slate-700">
-                            {property.title}
+                      <SelectContent className="bg-white border-gray-200">
+                        <SelectItem value="all">Select a property</SelectItem>
+                        {properties?.map((prop) => (
+                          <SelectItem key={prop.id} value={String(prop.id)}>
+                            {prop.title}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
 
-                  {/* Shares Input */}
+                  {/* Shares */}
                   <div>
-                    <Label className="text-slate-400 text-sm mb-2 block">Number of Shares</Label>
-                    <Input 
-                      type="number" 
+                    <Label className="text-gray-700 mb-2 block">Number of Shares</Label>
+                    <Input
+                      type="number"
+                      min={1}
                       value={orderShares}
                       onChange={(e) => setOrderShares(Number(e.target.value))}
-                      min={1}
-                      placeholder="0" 
-                      className="bg-slate-700/50 border-slate-600 text-white rounded-lg" 
+                      className="bg-white border-gray-200 text-gray-900"
                     />
                   </div>
 
-                  {/* Price Input */}
+                  {/* Price */}
                   <div>
-                    <Label className="text-slate-400 text-sm mb-2 block">Price per Share (PKR)</Label>
-                    <Input 
-                      type="number" 
+                    <Label className="text-gray-700 mb-2 block">Price per Share (PKR)</Label>
+                    <Input
+                      type="number"
+                      placeholder="Enter price"
                       value={orderPrice}
                       onChange={(e) => setOrderPrice(e.target.value)}
-                      placeholder="0" 
-                      className="bg-slate-700/50 border-slate-600 text-white rounded-lg" 
+                      className="bg-white border-gray-200 text-gray-900"
                     />
                   </div>
 
-                  {/* Summary */}
-                  <div className="p-4 rounded-xl bg-slate-700/30 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-400">Total Amount</span>
-                      <span className="text-white font-medium">PKR {(Number(orderPrice || 0) * orderShares).toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-slate-400">Platform Fee (0.5%)</span>
-                      <span className="text-white font-medium">PKR {((Number(orderPrice || 0) * orderShares) * 0.005).toLocaleString()}</span>
+                  {/* Total */}
+                  <div className="p-4 rounded-xl bg-gray-50">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-600">Total Amount</span>
+                      <span className="text-xl font-bold text-gray-900">
+                        PKR {(orderShares * Number(orderPrice || 0)).toLocaleString()}
+                      </span>
                     </div>
                   </div>
 
                   {/* Submit Button */}
                   <Button 
+                    className={`w-full py-6 ${
+                      orderType === "buy" 
+                        ? "bg-green-500 hover:bg-green-600" 
+                        : "bg-red-500 hover:bg-red-600"
+                    } text-white`}
                     onClick={handlePlaceOrder}
                     disabled={placeOrderMutation.isPending}
-                    className={`w-full py-6 rounded-xl font-semibold ${
-                      orderType === "buy" 
-                        ? "bg-emerald-500 hover:bg-emerald-600 text-white" 
-                        : "bg-red-500 hover:bg-red-600 text-white"
-                    }`}
                   >
-                    {placeOrderMutation.isPending ? "Placing..." : `Place ${orderType === "buy" ? "Buy" : "Sell"} Order`}
+                    {placeOrderMutation.isPending ? "Processing..." : `Place ${orderType === "buy" ? "Buy" : "Sell"} Order`}
                   </Button>
                 </div>
               </div>
 
-              {/* Recent Trades */}
-              <div className="rounded-2xl bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-slate-700/50 p-6">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-amber-400" />
-                  Recent Trades
-                </h3>
-
-                <div className="space-y-3">
-                  {recentTrades.map((trade) => (
-                    <div key={trade.id} className="flex items-center justify-between p-3 rounded-xl bg-slate-700/30">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                          trade.type === 'buy' ? 'bg-emerald-500/20' : 'bg-red-500/20'
-                        }`}>
-                          {trade.type === 'buy' ? (
-                            <ArrowDownRight className="w-4 h-4 text-emerald-400" />
-                          ) : (
-                            <ArrowUpRight className="w-4 h-4 text-red-400" />
-                          )}
-                        </div>
-                        <div>
-                          <p className="text-white text-sm font-medium">{trade.property}</p>
-                          <p className="text-slate-500 text-xs">{trade.shares} shares • {trade.time}</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <p className={`text-sm font-medium ${trade.type === 'buy' ? 'text-emerald-400' : 'text-red-400'}`}>
-                          PKR {trade.price.toLocaleString()}
-                        </p>
-                        {trade.status === 'completed' ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 ml-auto" />
-                        ) : (
-                          <Clock className="w-4 h-4 text-amber-400 ml-auto" />
-                        )}
-                      </div>
-                    </div>
-                  ))}
+              {/* Security Badge */}
+              <div className="p-6 rounded-2xl bg-green-50 border border-green-200">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-xl bg-green-200 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-green-700" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-green-900">Secure Trading</p>
+                    <p className="text-sm text-green-700">All transactions protected</p>
+                  </div>
                 </div>
-
-                <Button variant="ghost" className="w-full mt-4 text-amber-400 hover:text-amber-300 hover:bg-slate-700/50 rounded-lg">
-                  View All Trades
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Button>
+                <p className="text-sm text-green-700">
+                  Funds are held in escrow until shares are successfully transferred. Both parties are protected.
+                </p>
               </div>
 
-              {/* Info Card */}
-              <div className="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-5">
-                <div className="flex gap-3">
-                  <Info className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-amber-400 font-medium mb-1">Trading Hours</p>
-                    <p className="text-slate-400 text-sm">
-                      The marketplace is open 24/7. Orders are processed instantly when matched.
-                    </p>
+              {/* How It Works */}
+              <div className="p-6 rounded-2xl bg-white border border-gray-200 shadow-sm">
+                <h3 className="font-bold text-gray-900 mb-4">How It Works</h3>
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-purple-600 font-bold text-sm">1</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">Place Order</p>
+                      <p className="text-sm text-gray-500">Set your price and quantity</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-purple-600 font-bold text-sm">2</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">Match Found</p>
+                      <p className="text-sm text-gray-500">System finds matching orders</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-purple-600 font-bold text-sm">3</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">Trade Complete</p>
+                      <p className="text-sm text-gray-500">Shares transferred instantly</p>
+                    </div>
                   </div>
                 </div>
               </div>
