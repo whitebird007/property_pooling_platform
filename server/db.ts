@@ -1,4 +1,4 @@
-import { eq, and, desc, asc, sql, gte, lte } from "drizzle-orm";
+import { eq, and, or, desc, asc, sql, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, properties, investments, transactions, 
@@ -191,6 +191,63 @@ export async function updateMarketOrder(id: number, data: Partial<typeof marketO
   await db.update(marketOrders).set(data).where(eq(marketOrders.id, id));
 }
 
+export async function getOrderById(orderId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(marketOrders).where(eq(marketOrders.id, orderId)).limit(1);
+  return result[0] || null;
+}
+
+export async function getAllOpenOrders() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(marketOrders)
+    .where(or(eq(marketOrders.status, 'open'), eq(marketOrders.status, 'partial')))
+    .orderBy(desc(marketOrders.createdAt));
+}
+
+export async function getOrderBook(propertyId: number) {
+  const db = await getDb();
+  if (!db) return { buyOrders: [], sellOrders: [] };
+  
+  const buyOrders = await db.select().from(marketOrders)
+    .where(and(
+      eq(marketOrders.propertyId, propertyId),
+      eq(marketOrders.orderType, 'buy'),
+      or(eq(marketOrders.status, 'open'), eq(marketOrders.status, 'partial'))
+    ))
+    .orderBy(desc(marketOrders.pricePerShare));
+  
+  const sellOrders = await db.select().from(marketOrders)
+    .where(and(
+      eq(marketOrders.propertyId, propertyId),
+      eq(marketOrders.orderType, 'sell'),
+      or(eq(marketOrders.status, 'open'), eq(marketOrders.status, 'partial'))
+    ))
+    .orderBy(asc(marketOrders.pricePerShare));
+  
+  return { buyOrders, sellOrders };
+}
+
+export async function getMatchingOrders(propertyId: number, orderType: 'buy' | 'sell', pricePerShare: string) {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const oppositeType = orderType === 'buy' ? 'sell' : 'buy';
+  const priceCondition = orderType === 'buy' 
+    ? lte(marketOrders.pricePerShare, pricePerShare)
+    : gte(marketOrders.pricePerShare, pricePerShare);
+  
+  return db.select().from(marketOrders)
+    .where(and(
+      eq(marketOrders.propertyId, propertyId),
+      eq(marketOrders.orderType, oppositeType),
+      or(eq(marketOrders.status, 'open'), eq(marketOrders.status, 'partial')),
+      priceCondition
+    ))
+    .orderBy(orderType === 'buy' ? asc(marketOrders.pricePerShare) : desc(marketOrders.pricePerShare));
+}
+
 // ==================== TRADE OPERATIONS ====================
 export async function getPropertyTrades(propertyId: number) {
   const db = await getDb();
@@ -198,11 +255,38 @@ export async function getPropertyTrades(propertyId: number) {
   return db.select().from(trades).where(eq(trades.propertyId, propertyId)).orderBy(desc(trades.executedAt));
 }
 
+export async function getAllTrades(limit: number = 50) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(trades).orderBy(desc(trades.executedAt)).limit(limit);
+}
+
+export async function getUserTrades(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(trades)
+    .where(or(eq(trades.buyerId, userId), eq(trades.sellerId, userId)))
+    .orderBy(desc(trades.executedAt));
+}
+
 export async function createTrade(data: typeof trades.$inferInsert) {
   const db = await getDb();
   if (!db) return null;
   const result = await db.insert(trades).values(data);
   return result[0].insertId;
+}
+
+export async function getMarketStats() {
+  const db = await getDb();
+  if (!db) return { totalVolume: "0", totalTrades: 0, avgTradeSize: "0" };
+  
+  const [stats] = await db.select({
+    totalVolume: sql<string>`COALESCE(SUM(totalAmount), 0)`,
+    totalTrades: sql<number>`COUNT(*)`,
+    avgTradeSize: sql<string>`COALESCE(AVG(totalAmount), 0)`,
+  }).from(trades);
+  
+  return stats || { totalVolume: "0", totalTrades: 0, avgTradeSize: "0" };
 }
 
 // ==================== KYC OPERATIONS ====================

@@ -49,6 +49,18 @@ export default function Marketplace() {
   const { data: myOrders, refetch: refetchOrders } = trpc.market.myOrders.useQuery(undefined, {
     enabled: isAuthenticated,
   });
+  const { data: myTrades } = trpc.market.myTrades.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+  const { data: marketStats } = trpc.market.stats.useQuery();
+  const { data: orderBook, refetch: refetchOrderBook } = trpc.market.orderBook.useQuery(
+    { propertyId: selectedProperty && selectedProperty !== "all" ? Number(selectedProperty) : 0 },
+    { enabled: selectedProperty !== "all" && selectedProperty !== "" }
+  );
+  const { data: allOrderBooks } = trpc.market.orderBook.useQuery(
+    { propertyId: properties?.[0]?.id || 0 },
+    { enabled: !!properties?.length }
+  );
 
   const placeOrderMutation = trpc.market.placeOrder.useMutation({
     onSuccess: () => {
@@ -70,28 +82,64 @@ export default function Marketplace() {
     },
   });
 
-  // Market stats
-  const marketStats = [
-    { label: "24h Volume", value: "PKR 12.5M", change: "+15.2%", positive: true, icon: BarChart3, color: "purple" },
-    { label: "Active Listings", value: "156", change: "+8", positive: true, icon: Activity, color: "blue" },
-    { label: "Avg. Price/Share", value: "PKR 5,420", change: "-2.1%", positive: false, icon: TrendingDown, color: "amber" },
-    { label: "Total Trades Today", value: "89", change: "+23", positive: true, icon: RefreshCw, color: "green" },
+  // Market stats display data
+  const marketStatsDisplay = [
+    { 
+      label: "Total Volume", 
+      value: `PKR ${marketStats ? Number(marketStats.totalVolume).toLocaleString() : '0'}`, 
+      change: "+15.2%", 
+      positive: true, 
+      icon: BarChart3, 
+      color: "purple" 
+    },
+    { 
+      label: "Active Orders", 
+      value: myOrders?.filter(o => o.status === 'open').length.toString() || "0", 
+      change: "+8", 
+      positive: true, 
+      icon: Activity, 
+      color: "blue" 
+    },
+    { 
+      label: "Avg. Trade Size", 
+      value: `PKR ${marketStats ? Number(marketStats.avgTradeSize).toLocaleString() : '0'}`, 
+      change: "-2.1%", 
+      positive: false, 
+      icon: TrendingDown, 
+      color: "amber" 
+    },
+    { 
+      label: "Total Trades", 
+      value: marketStats?.totalTrades.toString() || "0", 
+      change: "+23", 
+      positive: true, 
+      icon: RefreshCw, 
+      color: "green" 
+    },
   ];
 
-  // Sample marketplace data
-  const buyOrders = [
-    { id: 1, property: "DHA Phase 6 Apartment", shares: 50, pricePerShare: 5200, total: 260000, seller: "Ahmed K.", time: "2 min ago" },
-    { id: 2, property: "Bahria Town Villa", shares: 100, pricePerShare: 4800, total: 480000, seller: "Sara M.", time: "5 min ago" },
-    { id: 3, property: "Commercial Plaza Gulberg", shares: 25, pricePerShare: 8500, total: 212500, seller: "Hassan R.", time: "12 min ago" },
-    { id: 4, property: "DHA Phase 5 Plot", shares: 75, pricePerShare: 6200, total: 465000, seller: "Fatima A.", time: "18 min ago" },
-    { id: 5, property: "Bahria Orchard Apartment", shares: 30, pricePerShare: 3900, total: 117000, seller: "Ali Z.", time: "25 min ago" },
-  ];
-
-  const sellOrders = [
-    { id: 1, property: "DHA Phase 6 Apartment", shares: 40, pricePerShare: 5400, total: 216000, buyer: "Usman T.", time: "1 min ago" },
-    { id: 2, property: "Commercial Plaza Gulberg", shares: 60, pricePerShare: 8800, total: 528000, buyer: "Zara K.", time: "8 min ago" },
-    { id: 3, property: "Bahria Town Villa", shares: 80, pricePerShare: 5000, total: 400000, buyer: "Imran S.", time: "15 min ago" },
-  ];
+  // Get real order book data
+  const buyOrders = orderBook?.buyOrders || [];
+  const sellOrders = orderBook?.sellOrders || [];
+  
+  // Helper to get property name by ID
+  const getPropertyName = (propertyId: number) => {
+    const property = properties?.find(p => p.id === propertyId);
+    return property?.title || `Property #${propertyId}`;
+  };
+  
+  // Helper to format time ago
+  const formatTimeAgo = (date: Date | string) => {
+    const now = new Date();
+    const then = new Date(date);
+    const diffMs = now.getTime() - then.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min ago`;
+    const diffHours = Math.floor(diffMins / 60);
+    if (diffHours < 24) return `${diffHours}h ago`;
+    return `${Math.floor(diffHours / 24)}d ago`;
+  };
 
   const handlePlaceOrder = () => {
     if (!selectedProperty || selectedProperty === "all") {
@@ -109,6 +157,13 @@ export default function Marketplace() {
       shares: orderShares,
       pricePerShare: orderPrice,
     });
+    
+    // Reset form after placing order
+    setOrderShares(1);
+    setOrderPrice("");
+    
+    // Refetch order book
+    setTimeout(() => refetchOrderBook(), 500);
   };
 
   const getColorClasses = (color: string) => {
@@ -200,7 +255,7 @@ export default function Marketplace() {
 
           {/* Market Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {marketStats.map((stat, index) => (
+            {marketStatsDisplay.map((stat, index) => (
               <div key={index} className="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${getColorClasses(stat.color)}`}>
@@ -273,22 +328,37 @@ export default function Marketplace() {
                     
                     {/* Table Body */}
                     <div className="divide-y divide-gray-100">
-                      {buyOrders.map((order) => (
-                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50 transition-colors">
-                          <div className="col-span-2">
-                            <p className="text-gray-900 font-medium">{order.property}</p>
-                            <p className="text-gray-500 text-sm">by {order.seller} • {order.time}</p>
-                          </div>
-                          <div className="text-right text-gray-900 font-medium">{order.shares}</div>
-                          <div className="text-right text-green-600 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
-                          <div className="text-right text-gray-900 font-bold">PKR {order.total.toLocaleString()}</div>
-                          <div className="text-right">
-                            <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white rounded-lg">
-                              Buy
-                            </Button>
-                          </div>
+                      {buyOrders.length === 0 ? (
+                        <div className="p-8 text-center text-gray-500">
+                          No buy orders available. {selectedProperty === "all" && "Select a property to view orders."}
                         </div>
-                      ))}
+                      ) : (
+                        buyOrders.map((order) => (
+                          <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50 transition-colors">
+                            <div className="col-span-2">
+                              <p className="text-gray-900 font-medium">{getPropertyName(order.propertyId)}</p>
+                              <p className="text-gray-500 text-sm">{formatTimeAgo(order.createdAt)}</p>
+                            </div>
+                            <div className="text-right text-gray-900 font-medium">{order.shares - order.filledShares}</div>
+                            <div className="text-right text-green-600 font-medium">PKR {Number(order.pricePerShare).toLocaleString()}</div>
+                            <div className="text-right text-gray-900 font-bold">PKR {((order.shares - order.filledShares) * Number(order.pricePerShare)).toLocaleString()}</div>
+                            <div className="text-right">
+                              <Button 
+                                size="sm" 
+                                className="bg-green-500 hover:bg-green-600 text-white rounded-lg"
+                                onClick={() => {
+                                  setSelectedProperty(order.propertyId.toString());
+                                  setOrderType("sell");
+                                  setOrderPrice(order.pricePerShare);
+                                  setOrderShares(order.shares - order.filledShares);
+                                }}
+                              >
+                                Sell to Buyer
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </TabsContent>
@@ -306,22 +376,37 @@ export default function Marketplace() {
                     
                     {/* Table Body */}
                     <div className="divide-y divide-gray-100">
-                      {sellOrders.map((order) => (
-                        <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50 transition-colors">
-                          <div className="col-span-2">
-                            <p className="text-gray-900 font-medium">{order.property}</p>
-                            <p className="text-gray-500 text-sm">wanted by {order.buyer} • {order.time}</p>
-                          </div>
-                          <div className="text-right text-gray-900 font-medium">{order.shares}</div>
-                          <div className="text-right text-red-600 font-medium">PKR {order.pricePerShare.toLocaleString()}</div>
-                          <div className="text-right text-gray-900 font-bold">PKR {order.total.toLocaleString()}</div>
-                          <div className="text-right">
-                            <Button size="sm" className="bg-red-500 hover:bg-red-600 text-white rounded-lg">
-                              Sell
-                            </Button>
-                          </div>
+                      {sellOrders.length === 0 ? (
+                        <div className="p-8 text-center text-gray-500">
+                          No sell orders available. {selectedProperty === "all" && "Select a property to view orders."}
                         </div>
-                      ))}
+                      ) : (
+                        sellOrders.map((order) => (
+                          <div key={order.id} className="grid grid-cols-6 gap-4 p-4 items-center hover:bg-gray-50 transition-colors">
+                            <div className="col-span-2">
+                              <p className="text-gray-900 font-medium">{getPropertyName(order.propertyId)}</p>
+                              <p className="text-gray-500 text-sm">{formatTimeAgo(order.createdAt)}</p>
+                            </div>
+                            <div className="text-right text-gray-900 font-medium">{order.shares - order.filledShares}</div>
+                            <div className="text-right text-red-600 font-medium">PKR {Number(order.pricePerShare).toLocaleString()}</div>
+                            <div className="text-right text-gray-900 font-bold">PKR {((order.shares - order.filledShares) * Number(order.pricePerShare)).toLocaleString()}</div>
+                            <div className="text-right">
+                              <Button 
+                                size="sm" 
+                                className="bg-red-500 hover:bg-red-600 text-white rounded-lg"
+                                onClick={() => {
+                                  setSelectedProperty(order.propertyId.toString());
+                                  setOrderType("buy");
+                                  setOrderPrice(order.pricePerShare);
+                                  setOrderShares(order.shares - order.filledShares);
+                                }}
+                              >
+                                Buy from Seller
+                              </Button>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </TabsContent>

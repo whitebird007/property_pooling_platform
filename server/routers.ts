@@ -234,10 +234,36 @@ export const appRouter = router({
 
   // ==================== MARKET ORDERS ====================
   market: router({
+    // Get user's own orders
     myOrders: protectedProcedure.query(async ({ ctx }) => {
       return db.getUserOrders(ctx.user.id);
     }),
     
+    // Get user's trade history
+    myTrades: protectedProcedure.query(async ({ ctx }) => {
+      return db.getUserTrades(ctx.user.id);
+    }),
+    
+    // Get order book for a property
+    orderBook: publicProcedure
+      .input(z.object({ propertyId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getOrderBook(input.propertyId);
+      }),
+    
+    // Get recent trades for a property
+    propertyTrades: publicProcedure
+      .input(z.object({ propertyId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getPropertyTrades(input.propertyId);
+      }),
+    
+    // Get marketplace stats
+    stats: publicProcedure.query(async () => {
+      return db.getMarketStats();
+    }),
+    
+    // Place a buy or sell order
     placeOrder: protectedProcedure
       .input(z.object({
         propertyId: z.number(),
@@ -252,6 +278,14 @@ export const appRouter = router({
           throw new TRPCError({ code: 'FORBIDDEN', message: 'KYC verification required' });
         }
         
+        // For buy orders, verify wallet balance
+        if (input.orderType === 'buy') {
+          const totalCost = parseFloat(input.pricePerShare) * input.shares;
+          if (!profile || parseFloat(profile.walletBalance) < totalCost) {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Insufficient wallet balance' });
+          }
+        }
+        
         // For sell orders, verify ownership
         if (input.orderType === 'sell') {
           const investments = await db.getUserInvestments(ctx.user.id);
@@ -261,6 +295,7 @@ export const appRouter = router({
           }
         }
         
+        // Create the order
         const orderId = await db.createMarketOrder({
           userId: ctx.user.id,
           propertyId: input.propertyId,
@@ -270,10 +305,109 @@ export const appRouter = router({
           status: 'open',
         });
         
-        return { orderId };
+        // Try to match the order immediately
+        const matchingOrders = await db.getMatchingOrders(
+          input.propertyId,
+          input.orderType,
+          input.pricePerShare
+        );
+        
+        let remainingShares = input.shares;
+        const executedTrades: number[] = [];
+        
+        for (const matchOrder of matchingOrders) {
+          if (remainingShares <= 0) break;
+          
+          const availableShares = matchOrder.shares - matchOrder.filledShares;
+          const tradedShares = Math.min(remainingShares, availableShares);
+          const tradePrice = matchOrder.pricePerShare; // Use the existing order's price
+          const totalAmount = parseFloat(tradePrice) * tradedShares;
+          const platformFee = totalAmount * 0.01; // 1% fee
+          
+          // Determine buyer and seller
+          const buyerId = input.orderType === 'buy' ? ctx.user.id : matchOrder.userId;
+          const sellerId = input.orderType === 'sell' ? ctx.user.id : matchOrder.userId;
+          const buyOrderId = input.orderType === 'buy' ? orderId! : matchOrder.id;
+          const sellOrderId = input.orderType === 'sell' ? orderId! : matchOrder.id;
+          
+          // Create the trade
+          const tradeId = await db.createTrade({
+            propertyId: input.propertyId,
+            buyOrderId,
+            sellOrderId,
+            buyerId,
+            sellerId,
+            shares: tradedShares,
+            pricePerShare: tradePrice,
+            totalAmount: totalAmount.toString(),
+            platformFee: platformFee.toString(),
+          });
+          
+          if (tradeId) executedTrades.push(tradeId);
+          
+          // Update the matching order
+          const newFilledShares = matchOrder.filledShares + tradedShares;
+          const newStatus = newFilledShares >= matchOrder.shares ? 'filled' : 'partial';
+          await db.updateMarketOrder(matchOrder.id, {
+            filledShares: newFilledShares,
+            status: newStatus,
+          });
+          
+          remainingShares -= tradedShares;
+        }
+        
+        // Update the new order status
+        const filledShares = input.shares - remainingShares;
+        if (filledShares > 0) {
+          const newStatus = remainingShares <= 0 ? 'filled' : 'partial';
+          await db.updateMarketOrder(orderId!, {
+            filledShares,
+            status: newStatus,
+          });
+        }
+        
+        return { 
+          orderId, 
+          filledShares,
+          remainingShares,
+          executedTrades,
+          status: remainingShares <= 0 ? 'filled' : (filledShares > 0 ? 'partial' : 'open')
+        };
       }),
     
+    // Cancel an order
     cancelOrder: protectedProcedure
+      .input(z.object({ orderId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const order = await db.getOrderById(input.orderId);
+        if (!order) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Order not found' });
+        }
+        if (order.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Not your order' });
+        }
+        if (order.status === 'filled' || order.status === 'cancelled') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Order cannot be cancelled' });
+        }
+        
+        await db.updateMarketOrder(input.orderId, { status: 'cancelled' });
+        return { success: true };
+      }),
+    
+    // Admin: Get all open orders
+    adminGetAllOrders: adminProcedure.query(async () => {
+      return db.getAllOpenOrders();
+    }),
+    
+    // Admin: Get all trades
+    adminGetAllTrades: adminProcedure
+      .input(z.object({ limit: z.number().optional() }).optional())
+      .query(async ({ input }) => {
+        return db.getAllTrades(input?.limit || 50);
+      }),
+    
+    // Admin: Cancel any order
+    adminCancelOrder: adminProcedure
       .input(z.object({ orderId: z.number() }))
       .mutation(async ({ input }) => {
         await db.updateMarketOrder(input.orderId, { status: 'cancelled' });
