@@ -297,13 +297,13 @@ export default function AreaDetail() {
 
   if (!area) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <MapPin className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Area Not Found</h2>
-          <p className="text-slate-400 mb-6">The area you're looking for doesn't exist.</p>
+          <MapPin className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Area Not Found</h2>
+          <p className="text-gray-500 mb-6">The area you're looking for doesn't exist.</p>
           <Link href="/area-guides">
-            <Button className="bg-amber-500 hover:bg-amber-600 text-slate-900">
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white">
               Browse All Areas
             </Button>
           </Link>
@@ -313,54 +313,51 @@ export default function AreaDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900" />
-        <div className="absolute inset-0 bg-[url('/hero-bg.png')] bg-cover bg-center opacity-15" />
-        
-        {/* Animated shapes */}
-        <div className="absolute top-20 left-10 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-10 right-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+      <section className="relative pt-24 pb-16 overflow-hidden bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        {/* Decorative shapes */}
+        <div className="absolute top-20 left-10 w-72 h-72 bg-purple-200/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-blue-200/30 rounded-full blur-3xl" />
 
         <div className="container relative z-10">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm text-slate-400 mb-6">
-            <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-sm text-gray-500 mb-6">
+            <Link href="/" className="hover:text-purple-600 transition-colors">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/area-guides" className="hover:text-amber-400 transition-colors">Area Guides</Link>
+            <Link href="/area-guides" className="hover:text-purple-600 transition-colors">Area Guides</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-white">{area.name}</span>
+            <span className="text-gray-900 font-medium">{area.name}</span>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             {/* Left - Info */}
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <Badge className="bg-slate-800 text-white border-slate-700">
+                <Badge className="bg-purple-100 text-purple-700 border-purple-200">
                   <MapPin className="w-3 h-3 mr-1" />
                   {area.city}
                 </Badge>
-                <Badge className={`${area.priceChange >= 0 ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-red-500/20 text-red-400 border-red-500/30'}`}>
+                <Badge className={`${area.priceChange >= 0 ? 'bg-green-100 text-green-700 border-green-200' : 'bg-red-100 text-red-700 border-red-200'}`}>
                   {area.priceChange >= 0 ? <TrendingUp className="w-3 h-3 mr-1" /> : <TrendingDown className="w-3 h-3 mr-1" />}
                   {area.priceChange}% YoY Growth
                 </Badge>
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                 {area.name}
               </h1>
               
-              <p className="text-lg text-slate-400 mb-6">
+              <p className="text-lg text-gray-600 mb-6">
                 {area.description}
               </p>
 
               {/* Highlights */}
               <div className="flex flex-wrap gap-2 mb-8">
                 {area.highlights.map((highlight, idx) => (
-                  <Badge key={idx} className="bg-amber-500/10 text-amber-400 border-amber-500/30">
+                  <Badge key={idx} className="bg-purple-100 text-purple-700 border-purple-200">
                     <CheckCircle className="w-3 h-3 mr-1" />
                     {highlight}
                   </Badge>
@@ -369,27 +366,27 @@ export default function AreaDetail() {
 
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <p className="text-sm text-slate-400 mb-1">Rental Yield</p>
-                  <p className="text-2xl font-bold text-emerald-400">{area.rentalYield}% p.a.</p>
+                <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-100">
+                  <p className="text-sm text-gray-500 mb-1">Rental Yield</p>
+                  <p className="text-2xl font-bold text-green-600">{area.rentalYield}% p.a.</p>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <p className="text-sm text-slate-400 mb-1">Avg. Monthly Rent</p>
-                  <p className="text-2xl font-bold text-white">{formatPrice(area.avgRent)}</p>
+                <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-100">
+                  <p className="text-sm text-gray-500 mb-1">Avg. Monthly Rent</p>
+                  <p className="text-2xl font-bold text-gray-900">{formatPrice(area.avgRent)}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <p className="text-sm text-slate-400 mb-1">Properties Available</p>
-                  <p className="text-2xl font-bold text-amber-400">{area.totalProperties}</p>
+                <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-100">
+                  <p className="text-sm text-gray-500 mb-1">Properties Available</p>
+                  <p className="text-2xl font-bold text-purple-600">{area.totalProperties}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <p className="text-sm text-slate-400 mb-1">Phases/Blocks</p>
-                  <p className="text-2xl font-bold text-white">{area.phases.length}</p>
+                <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-100">
+                  <p className="text-sm text-gray-500 mb-1">Phases/Blocks</p>
+                  <p className="text-2xl font-bold text-gray-900">{area.phases.length}</p>
                 </div>
               </div>
             </div>
 
             {/* Right - Map Placeholder */}
-            <div className="rounded-2xl overflow-hidden border border-slate-700/50 bg-slate-800/50">
+            <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
               <div className="aspect-video relative">
                 <iframe
                   src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(area.name + ', ' + area.city + ', Pakistan')}&zoom=13`}
@@ -400,8 +397,8 @@ export default function AreaDetail() {
                   referrerPolicy="no-referrer-when-downgrade"
                 />
               </div>
-              <div className="p-4 border-t border-slate-700/50">
-                <p className="text-sm text-slate-400">
+              <div className="p-4 border-t border-gray-100">
+                <p className="text-sm text-gray-500">
                   <MapPin className="w-4 h-4 inline mr-1" />
                   {area.name}, {area.city}, Pakistan
                 </p>
@@ -412,67 +409,67 @@ export default function AreaDetail() {
       </section>
 
       {/* Price Index Section */}
-      <section className="py-12 border-y border-slate-800">
+      <section className="py-12 border-y border-gray-200 bg-white">
         <div className="container">
-          <h2 className="text-2xl font-bold text-white mb-6">Property Prices in {area.name}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Property Prices in {area.name}</h2>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-100">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                  <Home className="w-6 h-6 text-amber-400" />
+                <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center">
+                  <Home className="w-6 h-6 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-400">Houses</p>
-                  <p className="text-xl font-bold text-white">{formatPrice(area.avgHousePrice)}</p>
+                  <p className="text-sm text-gray-500">Houses</p>
+                  <p className="text-xl font-bold text-gray-900">{formatPrice(area.avgHousePrice)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 {area.priceChange >= 0 ? (
-                  <span className="text-emerald-400 flex items-center">
+                  <span className="text-green-600 flex items-center">
                     <TrendingUp className="w-4 h-4 mr-1" /> +{area.priceChange}%
                   </span>
                 ) : (
-                  <span className="text-red-400 flex items-center">
+                  <span className="text-red-600 flex items-center">
                     <TrendingDown className="w-4 h-4 mr-1" /> {area.priceChange}%
                   </span>
                 )}
-                <span className="text-slate-500">since last year</span>
+                <span className="text-gray-400">since last year</span>
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-50 to-white border border-blue-100">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-blue-400" />
+                <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+                  <Building2 className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-400">Apartments</p>
-                  <p className="text-xl font-bold text-white">{formatPrice(area.avgApartmentPrice)}</p>
+                  <p className="text-sm text-gray-500">Apartments</p>
+                  <p className="text-xl font-bold text-gray-900">{formatPrice(area.avgApartmentPrice)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-emerald-400 flex items-center">
+                <span className="text-green-600 flex items-center">
                   <TrendingUp className="w-4 h-4 mr-1" /> +{Math.max(1, area.priceChange - 1)}%
                 </span>
-                <span className="text-slate-500">since last year</span>
+                <span className="text-gray-400">since last year</span>
               </div>
             </div>
 
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
+            <div className="p-6 rounded-2xl bg-gradient-to-br from-green-50 to-white border border-green-100">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                  <Landmark className="w-6 h-6 text-emerald-400" />
+                <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+                  <Landmark className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-slate-400">Plots</p>
-                  <p className="text-xl font-bold text-white">{formatPrice(area.avgPlotPrice)}</p>
+                  <p className="text-sm text-gray-500">Plots</p>
+                  <p className="text-xl font-bold text-gray-900">{formatPrice(area.avgPlotPrice)}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 text-sm">
-                <span className="text-emerald-400 flex items-center">
+                <span className="text-green-600 flex items-center">
                   <TrendingUp className="w-4 h-4 mr-1" /> +{area.priceChange + 2}%
                 </span>
-                <span className="text-slate-500">since last year</span>
+                <span className="text-gray-400">since last year</span>
               </div>
             </div>
           </div>
@@ -480,25 +477,25 @@ export default function AreaDetail() {
       </section>
 
       {/* Investment Calculator Section */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <div className="container">
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Calculator */}
             <div>
-              <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/30 mb-4">
+              <Badge className="bg-purple-100 text-purple-700 border-purple-200 mb-4">
                 <Calculator className="w-3 h-3 mr-1" />
                 Investment Calculator
               </Badge>
-              <h2 className="text-3xl font-bold text-white mb-2">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 Calculate Your Returns in {area.name}
               </h2>
-              <p className="text-slate-400 mb-8">
+              <p className="text-gray-600 mb-8">
                 See how much you can earn by investing in properties in this area through PropertyPool.
               </p>
 
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/60 to-slate-900/60 border border-slate-700/50">
-                <label className="block text-sm text-slate-400 mb-2">Investment Amount</label>
-                <div className="text-3xl font-bold text-amber-400 mb-4">
+              <div className="p-6 rounded-2xl bg-white shadow-sm border border-gray-100">
+                <label className="block text-sm text-gray-500 mb-2">Investment Amount</label>
+                <div className="text-3xl font-bold text-purple-600 mb-4">
                   {formatPrice(investmentAmount[0])}
                 </div>
                 <Slider
@@ -509,7 +506,7 @@ export default function AreaDetail() {
                   step={50000}
                   className="mb-6"
                 />
-                <div className="flex justify-between text-xs text-slate-500">
+                <div className="flex justify-between text-xs text-gray-400">
                   <span>PKR 50,000</span>
                   <span>PKR 1 Crore</span>
                 </div>
@@ -518,47 +515,47 @@ export default function AreaDetail() {
 
             {/* Projections */}
             <div className="space-y-4">
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border border-emerald-500/30">
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-green-50 to-white border border-green-200">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
-                    <PiggyBank className="w-5 h-5 text-emerald-400" />
+                  <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+                    <PiggyBank className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-slate-400">Monthly Rental Income</p>
-                    <p className="text-2xl font-bold text-emerald-400">{formatPrice(projections.monthlyRental)}</p>
+                    <p className="text-sm text-gray-500">Monthly Rental Income</p>
+                    <p className="text-2xl font-bold text-green-600">{formatPrice(projections.monthlyRental)}</p>
                   </div>
                 </div>
-                <p className="text-xs text-slate-500">Based on {area.rentalYield}% annual rental yield</p>
+                <p className="text-xs text-gray-400">Based on {area.rentalYield}% annual rental yield</p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <p className="text-xs text-slate-400 mb-1">1 Year Value</p>
-                  <p className="text-lg font-bold text-white">{formatPrice(projections.year1Value)}</p>
+                <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-100 text-center">
+                  <p className="text-xs text-gray-500 mb-1">1 Year Value</p>
+                  <p className="text-lg font-bold text-gray-900">{formatPrice(projections.year1Value)}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <p className="text-xs text-slate-400 mb-1">3 Year Value</p>
-                  <p className="text-lg font-bold text-white">{formatPrice(projections.year3Value)}</p>
+                <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-100 text-center">
+                  <p className="text-xs text-gray-500 mb-1">3 Year Value</p>
+                  <p className="text-lg font-bold text-gray-900">{formatPrice(projections.year3Value)}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <p className="text-xs text-slate-400 mb-1">5 Year Value</p>
-                  <p className="text-lg font-bold text-amber-400">{formatPrice(projections.year5Value)}</p>
+                <div className="p-4 rounded-xl bg-white shadow-sm border border-gray-100 text-center">
+                  <p className="text-xs text-gray-500 mb-1">5 Year Value</p>
+                  <p className="text-lg font-bold text-purple-600">{formatPrice(projections.year5Value)}</p>
                 </div>
               </div>
 
-              <div className="p-6 rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/30">
+              <div className="p-6 rounded-2xl bg-gradient-to-br from-purple-50 to-white border border-purple-200">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-slate-400">Total 5-Year Return</span>
-                  <span className="text-2xl font-bold text-amber-400">{formatPrice(projections.totalReturn5Years)}</span>
+                  <span className="text-gray-600">Total 5-Year Return</span>
+                  <span className="text-2xl font-bold text-purple-600">{formatPrice(projections.totalReturn5Years)}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">ROI (5 Years)</span>
-                  <span className="text-xl font-bold text-emerald-400">{projections.roi5Years.toFixed(1)}%</span>
+                  <span className="text-gray-600">ROI (5 Years)</span>
+                  <span className="text-xl font-bold text-green-600">{projections.roi5Years.toFixed(1)}%</span>
                 </div>
               </div>
 
               <Link href="/properties">
-                <Button className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold">
+                <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold">
                   <Sparkles className="mr-2 w-4 h-4" />
                   Invest in {area.name} Properties
                 </Button>
@@ -569,50 +566,50 @@ export default function AreaDetail() {
       </section>
 
       {/* Amenities & Accessibility */}
-      <section className="py-16 border-t border-slate-800">
+      <section className="py-16 border-t border-gray-200 bg-white">
         <div className="container">
           <Tabs defaultValue="amenities" className="w-full">
-            <TabsList className="bg-slate-800/50 border border-slate-700/50 mb-8">
-              <TabsTrigger value="amenities" className="data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900">
+            <TabsList className="bg-gray-100 border border-gray-200 mb-8">
+              <TabsTrigger value="amenities" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
                 Amenities
               </TabsTrigger>
-              <TabsTrigger value="accessibility" className="data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900">
+              <TabsTrigger value="accessibility" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
                 Accessibility
               </TabsTrigger>
-              <TabsTrigger value="phases" className="data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900">
+              <TabsTrigger value="phases" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
                 Phases/Blocks
               </TabsTrigger>
-              <TabsTrigger value="nearby" className="data-[state=active]:bg-amber-500 data-[state=active]:text-slate-900">
+              <TabsTrigger value="nearby" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white">
                 Nearby Areas
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="amenities">
               <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-                <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <GraduationCap className="w-8 h-8 text-blue-400 mx-auto mb-3" />
-                  <p className="text-2xl font-bold text-white">{area.amenities.schools}</p>
-                  <p className="text-sm text-slate-400">Schools</p>
+                <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                  <GraduationCap className="w-8 h-8 text-blue-600 mx-auto mb-3" />
+                  <p className="text-2xl font-bold text-gray-900">{area.amenities.schools}</p>
+                  <p className="text-sm text-gray-500">Schools</p>
                 </div>
-                <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <Hospital className="w-8 h-8 text-red-400 mx-auto mb-3" />
-                  <p className="text-2xl font-bold text-white">{area.amenities.hospitals}</p>
-                  <p className="text-sm text-slate-400">Hospitals</p>
+                <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                  <Hospital className="w-8 h-8 text-red-500 mx-auto mb-3" />
+                  <p className="text-2xl font-bold text-gray-900">{area.amenities.hospitals}</p>
+                  <p className="text-sm text-gray-500">Hospitals</p>
                 </div>
-                <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <ShoppingBag className="w-8 h-8 text-purple-400 mx-auto mb-3" />
-                  <p className="text-2xl font-bold text-white">{area.amenities.shopping}</p>
-                  <p className="text-sm text-slate-400">Shopping Centers</p>
+                <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                  <ShoppingBag className="w-8 h-8 text-purple-600 mx-auto mb-3" />
+                  <p className="text-2xl font-bold text-gray-900">{area.amenities.shopping}</p>
+                  <p className="text-sm text-gray-500">Shopping Centers</p>
                 </div>
-                <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <TreePine className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
-                  <p className="text-2xl font-bold text-white">{area.amenities.parks}</p>
-                  <p className="text-sm text-slate-400">Parks</p>
+                <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                  <TreePine className="w-8 h-8 text-green-600 mx-auto mb-3" />
+                  <p className="text-2xl font-bold text-gray-900">{area.amenities.parks}</p>
+                  <p className="text-sm text-gray-500">Parks</p>
                 </div>
-                <div className="p-6 rounded-2xl bg-slate-800/50 border border-slate-700/50 text-center">
-                  <Utensils className="w-8 h-8 text-amber-400 mx-auto mb-3" />
-                  <p className="text-2xl font-bold text-white">{area.amenities.restaurants}</p>
-                  <p className="text-sm text-slate-400">Restaurants</p>
+                <div className="p-6 rounded-2xl bg-gray-50 border border-gray-100 text-center">
+                  <Utensils className="w-8 h-8 text-amber-500 mx-auto mb-3" />
+                  <p className="text-2xl font-bold text-gray-900">{area.amenities.restaurants}</p>
+                  <p className="text-sm text-gray-500">Restaurants</p>
                 </div>
               </div>
             </TabsContent>
@@ -620,16 +617,16 @@ export default function AreaDetail() {
             <TabsContent value="accessibility">
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {area.accessibility.map((item, idx) => (
-                  <div key={idx} className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
-                      {item.name.includes("Airport") ? <Plane className="w-5 h-5 text-amber-400" /> :
-                       item.name.includes("Motorway") || item.name.includes("Road") ? <Car className="w-5 h-5 text-amber-400" /> :
-                       item.name.includes("Station") || item.name.includes("Metro") ? <Train className="w-5 h-5 text-amber-400" /> :
-                       <MapPin className="w-5 h-5 text-amber-400" />}
+                  <div key={idx} className="p-5 rounded-xl bg-gray-50 border border-gray-100 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center shrink-0">
+                      {item.name.includes("Airport") ? <Plane className="w-5 h-5 text-purple-600" /> :
+                       item.name.includes("Motorway") || item.name.includes("Road") ? <Car className="w-5 h-5 text-purple-600" /> :
+                       item.name.includes("Station") || item.name.includes("Metro") ? <Train className="w-5 h-5 text-purple-600" /> :
+                       <MapPin className="w-5 h-5 text-purple-600" />}
                     </div>
                     <div>
-                      <p className="text-white font-medium">{item.name}</p>
-                      <p className="text-sm text-slate-400 flex items-center">
+                      <p className="text-gray-900 font-medium">{item.name}</p>
+                      <p className="text-sm text-gray-500 flex items-center">
                         <Clock className="w-3 h-3 mr-1" /> {item.time}
                       </p>
                     </div>
@@ -641,7 +638,7 @@ export default function AreaDetail() {
             <TabsContent value="phases">
               <div className="flex flex-wrap gap-3">
                 {area.phases.map((phase, idx) => (
-                  <Badge key={idx} className="px-4 py-2 text-base bg-slate-800 text-white border-slate-700 hover:bg-slate-700 cursor-pointer">
+                  <Badge key={idx} className="px-4 py-2 text-base bg-gray-100 text-gray-700 border-gray-200 hover:bg-purple-100 hover:text-purple-700 cursor-pointer">
                     {phase}
                   </Badge>
                 ))}
@@ -651,9 +648,9 @@ export default function AreaDetail() {
             <TabsContent value="nearby">
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {area.nearbyAreas.map((nearby, idx) => (
-                  <div key={idx} className="p-5 rounded-xl bg-slate-800/50 border border-slate-700/50 flex items-center gap-3 hover:border-amber-500/50 transition-colors cursor-pointer">
-                    <MapPin className="w-5 h-5 text-amber-400" />
-                    <span className="text-white">{nearby}</span>
+                  <div key={idx} className="p-5 rounded-xl bg-gray-50 border border-gray-100 flex items-center gap-3 hover:border-purple-300 transition-colors cursor-pointer">
+                    <MapPin className="w-5 h-5 text-purple-600" />
+                    <span className="text-gray-900">{nearby}</span>
                   </div>
                 ))}
               </div>
@@ -663,24 +660,24 @@ export default function AreaDetail() {
       </section>
 
       {/* CTA */}
-      <section className="py-16 border-t border-slate-800">
+      <section className="py-16 border-t border-gray-200 bg-gradient-to-br from-purple-50 via-white to-blue-50">
         <div className="container">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Ready to Invest in {area.name}?
             </h2>
-            <p className="text-slate-400 mb-8">
+            <p className="text-gray-600 mb-8">
               Browse available properties in this area and start building your real estate portfolio today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/properties">
-                <Button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-semibold px-8">
+                <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8">
                   View Properties in {area.name}
                   <ArrowUpRight className="ml-2 w-4 h-4" />
                 </Button>
               </Link>
               <Link href="/area-guides">
-                <Button variant="outline" className="border-slate-600 text-white hover:bg-slate-800">
+                <Button variant="outline" className="border-gray-300 text-gray-700 hover:bg-gray-100">
                   Explore Other Areas
                 </Button>
               </Link>

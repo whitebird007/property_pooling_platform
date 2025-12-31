@@ -282,3 +282,7 @@
 - [x] Create /admin/reports page
 - [x] Create /admin/settings page
 - [x] Register all routes in App.tsx
+
+
+## Area Detail Page Fix (User Report)
+- [x] Update /area/:id page to use light theme colors
